@@ -1,0 +1,32 @@
+{
+  "name": "checkinn",
+  "version": "1.0.0",
+  "description": "App for booking and hosting accomodations",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "server": "nodemon index.js"
+  },
+  "keywords": [
+    "booking",
+    "accomodation",
+    "host",
+    "cabin",
+    "apartment",
+    "studio"
+  ],
+  "author": "Andrei Macovei",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.3",
+    "pg": "^8.7.3"
+  },
+  "engines": {
+    "node": "16.x"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
