@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+
+        <title>CheckInn Home</title>
+        <%-include("../fragments/head.ejs")%>
+    </head>
+    <body>
+        <%-include("../fragments/header.ejs")%>
+        <main>
+            <div class="px-20 justify-center mx-auto">
+                <form>
+                    <div class="flex flex-col gap-8 justify-center p-10 border mt-20">
+                        <h1 class="text-3xl mx-auto">Login to your account</h1>
+                        <input type="text" placeholder="Username" class="border rounded mx-auto">
+                        <input type="password" placeholder="Password" class="border rounded mx-auto">
+                        <button type="submit" class="btn-primary">Log in</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </body>
+</html>
