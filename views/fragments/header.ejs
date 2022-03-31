@@ -4,14 +4,14 @@
 
         <ul class="flex flex-row items-center align-middle gap-4 text-white">
             <li><a href="#" class="">Become a host</a></li>
-            <li><a href="/register" class="">Register</a></li>
+            <% if(locals.user) { %>
+                <li><a href="#"><%-locals.user.firstname%></a></li>
+            <% } else{ %> 
+            <li><a href="/users/register" class="">Register</a></li>
             <li>
-                <a href="/login" class="peer">Sign in</a>
-                <!-- <ul class="hidden peer-hover:inline-flex flex-col">
-                    <li><a href="#" class="">Traveler Sign-in</a></li>
-                    <li><a href="#">Host Sign-in</a></li>
-                </ul> -->
+                <a href="/users/login" class="peer">Sign in</a>
             </li>
+            <% } %>
         </ul>
     </nav>
 </header>

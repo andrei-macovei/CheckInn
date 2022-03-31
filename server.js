@@ -1,5 +1,6 @@
 const express = require('express');
 const {Client} = require('pg');
+const session = require('express-session');
 
 console.log("Server starting...");
 var app = express();
@@ -8,20 +9,26 @@ const PORT = 8080;
 app.set("view engine", "ejs");
 app.use("/public", express.static(__dirname + "/public"));
 
+// session initialization
+app.use(session({
+    secret: 'discret',  // CHANGE maybe
+    resave: true,
+    saveUninitialized: false
+}));
+
+app.use("/*", (req, res, next) => {
+    res.locals.user = req.session.user; // send the user data to all pages
+    next();
+})
+
 // home page
 app.get(["/", "/index", "/home"], function(req, res){
     res.render("pages/index");
 });
 
-// login page
-app.get("/login", (req, res) => {
-    res.render("pages/login");
-});
+app.use("/users", require('./server/users'));
 
-// register page
-app.get("/register", (req, res) => {
-    res.render("pages/register");
-});
+app.get('/favicon.ico' , function(req , res){/*code*/}); // silence weird errors
 
 // fallback if no prior app.get is accesed
 app.get("/*", (req, res) => {

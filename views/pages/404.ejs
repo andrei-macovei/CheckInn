@@ -10,7 +10,11 @@
     <body>
         <%-include("../fragments/header.ejs")%>
         <main class="px-20">
-            <h1> Page not found - Error 404</h1>
+            <div class="bg-slate-100 text-center p-52">
+                <h1 class="text-4xl font-bold p-6"> 404 - Page not found</h1>
+                <p class="p-6 pt-0 text-lg">The requested page couldn't be found on our site. Make sure you are using a correct link</p>
+                <a href="/home" class="btn-primary">Go back to the homepage</a>
+            </div>
         </main>
     </body>
 </html>

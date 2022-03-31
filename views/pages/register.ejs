@@ -10,30 +10,40 @@
     <body>
         <%-include("../fragments/header.ejs")%>
         <main class="px-20">
-            <div class="px-20 justify-center">
-                <form class>
-                    <div class="flex flex-col gap-8 justify-center p-10 border mt-20">
+            <!-- <div class="px-20 justify-center"> -->
+                <form method="POST" action="/users/registerUser" class="">
+                    <div class="flex flex-col gap-4 justify-center p-8 border mt-20 min-w-fit">
                         <h1 class="text-3xl mx-auto">Register a new account</h1>
                         <div class="mx-auto">
                             <label class="">E-mail address:</label><br>
-                            <input type="text" placeholder="E-mail address" class="border rounded">
+                            <input type="text" required name="email" placeholder="E-mail address" class="inp-basic">
                         </div>
                         <div class="mx-auto">
                             <label>First name:</label><br>
-                            <input type="text" placeholder="First name" class="border rounded mx-auto"> 
+                            <input type="text" required name="firstname" placeholder="First name" class="inp-basic"> 
                         </div>
                         <div class="mx-auto">
                             <label>Last name:</label><br>
-                            <input type="text" placeholder="Last name" class="border rounded mx-auto">
+                            <input type="text" required name="lastname" placeholder="Last name" class="inp-basic">
                         </div>
                         <div class="mx-auto">
                             <label>Password:</label><br>
-                            <input type="password" placeholder="Password" class="border rounded mx-auto">
-                        </div>                     
+                            <input type="password" name="password" placeholder="Password" class="inp-basic">
+                        </div>
+                        <div class="mx-auto">
+                            <% if(locals.succes == "true") { %>
+                                <p class="text-green-600"><%- locals.msg %></p>
+                                <% } else { %>
+                                <p class="text-red-600"><%- locals.msg %></p>
+                                <% } %>
+                        </div>               
                         <button type="submit" class="btn-primary">Register</button>
+                        <div class="mx-auto">
+                            <p class="text-gray-500 text-sm">If you already have an account, <a href="/users/login" class="text-blue-400 underline">sign in</a></p>
+                        </div>
                     </div>
                 </form>
-            </div>
+            <!-- </div> -->
         </main>
     </body>
 </html>

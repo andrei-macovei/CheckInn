@@ -41,6 +41,12 @@
             <div>
                 <h2 class="font-bold text-xl pt-4">Inspiration for your next trip</h2>
             </div>
+            <div>
+                <% if (locals.user) { %>
+                    <%- locals.user.firstname %>
+                    <%- locals.user.lastname %>
+                <% } %>
+            </div>
         </main>
     </body>
 </html>
