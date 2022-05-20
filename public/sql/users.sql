@@ -9,5 +9,5 @@ CREATE TABLE IF NOT EXISTS users (
    birthday DATE,
    profile_picture VARCHAR(300),
    token VARCHAR(50),
-   confirmed BOOLEAN
+   confirmed BOOLEAN DEFAULT false,
 );

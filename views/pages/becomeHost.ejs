@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+
+        <title>CheckInn Home</title>
+        <%-include("../fragments/head.ejs")%>
+    </head>
+    <body>
+        <%-include("../fragments/header.ejs")%>
+        <main class="px-20">
+            <h2>What kind of property do you wish to list?</h2>
+
+            <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+                <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 rounded-t-lg border-b-2" id="apartment-tab" data-tabs-target="#apartment" type="button" role="tab" aria-controls="apartment" aria-selected="false">Apartment</button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="villa-tab" data-tabs-target="#villa" type="button" role="tab" aria-controls="villa" aria-selected="false">House/Villa</button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="bedandbreakfast-tab" data-tabs-target="#bedandbreakfast" type="button" role="tab" aria-controls="bedandbreakfast" aria-selected="false">Bed and Breakfast</button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="hostel-tab" data-tabs-target="#hostel" type="button" role="tab" aria-controls="hostel" aria-selected="false">Hostel</button>
+                    </li>
+                    <li role="presentation">
+                        <button class="inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="special-tab" data-tabs-target="#special" type="button" role="tab" aria-controls="special" aria-selected="false">Special Place</button>
+                    </li>
+                </ul>
+            </div>
+            <div id="myTabContent">
+                <div class="hidden p-4 bg-gray-50 rounded-lg dark:bg-gray-800" id="apartment" role="tabpanel" aria-labelledby="apartment-tab">
+                    <form method="POST" action="newListing">
+                        <div class="relative z-0 w-full mb-6 group">
+                            <input type="text" name="title" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                            <label for="title" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Title of your property</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-1" type="radio" value="entire" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Entire Property</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-1" type="radio" value="private" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Private room</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-2" type="radio" value="shared" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-2" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Shared room</label>
+                        </div>
+                        <input type="hidden" value="apartment" name="property_type">
+                        <button type="submit" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Details about your Apartment
+                            <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="hidden p-4 bg-gray-50 rounded-lg dark:bg-gray-800" id="villa" role="tabpanel" aria-labelledby="villa-tab">
+                    <form method="POST" action="newListing">
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-1" type="radio" value="entire" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Entire Property</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-1" type="radio" value="private" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Private room</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-2" type="radio" value="shared" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-2" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Shared room</label>
+                        </div>
+                        <input type="hidden" value="house" name="property_type">
+                        <button type="submit" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Details about your House
+                            <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="hidden p-4 bg-gray-50 rounded-lg dark:bg-gray-800" id="bedandbreakfast" role="tabpanel" aria-labelledby="bedandbreakfast-tab">
+                    <form method="POST" action="newListing">
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-1" type="radio" value="private" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Private room</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-2" type="radio" value="shared" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-2" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Shared room</label>
+                        </div>
+                        <input type="hidden" value="bedandbreakfast" name="property_type">
+                        <button type="submit" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Details about your Bed and Breakfast
+                            <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="hidden p-4 bg-gray-50 rounded-lg dark:bg-gray-800" id="hostel" role="tabpanel" aria-labelledby="hostel-tab">
+                    <form method="POST" action="newListing">
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-1" type="radio" value="private" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Private room</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-2" type="radio" value="shared" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-2" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Shared room</label>
+                        </div>
+                        <input type="hidden" value="hostel" name="property_type">
+                        <button type="submit" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Details about your Hostel
+                            <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="hidden p-4 bg-gray-50 rounded-lg dark:bg-gray-800" id="special" role="tabpanel" aria-labelledby="special-tab">
+                    <form method="POST" action="newListing">
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-1" type="radio" value="entire" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Entire Property</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-1" type="radio" value="private" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-1" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Private room</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input id="privacy-radio-2" type="radio" value="shared" name="privacy" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="privacy-radio-2" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Shared room</label>
+                        </div>
+                        <input type="hidden" value="special" name="property_type">
+                        <button type="submit" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Details about your Special Place
+                            <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>

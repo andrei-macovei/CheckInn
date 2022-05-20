@@ -2,7 +2,6 @@ const express = require('express');
 const {Client} = require('pg');
 const session = require('express-session');
 
-console.log("Server starting...");
 var app = express();
 const PORT = 8080;
 
@@ -16,6 +15,8 @@ app.use(session({
     saveUninitialized: false
 }));
 
+app.use(express.json());
+
 app.use("/*", (req, res, next) => {
     res.locals.user = req.session.user; // send the user data to all pages
     next();
@@ -26,9 +27,13 @@ app.get(["/", "/index", "/home"], function(req, res){
     res.render("pages/index");
 });
 
+// inclusion of controllers
 app.use("/users", require('./server/users'));
+app.use("/hosting", require('./server/hosting'));
 
 app.get('/favicon.ico' , function(req , res){/*code*/}); // silence weird errors
+app.get('/*.js' , function(req , res){/*code*/}); // silence weird errors
+
 
 // fallback if no prior app.get is accesed
 app.get("/*", (req, res) => {
@@ -41,7 +46,7 @@ app.get("/*", (req, res) => {
             }
             else {
                 console.log(err);
-                res.render("pages/general_error");
+                res.render("pages/error");
             }
         }
         else res.send(render_res);

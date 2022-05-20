@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+
+        <title>CheckInn Home</title>
+        <%-include("../fragments/head.ejs")%>
+    </head>
+    <body>
+        <%-include("../fragments/header.ejs")%>
+        <main class="px-20">
+            <p>HOST DASHBOARD</p>
+            <div id="properties-container" class="container flex flex-col">
+                <% for (let prop of locals.properties) {%>
+                    <div class="prop border rounded-lg py-4 m-3">
+                        <div class="prop-title border-b flex flex-row gap-4">
+                            <h3><%-prop.title%></h3>
+                            <p><%-prop.property_type%></p>
+                            <p><%-prop.guests%></p>
+                        </div>
+                    </div>
+                <%}%>
+            </div>
+        </main>
+    </body>
+</html>

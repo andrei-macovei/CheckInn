@@ -134,7 +134,8 @@ router.post('/authenticate', (req, res) => {
                             phone : result.rows[0].phone,
                             join_date : result.rows[0].join_date,
                             birthday :  result.rows[0].birthday,
-                            profile_picture : result.rows[0].profile_picture
+                            profile_picture : result.rows[0].profile_picture,
+                            host: result.rows[0].host
                         }
                     }
                     res.redirect('/');

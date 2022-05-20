@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+
+        <title>CheckInn Home</title>
+        <%-include("../fragments/head.ejs")%>
+        <script src="/public/js/rooms.js"></script>
+    </head>
+    <body>
+        <%-include("../fragments/header.ejs")%>
+        <main class="px-20">
+            <form method="POST" action="/hosting/addListingDetails/<%-locals.id_property%>">
+                <div>
+                    <label for="title_inp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Title of your listing</label>
+                    <input type="text" id="title_inp" name="title" value="<%-locals.title%>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Title">
+                </div>
+                <div>
+                    <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Description of your place</label>
+                    <textarea id="description" name="description" rows="4" value="<%-locals.description%>" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your description..."></textarea>
+                </div>
+                <div>
+                <div>
+                    <label for="guests_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Number of guests allowed</label>
+                    <input type="number" id="guests_number" name="guests" value="<%-locals.guests%>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
+                </div>
+                <div>
+                    <label for="bathrooms_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Number of bathrooms</label>
+                    <input type="number" id="bathrooms_number" name="bathrooms" value="<%-locals.bathrooms%>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
+                </div>
+                
+                <!-- Modal toggle -->
+                <button class="block text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button" data-modal-toggle="roomModal">
+                    Add Room
+                </button>
+
+                <!-- Rooms details -->
+                <div id="rooms-container">
+                
+                </div>
+
+                <% function capitalize(string) {
+                    return string.charAt(0).toUpperCase() + string.slice(1);
+                } 
+                %> 
+                <!-- Amenities checkboxes -->
+                <h2>General amenities</h2>
+                <div class="grid grid-cols-4">
+                    <% for(let amenity of locals.generalAmenities) { %>
+                        <% if(amenity.column_name == 'id_amenities' || amenity.column_name == 'id_property') continue %>
+                        <div class="items-center mr-4">
+                            <input id="<%-amenity.column_name%>-check" name="generalAmenities" type="checkbox" value="<%-amenity.column_name%>" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="<%-amenity.column_name%>-check" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"><%-capitalize(amenity.column_name.split("_").join(" "))%></label>
+                        </div>
+                    <%}%>
+                </div>
+
+                <h2>Bathroom</h2>
+                <div class="grid grid-cols-4">
+                    <% for(let amenity of locals.bathroomAmenities) { %>
+                        <% if(amenity.column_name == 'id_amenities' || amenity.column_name == 'id_property') continue %>
+                        <div class="items-center mr-4">
+                            <input id="<%-amenity.column_name%>-check" name="bathroomAmenities" type="checkbox" value="<%-amenity.column_name%>" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="<%-amenity.column_name%>-check" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"><%-capitalize(amenity.column_name.split("_").join(" "))%></label>
+                        </div>
+                    <%}%>
+                </div>
+
+                <h2>Kitchen</h2>
+                <div class="grid grid-cols-4">
+                    <% for(let amenity of locals.kitchenAmenities) { %>
+                        <% if(amenity.column_name == 'id_amenities' || amenity.column_name == 'id_property') continue %>
+                        <div class="items-center mr-4">
+                            <input id="<%-amenity.column_name%>-check" name="kitchenAmenities" type="checkbox" value="<%-amenity.column_name%>" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="<%-amenity.column_name%>-check" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"><%-capitalize(amenity.column_name.split("_").join(" "))%></label>
+                        </div>
+                    <%}%>
+                </div>
+
+                <button type="submit" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Price & Rules
+                    <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                </button>
+            </form>
+
+            <!-- Main modal -->
+            <div id="roomModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full">
+                <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
+                    <!-- Modal content -->
+                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div class="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                Room details
+                            </h3>
+                            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="roomModal">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>  
+                            </button>
+                        </div>
+                        <!-- Modal body -->
+                        <form method="POST" action="addRoom">
+                            <div class="p-6 space-y-6">
+                                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                    <label for="room_types" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Choose room type</label>
+                                    <select id="room_types" name="room_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <option value="choose" selected>Choose a type</option>
+                                        <option value="bedroom">Bedroom</option>
+                                        <option value="living">Living</option>
+                                        <option value="shared_space">Shared Space</option>
+                                    </select>
+                                </p>
+                                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                    <div>
+                                        <label for="single" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Single beds</label>
+                                        <input type="number" name="single_beds" id="single" value="0" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
+                                    </div>
+                                    <div>
+                                        <label for="double" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Double beds</label>
+                                        <input type="number" name="double_beds" id="double" value="0" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
+                                    </div>
+                                    <div>
+                                        <label for="bunk" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Bunk beds</label>
+                                        <input type="number" name="bunk_beds" id="bunk" value="0" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
+                                    </div>
+                                    <div>
+                                        <label for="other" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Other (Sofas/mattresses etc.)</label>
+                                        <input type="number" name="other" id="other" value="0" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="">
+                                    </div>
+                                </p>
+                            </div>
+                            <input type="hidden" id="id_property_inp" name="id_property" value="<%-locals.id_property%>">
+                            <!-- Modal footer -->
+                            <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
+                                <button data-modal-toggle="roomModal" id="addRoomButton" type="button" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Confirm room details</button>
+                                <button data-modal-toggle="roomModal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </body>
+</html>
