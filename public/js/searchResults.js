@@ -56,7 +56,6 @@ function getResults(){
             url += `&price=${opt.value}`;
         }
     }
-    console.log(`/search/results${url}`)
     fetch(`/search/results${url}`)
         .then(res => res.json())
         .then(data => {

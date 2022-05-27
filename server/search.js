@@ -129,7 +129,8 @@ router.get('/result/:id_property', (req, res) =>{
                                     k_amenities: result4.rows[0],
                                     b_amenities: result5.rows[0],
                                     reviews: result6.rows,
-                                    numberReviews: numberReviews
+                                    numberReviews: numberReviews,
+                                    error: req.query.error
                                 });
                             })
                         })
