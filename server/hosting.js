@@ -8,21 +8,39 @@ const conn = require("../public/json/connection.json");
 var client = new Client(conn);
 client.connect();
 
+function loggedInGuard(path, req, res){
+    if(req.session.user == null){   // if not logged in
+        // ask for login
+        res.redirect('/users/login');
+    }   
+}
+
 router.get('/', (req,res) =>{
-    var queryGetProperties = `SELECT id_property, title, property_type, guests, rating FROM properties WHERE id_host=$1`;
-    client.query(queryGetProperties, [req.session.user.id_user  ], (err, result) =>{
-        if(err) console.log(err);
-        else{
-            res.render('pages/hostDashboard', {properties: result.rows})
-        }
-    })
+    if(req.session && req.session.user){
+        var queryGetProperties = `SELECT id_property, title, property_type, guests, rating FROM properties WHERE id_host=$1`;
+        client.query(queryGetProperties, [req.session.user.id_user], (err, result) =>{
+            if(err) console.log(err);
+            else{
+                res.render('pages/hostDashboard', {properties: result.rows})
+            }
+        })
+    }else{   // if not logged in
+        res.render('pages/login',{path: '/hosting'});
+    }
 });
 
 router.get('/becomeHost', (req, res) =>{
-    res.render('pages/becomeHost')
+    if(req.session && req.session.user) res.render('pages/becomeHost')
+    else{   // if not logged in
+        res.render('pages/login',{path: '/hosting/becomeHost'});
+    }
 });
 
 router.post('/newListing', (req, res) =>{
+    if(req.session == null && req.session.user == null){
+        res.send(403).render('pages/403');
+        return;
+    }
     var form = new formidable.IncomingForm();
     // TODO: check inputs?
     if(req.session.user){
@@ -86,8 +104,14 @@ router.get('/listingAddress/:id_property', (req, res) =>{
 })
 
 router.post('/addAddress', (req, res) =>{
-    const {id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng} = req.body;
+    var {id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng} = req.body;
     queryAddAddress = `INSERT INTO address (id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
+    // removes diacritics and special characters
+    if(street_and_number) street_and_number = street_and_number.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if(neighbourhood) neighbourhood = neighbourhood.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if(city) city = city.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if(region) region = region.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if(country) country = country.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     paramsAddAddress = [id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng];
     client.query(queryAddAddress, paramsAddAddress, (err, result) => {
         if(err) console.log(err);
@@ -96,7 +120,14 @@ router.post('/addAddress', (req, res) =>{
 });
 
 router.put('/addAddress', (req, res) =>{
-    const {id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng} = req.body;
+    var {id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng} = req.body;
+    // removes diacritics and special characters
+    if(street_and_number) street_and_number = street_and_number.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if(neighbourhood) neighbourhood = neighbourhood.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if(city) city = city.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if(region) region = region.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if(country) country = country.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
     queryUpdateAddress = `UPDATE address SET street_and_number=$1, neighbourhood=$2, city=$3, region=$4, country=$5, postal_code=$6, lat=$7, lng=$8 WHERE id_property=$9`;
     paramsUpdateAddress = [street_and_number, neighbourhood, city, region, country, postal_code, lat, lng, id_property];
     client.query(queryUpdateAddress, paramsUpdateAddress, (err, result) =>{
@@ -119,20 +150,25 @@ router.get('/listingDetails/:id_property', (req, res) =>{
                     client.query(queryGetGeneralAmenities, (err2, result2) =>{
                         if(err2) console.log(err2);
                         else{
-
                             var queryGetPropertyInfo = `SELECT title, description, guests, bathrooms FROM properties WHERE id_property = $1`
-                            client.query(queryGetPropertyInfo, [req.params.id_property], (err, result3) =>{
-                                // TODO?: get prior amenities
-                                res.render('pages/listingDetails', {
-                                    id_property: req.params.id_property,
-                                    title: result3.rows[0].title,
-                                    description: result3.rows[0].description,
-                                    guests: result3.rows[0].guests,
-                                    bathrooms: result3.rows[0].bathrooms,
-                                    bathroomAmenities: result.rows,
-                                    kitchenAmenities: result1.rows,
-                                    generalAmenities: result2.rows
-                                });
+                            client.query(queryGetPropertyInfo, [req.params.id_property], (err3, result3) =>{
+                                if(err3) console.log(err3);
+                                var queryGetAllAmenities = `SELECT * from general_amenities join kitchen_amenities using(id_property) 
+                                            join bathroom_amenities using(id_property) where id_property=$1`;
+                                client.query(queryGetAllAmenities, [req.params.id_property], (err4, result4) =>{
+                                    if(err4) {console.log(err4); return}
+                                    res.render('pages/listingDetails', {
+                                        id_property: req.params.id_property,
+                                        title: result3.rows[0].title,
+                                        description: result3.rows[0].description,
+                                        guests: result3.rows[0].guests,
+                                        bathrooms: result3.rows[0].bathrooms,
+                                        bathroomAmenities: result.rows,
+                                        kitchenAmenities: result1.rows,
+                                        generalAmenities: result2.rows,
+                                        propertyAmenities: result4.rows[0]
+                                    });
+                                })                                
                             });
                         }
                     });
@@ -140,27 +176,157 @@ router.get('/listingDetails/:id_property', (req, res) =>{
             });
         }
     });
-})
+});
 
 router.post('/addListingDetails/:id_property', (req, res) =>{
     var form = new  formidable.IncomingForm();
 
     form.parse(req, (err, text_fields) =>{
-        console.log(text_fields)
         var queryUpdateProperty = `UPDATE properties SET title = $1, description = $2, guests = $3, bathrooms = $4 WHERE id_property= $5`
-        var paramsUpdateProperty = [text_fields.title, text_fields.description, text_fields.guests, text_fields.bathrooms, req.params.id_property];
+        var paramsUpdateProperty = [text_fields.title, text_fields.description.trim(), text_fields.guests, text_fields.bathrooms, req.params.id_property];
         client.query(queryUpdateProperty, paramsUpdateProperty, (err, result) =>{
-            if(err) console.log(err);
-            else{
-                // TODO: add amenities to db
+            if(err) {console.log(err); return}
 
-                res.redirect(`/hosting/listingRules/${req.params.id_property}`)
-            }
-        })
+            // add general amenities in db
+            const generalAmenitiesArr = ['essentials', 'wifi', 'tv', 'iron', 'heating', 'air_conditioning', 'desk', 'free_parking', 
+            'paid_parking', 'security_cameras', 'safe', 'smoke_detectors', 'balcony', 'outdoor_space'];
+            var queryUpdateGeneralAmenities;
+            if(text_fields.generalAmenities){
+                // check if property already has general amenities introduced
+                client.query('SELECT id_amenities FROM general_amenities WHERE id_property=$1', [req.params.id_property], (err1, result1) =>{
+                    if(err1) {console.log(err1); return;}
+                    if(result1.rowCount == 0){
+                        queryUpdateGeneralAmenities = `INSERT INTO general_amenities(essentials, wifi, tv, iron, heating, air_conditioning, desk, free_parking, 
+                            paid_parking, security_cameras, safe, smoke_detectors, balcony, outdoor_space, id_property) VALUES( `;
+                        if(Array.isArray(text_fields.generalAmenities)){
+                            for(amenity of generalAmenitiesArr){
+                                if(text_fields.generalAmenities.includes(amenity)) queryUpdateGeneralAmenities += `true, `
+                                else queryUpdateGeneralAmenities += `false, `
+                            }
+                        } else{
+                            for(amenity of generalAmenitiesArr){
+                                if(text_fields.generalAmenities == amenity) queryUpdateGeneralAmenities += `true, `
+                                else queryUpdateGeneralAmenities += `false, `
+                            }
+                        }
+                        queryUpdateGeneralAmenities += `$1)`;
+                    } else{
+                        queryUpdateGeneralAmenities = `UPDATE general_amenities SET `;
+                        if(Array.isArray(text_fields.generalAmenities)){
+                            for(amenity of generalAmenitiesArr){
+                                if(text_fields.generalAmenities.includes(amenity)) queryUpdateGeneralAmenities += `${amenity}=true, `
+                                else queryUpdateGeneralAmenities += `${amenity}=false, `
+                            }
+                        } else{
+                            for(amenity of generalAmenitiesArr){
+                                if(text_fields.generalAmenities == amenity) queryUpdateGeneralAmenities += `${amenity}=true, `
+                                else queryUpdateGeneralAmenities += `${amenity}=false, `
+                            }
+                        }
+                        queryUpdateGeneralAmenities += `id_property=$1 WHERE id_property=$1;`;
+                    }
+
+                    console.log(queryUpdateGeneralAmenities);
+                    client.query(queryUpdateGeneralAmenities, [req.params.id_property], (err2, result2) =>{
+                        if(err2) {console.log(err2); return}
 
 
-        // res.render('pages/listingDetails', {id_property: text_fields.id_property})
-        // res.redirect(`/hosting/listingDetails/${text_fields.id_property}`);
+
+
+                        // add kitchen amenities in db
+                        const kitchenAmenitiesArr = ['kitchen', 'fridge', 'freezer', 'cooker', 'oven', 'microwave', 'cutlery', 'cooking_essentials',
+                             'coffee', 'kettle', 'blender', 'dishwasher'];
+                        var queryUpdateKitchenAmenities;
+                        if(text_fields.kitchenAmenities){
+                            // check if property already has kitchen amenities introduced
+                            client.query('SELECT id_amenities FROM kitchen_amenities WHERE id_property=$1', [req.params.id_property], (err3, result3) =>{
+                                if(err3) {console.log(err3); return;}
+                                if(result3.rowCount == 0){
+                                    queryUpdateKitchenAmenities = `INSERT INTO kitchen_amenities(kitchen, fridge, freezer, cooker, oven, microwave, cutlery, cooking_essentials,
+                                        coffee, kettle, blender, dishwasher, id_property) VALUES( `;
+                                    if(Array.isArray(text_fields.kitchenAmenities)){
+                                        for(amenity of kitchenAmenitiesArr){
+                                            if(text_fields.kitchenAmenities.includes(amenity)) queryUpdateKitchenAmenities += `true, `
+                                            else queryUpdateKitchenAmenities += `false, `
+                                        }
+                                    } else{
+                                        for(amenity of kitchenAmenitiesArr){
+                                            if(text_fields.kitchenAmenities == amenity) queryUpdateKitchenAmenities += `true, `
+                                            else queryUpdateKitchenAmenities += `false, `
+                                        }
+                                    }
+                                    queryUpdateKitchenAmenities += `$1)`;
+                                } else{
+                                    queryUpdateKitchenAmenities = `UPDATE kitchen_amenities SET `;
+                                    if(Array.isArray(text_fields.kitchenAmenities)){
+                                        for(amenity of kitchenAmenitiesArr){
+                                            if(text_fields.kitchenAmenities.includes(amenity)) queryUpdateKitchenAmenities += `${amenity}=true, `
+                                            else queryUpdateKitchenAmenities += `${amenity}=false, `
+                                        }
+                                    } else{
+                                        for(amenity of kitchenAmenitiesArr){
+                                            if(text_fields.kitchenAmenities == amenity) queryUpdateKitchenAmenities += `${amenity}=true, `
+                                            else queryUpdateKitchenAmenities += `${amenity}=false, `
+                                        }
+                                    }
+                                    queryUpdateKitchenAmenities += `id_property=$1 WHERE id_property=$1;`;
+                                }
+                                console.log(queryUpdateKitchenAmenities);
+                                client.query(queryUpdateKitchenAmenities, [req.params.id_property], (err4, result4) =>{
+                                    if(err4) {console.log(err4); return;}
+                                    
+                                    // add bathroom amenities in db
+                                    const bathroomAmenitiesArr = ['shower_gel', 'shampoo', 'bath_tub', 'bathrobe', 'washing_machine', 'laundry_dryer', 'bidet', 'jacuzzi'];
+                                    var queryUpdateBathroomAmenities;
+                                    if(text_fields.bathroomAmenities){
+                                        // check if property already has bathroom amenities introduced
+                                        client.query('SELECT id_amenities FROM bathroom_amenities WHERE id_property=$1', [req.params.id_property], (err5, result5) =>{
+                                            if(err5) {console.log(err5); return;}
+                                            if(result5.rowCount == 0){
+                                                queryUpdateBathroomAmenities = `INSERT INTO bathroom_amenities(shower_gel, shampoo, bath_tub, bathrobe, washing_machine,
+                                                     laundry_dryer, bidet, jacuzzi, id_property) VALUES( `;
+                                                if(Array.isArray(text_fields.bathroomAmenities)){
+                                                    for(amenity of bathroomAmenitiesArr){
+                                                        if(text_fields.bathroomAmenities.includes(amenity)) queryUpdateBathroomAmenities += `true, `
+                                                        else queryUpdateBathroomAmenities += `false, `
+                                                    }
+                                                } else{
+                                                    for(amenity of bathroomAmenitiesArr){
+                                                        if(text_fields.bathroomAmenities == amenity) queryUpdateBathroomAmenities += `true, `
+                                                        else queryUpdateBathroomAmenities += `false, `
+                                                    }
+                                                }
+                                                queryUpdateBathroomAmenities += `$1)`;
+                                            } else{
+                                                queryUpdateBathroomAmenities = `UPDATE bathroom_amenities SET `;
+                                                if(Array.isArray(text_fields.bathroomAmenities)){
+                                                    for(amenity of bathroomAmenitiesArr){
+                                                        if(text_fields.bathroomAmenities.includes(amenity)) queryUpdateBathroomAmenities += `${amenity}=true, `
+                                                        else queryUpdateBathroomAmenities += `${amenity}=false, `
+                                                    }
+                                                } else{
+                                                    for(amenity of bathroomAmenitiesArr){
+                                                        if(text_fields.bathroomAmenities == amenity) queryUpdateBathroomAmenities += `${amenity}=true, `
+                                                        else queryUpdateBathroomAmenities += `${amenity}=false, `
+                                                    }
+                                                }
+                                                queryUpdateBathroomAmenities += `id_property=$1 WHERE id_property=$1;`;
+                                            }
+                                            console.log(queryUpdateBathroomAmenities);
+                                            client.query(queryUpdateBathroomAmenities, [req.params.id_property], (err6, result6) =>{
+                                                if(err6) {console.log(err6); return}
+                                                if(text_fields.save_btn == '') res.redirect(`/hosting/`);
+                                                if(text_fields.rules_btn == '')res.redirect(`/hosting/listingRules/${req.params.id_property}`);
+                                            });
+                                        });
+                                    }
+                                });
+                            });
+                        }                        
+                    });
+                });
+            }           
+        });
     });
 });
 
@@ -206,7 +372,7 @@ router.post('/rooms', (req, res) =>{
     paramsAddRoom = [id_property, room_type, single_beds, double_beds, bunk_beds, other];
     client.query(queryAddRoom, paramsAddRoom, (err, result) => {
         if(err) console.log(err);
-        else res.status(201).send("Room added succesfully");
+        else res.status(201);
     })
 });
 
@@ -216,7 +382,7 @@ router.put('/rooms/:id_room', (req, res) =>{
     paramsUpdateRoom = [room_type, single_beds, double_beds, bunk_beds, other, req.params.id_room];
     client.query(queryUpdateRoom, paramsUpdateRoom, (err, result) =>{
         if(err) console.log(err);
-        else response.status(200).send(`Room with id ${id} modified.`);
+        else res.status(200);
     })
     
 });
@@ -224,7 +390,7 @@ router.put('/rooms/:id_room', (req, res) =>{
 router.delete('/rooms/:id_room', (req, res) =>{
     client.query('DELETE FROM rooms WHERE id_room = $1', [req.params.id_room], (err, result) =>{
         if(err) console.log(err);
-        else response.status(200).send(`Room with id ${id} deleted.`);
+        else res.status(200);
     })
 });
 
@@ -265,5 +431,11 @@ router.post('/addRules/:id_property', (req, res) =>{
     });
 })
 
+router.delete('/deleteProperty/:id_property', (req, res) =>{
+    client.query('DELETE FROM properties WHERE id_property = $1', [req.params.id_property], (err, result) =>{
+        if(err) console.log(err);
+        else res.status(200);
+    })
+});
 
 module.exports = router

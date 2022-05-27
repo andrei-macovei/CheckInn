@@ -138,7 +138,8 @@ router.post('/authenticate', (req, res) => {
                             host: result.rows[0].host
                         }
                     }
-                    res.redirect('/');
+                    if(text_fields.path) res.redirect(text_fields.path);
+                    else res.redirect('/');
                 }
                 else{
                     res.render('pages/login', {msg:"Password is incorrect!"});

@@ -25,6 +25,10 @@
 //     // .then(data => console.log(data))
 
 window.onload = () => {
+    function capitalize(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     const roomModal = document.querySelector('#roomModal');
     const addRoomButton = roomModal.querySelector('#addRoomButton');
 
@@ -43,12 +47,47 @@ window.onload = () => {
             roomsContainer.textContent = '';
             for(room of data){
                 const roomDiv = document.createElement('div');
-                roomDiv.classList.add("border");
+                // roomDiv.classList.add("border");
+                var detailsDiv = '';
+                if(parseInt(room.single_beds) != 0) detailsDiv += `<p>Single beds: ${room.single_beds}</p>`;
+                if(parseInt(room.double_beds) != 0) detailsDiv += `<p>Double beds: ${room.double_beds}</p>`
+                if(parseInt(room.bunk_beds) != 0) detailsDiv += `<p>Bunk beds: ${room.bunk_beds}</p>`;
+                if(parseInt(room.other) != 0) detailsDiv += `<p>Sofas/ Other: ${room.other}</p>`;
                 roomDiv.innerHTML = `
-                    <p> ${room.id_room} </p>
-                    <p> ${room.room_type} </p>
-                `
+                <div class="room border rounded-lg m-3">
+                    <div class="room-title border-b flex flex-row justify-between px-4 py-2 bg-gray-100">
+                        <h3 class="text-xl font-medium">${capitalize(room.room_type).split("_").join(" ")}</h3>
+                    </div>
+                    <div class="prop-body flex justify-between">
+                        <div>
+                            ${detailsDiv}
+                        </div>
+                        <div class="flex flex-col">
+                            <button value="${room.id_room}" class="btn-del text-left focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" type="button" data-modal-toggle="popup-modal">
+                                Delete Room
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `           
                 roomsContainer.append(roomDiv);
+                var deleteButtons = document.querySelectorAll(".btn-del");
+                deleteButtons.forEach(function(but){
+                    but.addEventListener('click', e =>{
+                        (async () =>{
+                            const rawResponse = await fetch(`/hosting/rooms/${but.value}`, {
+                                    method: "DELETE",
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                });
+                                const content = await rawResponse.json();
+                            })();
+                            // REMOVE FROM DOM
+                            roomDiv1 = but.parentElement.parentElement.parentElement;
+                            roomDiv1.parentElement.removeChild(roomDiv1);
+                    });
+                });
             }
         })
     }

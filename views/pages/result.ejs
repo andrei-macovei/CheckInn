@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+
+        <title>CheckInn Home</title>
+        <%-include("../fragments/head.ejs")%>
+        <!-- <script src="/public/js/resultMap.js" defer></script> -->
+        <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQy7k2Ww3zcmNYGGkCLGw84z3XAnqqpnY&callback=initMap&v=weekly" defer></script> -->
+        <script src="/public/js/resultDetails.js" defer></script>
+    </head>
+    <body>
+        <%-include("../fragments/header.ejs")%>
+        <main class="px-36">
+            <% prop = locals.prop; function capitalize(string) {return string.charAt(0).toUpperCase() + string.slice(1);} %>
+           <div id="headline" class="p-4">
+               <h1 class="text-3xl font-bold">
+                   <%-prop.title%>
+               </h1>
+               <div class="flex flex-row">
+                    <div class="mr-2 font-light">
+                        <%-prop.rating ? prop.rating : "No rating yet"%>
+                    </div>
+                    <div class="mr-2">
+                        -
+                    </div>
+                    <div class="mr-1">
+                        <%-prop.street_and_number%>, <%- prop.city%>, <%- prop.country%>
+                    </div>
+               </div>
+            </div>
+            <div id="picture-grid" class="grid grid-cols-[2fr_1fr_1fr] grid-rows-2 gap-4 p-4">
+                <div id="big-picture" class="row-span-2 bg-slate-200 min-w-[400px] rounded-l-xl">
+                </div>
+                <div id="small-pic-1" class="bg-slate-200 min-h-[180px] min-w-[180px]">
+                </div>
+                <div id="small-pic-2" class="bg-slate-200 min-h-[180px] min-w-[180px] rounded-tr-xl">
+                </div>
+                <div id="small-pic-3" class="bg-slate-200 min-h-[180px] min-w-[180px]">
+                </div>
+                <div id="small-pic-4" class="bg-slate-200 min-h-[180px] min-w-[180px] rounded-br-xl">
+                </div>
+            </div>
+            <div id="" class="grid grid-cols-[2fr_1fr]">
+                <div id="subtitle" class="flex border-b m-4 pb-2">
+                    <div class="pr-4">
+                        <p class="text-xl font-semibold"><%-capitalize(prop.property_type)%> hosted by <%-prop.firstname%> <%-prop.lastname[0]%>.</p>
+                        <p><%-prop.guests%> guests - <%-prop.rooms_number%> rooms - <%-prop.bathrooms%> bathrooms</p> 
+                    </div>
+                    <div id="profile-pic-host" class="min-h-[60px] min-w-[60px] max-h-[60px] max-w-[60px] rounded-full bg-slate-200">
+                    </div>
+                </div>
+                <div id="reserve-card" class="row-span-5">
+                    <div class="border rounded-lg p-4">
+                        <p class="text-bold text-lg"><%-prop.price%></p>
+                        <form>
+                            
+                        </form>
+                    </div>
+                </div>
+                <div id="description" class="m-4 pb-4 border-b">
+                    <p><%-prop.description%></p>
+                </div>
+                <h2 class="text-lg font-semibold px-4">Rooms available</h2>
+                <div id="rooms" class="m-4 pb-4 border-b flex justify-start">
+                    <% for(let room of locals.rooms){%>
+                    <div class="room-content border rounded-lg p-4 mx-4">
+                        <h3 class="font-bold"><%-capitalize(room.room_type).split("_").join(" ")%></h3>
+                        <% if(room.single_beds != 0) {%>
+                            <div>
+                                <%-room.single_beds%> <%- room.single_beds == 1 ? "single bed" : "single beds"%>
+                            </div>
+                        <%}%>
+                        <% if(room.double_beds != 0) {%>
+                            <div>
+                                <%-room.double_beds%> <%- room.double_beds == 1 ? "double bed" : "double beds"%>
+                            </div>
+                        <%}%>
+                        <% if(room.bunk_beds != 0) {%>
+                            <div>
+                                <%-room.bunk_beds%> <%- room.bunk_beds == 1 ? "bunk bed" : "bunk beds"%>
+                            </div>
+                        <%}%>
+                        <% if(room.other != 0) {%>
+                            <div>
+                                <%-room.other%> <%- room.other == 1 ? "other" : "others"%>
+                            </div>
+                        <%}%>
+                        <div class="bed-pictograms">
+    
+                        </div>
+                    </div>
+                    <%}%>
+                </div>
+                <div id="amenities" class="m-4 pb-4 border-b flex flex-col">
+                    <h2 class="text-lg font-semibold">Property details</h2>
+                    <div class="flex flex-row">
+                        <div class="mx-4 p-4">
+                            <h3 class="text-lg font-semibold">General amenities</h3>
+                            <% var genAmenities = locals.g_amenities; var i = 0; %>
+                            <%  for(const property in genAmenities){%>
+                                <% if(property == 'id_amenities' || property == 'id_property') continue %>
+                                <% if(genAmenities[property] == true) { %>
+                                    <p class="amenity my-4 <%- (i>5) ? 'hidden' : ''%>"><%-capitalize(property).split("_").join(" ")%></p>
+                                <%i++;}%>
+                            <%}%>
+                        </div>
+                        <div class="mx-4 p-4">
+                            <h3 class="text-lg font-semibold">Cooking amenities</h3>
+                            <% var kitAmenities = locals.k_amenities; var i = 0; %>
+                            <%  for(const property in kitAmenities){%>
+                                <% if(property == 'id_amenities' || property == 'id_property') continue %>
+                                <% if(kitAmenities[property] == true) { %>
+                                    <p class="amenity my-4 <%- (i>5) ? 'hidden' : ''%>"><%-capitalize(property).split("_").join(" ")%></p>
+                                <%i++;}%>
+                            <%}%>
+                        </div>
+                        <div class="mx-4 p-4">
+                            <h3 class="text-lg font-semibold">Bathroom amenities</h3>
+                            <% var bathAmenities = locals.b_amenities; var i = 0;%>
+                            <%  for(const property in bathAmenities){%>
+                                <% if(property == 'id_amenities' || property == 'id_property') continue %>
+                                <% if(bathAmenities[property] == true) { %>
+                                    <p class="amenity my-4 <%- (i>5) ? 'hidden' : ''%>"><%-capitalize(property).split("_").join(" ")%></p>
+                                <%i++;}%>
+                            <%}%>
+                        </div>
+                    </div>
+                    <button id='show-more-amenities-btn' type="button" class="self-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Show all amenities</button>
+                </div>
+                <div id="map-container" class="m-4 pb-4">
+                    <h2 class="text-lg font-semibold mb-2">Property location</h2>
+                    <div id="map-lat" class="hidden"><%-prop.lat%></div><div id="map-lng" class="hidden"><%-prop.lng%></div>
+                    <div id="map" class="h-96 w-auto rounded-xl bg-slate-200"></div>
+                </div>
+            </div>
+            
+            <div id="reviews-container" class="mx-4 py-4 border-y flex flex-col">
+                <div class="text-xl font-light"><%-prop.rating ? prop.rating : "No rating yet"%> - <%-locals.numberReviews%> <%-locals.numberReviews == 1 ? 'review' : 'reviews'%></div>
+                <% if (locals.reviews.length > 0) {%>
+                <% for(review of locals.reviews) { %>
+                <div id="review-<%-review.id_review%>" class="grid grid-cols-2 items-center gap-4 py-4">
+                    <div class="grid grid-cols-2 border rounded-lg p-4 justify-between">
+                        <div class="flex flex-row">
+                            <div id="profile-pic-host" class="justify-self-start min-h-[60px] min-w-[60px] max-h-[60px] max-w-[60px] rounded-full bg-slate-200 mr-2">
+                            </div>
+                            <h3 class="font-semibold"><%-review.firstname%> <%-review.lastname[0]%>.</h3>
+                        </div>
+                        <div class="font-light justify-self-end"><%-review.total_score%></div>
+                        <div class="col-span-2 justify-self-center"><%-review.review_text%></div>
+                    </div>
+                </div>
+                <%}%>
+                <% }else { %>
+                    <div class="p-4">No reviews yet. Book a stay here and become the first reviewer!</div>
+                <%}%>
+            </div>
+            <div id="rules" class="m-4 pb-4">
+                <h2 class="text-lg font-semibold mb-2">Property rules</h2>
+                <ul class="px-4">
+                    <li id="checkin-rule" class="py-1"> Check-in time: starting <%-prop.checkin.slice(0,5) %></li>
+                    <li id="checkout-rule" class="py-1"> Check-out time: until <%-prop.checkout.slice(0,5) %></li>
+                    <li id="for-kids-rule" class="py-1"><%-prop.for_kids ? 'Suitable for kids' : 'Not suitable for infants (under 2 years old)' %></li>
+                    <li id="smoking-rule" class="py-1"><%-prop.smoking_allowed ? 'Smoking allowed in property' : 'Smoking not allowed'%></li>
+                    <li id="liets-rule" class="py-1"><%-prop.liets_allowed ? 'You can bring your pets along' : 'No pets allowed'%></li>
+                    <li id="events-rule" class="py-1"><%-prop.events_allowed ? 'Parties and events can be hosted in this property' : 'Events or parties not allowed'%></li>
+                </ul>
+            </div>
+        </main>
+    </body>
+</html>
