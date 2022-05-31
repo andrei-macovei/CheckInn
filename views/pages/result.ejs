@@ -15,7 +15,7 @@
         <%-include("../fragments/header.ejs")%>
         <main class="px-36">
             <% prop = locals.prop; function capitalize(string) {return string.charAt(0).toUpperCase() + string.slice(1);} %>
-           <div id="headline" class="p-4">
+           <div id="headline" class="p-4 pb-0">
                <h1 class="text-3xl font-bold">
                    <%-prop.title%>
                </h1>
@@ -31,16 +31,21 @@
                     </div>
                </div>
             </div>
-            <div id="picture-grid" class="grid grid-cols-[2fr_1fr_1fr] grid-rows-2 gap-4 p-4">
-                <div id="big-picture" class="row-span-2 bg-slate-200 min-w-[400px] rounded-l-xl">
+            <div id="picture-grid" class="grid grid-cols-4 grid-rows-[repeat(2,_14vw)] gap-4 p-4">
+                <div id="big-picture" class="row-span-2 col-span-2 bg-slate-200 rounded-l-xl">
+                    <img src="../../<%-locals.photos ? locals.photos.big_picture : ''%>" id="big-picture" class="row-span-2 bg-slate-200 w-full h-full object-cover rounded-l-xl"></img>
                 </div>
-                <div id="small-pic-1" class="bg-slate-200 min-h-[180px] min-w-[180px]">
+                <div id="small-pic-1" class="bg-slate-200 col-span-1 row-span-1">
+                    <img src="../../<%-locals.photos ? locals.photos.small_pic_1 : ''%>" id="small-pic-1" class="w-full h-full object-cover"></img>
                 </div>
-                <div id="small-pic-2" class="bg-slate-200 min-h-[180px] min-w-[180px] rounded-tr-xl">
+                <div id="small-pic-2" class="bg-slate-200 col-span-1 row-span-1 rounded-tr-xl ">
+                    <img src="../../<%-locals.photos ? locals.photos.small_pic_2 : ''%>" id="small-pic-2" class="w-full h-full object-cover rounded-tr-xl"></img>
                 </div>
-                <div id="small-pic-3" class="bg-slate-200 min-h-[180px] min-w-[180px]">
+                <div id="small-pic-3" class="bg-slate-200 col-span-1 row-span-1 ">
+                    <img src="../../<%-locals.photos ? locals.photos.small_pic_3 : ''%>" id="small-pic-3" class="w-full h-full object-cover"></img>
                 </div>
-                <div id="small-pic-4" class="bg-slate-200 min-h-[180px] min-w-[180px] rounded-br-xl">
+                <div id="small-pic-4" class="bg-slate-200 col-span-1 row-span-1 rounded-br-xl ">
+                    <img src="../../<%-locals.photos ? locals.photos.small_pic_4 : ''%>" id="small-pic-4" class="w-full h-full object-cover rounded-br-xl"></img>
                 </div>
             </div>
             <div id="" class="grid grid-cols-[2fr_1fr]">
@@ -49,17 +54,22 @@
                         <p class="text-xl font-semibold"><%-capitalize(prop.property_type)%> hosted by <%-prop.firstname%> <%-prop.lastname[0]%>.</p>
                         <p><span id="guests_nr"><%-prop.guests%></span> guests - <%-prop.rooms_number%> rooms - <%-prop.bathrooms%> bathrooms</p> 
                     </div>
+                    <% if(prop.profile_pic) {%>
+                        <img src="../../<%-prop.profile_pic%>" id="profile-pic-host" class="min-h-[60px] min-w-[60px] max-h-[60px] max-w-[60px] rounded-full bg-slate-200">
+                        </img>
+                    <%} else {%>
                     <div id="profile-pic-host" class="min-h-[60px] min-w-[60px] max-h-[60px] max-w-[60px] rounded-full bg-slate-200">
                     </div>
+                    <%}%>
                 </div>
                 <div id="sticky-reserve-container" class="row-span-6"> 
                     <div id="reserve-card" class="sticky top-4 py-2">
                         <div class="border rounded-lg p-4 m-4">
                             <p id="week-discount" class="hidden"><%-prop.week_discount%></p>
                             <p id="guests-discount" class="hidden"><%-prop.less_guests_discount%></p>
-                            <p id="flat-price" class="text-bold text-lg"><%-prop.price%></p>
+                            <p id="flat-price" class="font-semibold text-lg py-2"><%-parseInt(prop.price)%>€/night</p>
                             <form action="/booking/add" method="POST" id="booking-form" class="flex flex-col justify-center">
-                                <input type="number" name="guests" id="guests-inp" value="2" class="calcPrice bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Guests" required>
+                                <input type="number" name="guests" id="guests-inp" value="2" min="0" max="<%-prop.guests%>" class="calcPrice bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Guests" required>
                                 <div date-rangepicker class="flex justify-center">
                                     <div class="relative">
                                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -82,7 +92,11 @@
                                     <%- (locals.error == 'notLoggedIn') ? 'Please log in to book this property' : '' %>
                                 </div>
                                 <%}%>
+                                <% if(locals.user) { %>
                                 <button type="submit" id="booking-btn" class="text-white w-full bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 my-3">Book now</button>
+                                <% } else { %>
+                                    <button type="button" id="booking-btn" class="text-white w-full bg-gradient-to-br from-pink-400 to-orange-300 focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 my-3 cursor-not-allowed" disabled>Log in to book stay</button>
+                                <% } %>
                             </form>
                             <div id="price-calc" class="flex flex-col">
 

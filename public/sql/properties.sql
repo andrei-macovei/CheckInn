@@ -149,3 +149,15 @@ CREATE TABLE IF NOT EXISTS address(
     CONSTRAINT fk_property
     FOREIGN KEY(id_property) REFERENCES properties(id_property) ON DELETE CASCADE
 )
+
+CREATE TABLE IF NOT EXISTS photos(
+    id_photos BIGSERIAL PRIMARY KEY,
+    id_property BIGINT UNIQUE,
+    big_picture TEXT,
+    small_pic_1 TEXT,
+    small_pic_2 TEXT,
+    small_pic_3 TEXT,
+    small_pic_4 TEXT,
+    CONSTRAINT fk_property
+    FOREIGN KEY(id_property) REFERENCES properties(id_property) ON DELETE CASCADE
+);

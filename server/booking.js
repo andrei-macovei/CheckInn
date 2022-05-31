@@ -53,8 +53,8 @@ router.post('/add/:price', (req, res) =>{
                 // ERROR
                 res.redirect(`/search/result/${text_fields.id_property}?error=fullyBooked`);
             } else{
-                var queryAddBooking = `INSERT INTO bookings(id_user, id_property, checkin, checkout, guests) VALUES ($1, $2, $3, $4, $5)`;
-                var paramsAddBooking = [req.session.user.id_user,  text_fields.id_property, dates[0], dates[1], text_fields.guests];
+                var queryAddBooking = `INSERT INTO bookings(id_user, id_property, checkin, checkout, guests, total_price) VALUES ($1, $2, $3, $4, $5, $6)`;
+                var paramsAddBooking = [req.session.user.id_user,  text_fields.id_property, dates[0], dates[1], text_fields.guests, req.params.price];
                 client.query(queryAddBooking, paramsAddBooking, (err1, result1) =>{
                     if(err1) {console.log(err1); return;}
 
@@ -65,5 +65,56 @@ router.post('/add/:price', (req, res) =>{
         });
     });
 });
+
+router.get('/confirm/:id_property/:id_booking', (req, res) =>{
+    client.query("UPDATE bookings SET status='confirmed' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
+        if(err) {console.log(err); return;}
+        res.redirect(`/hosting/?id_property=${req.params.id_property}`);
+    });
+});
+
+router.get('/refuse/:id_property/:id_booking', (req, res) =>{
+    client.query("UPDATE bookings SET status='refused' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
+        if(err) {console.log(err); return;}
+        res.redirect(`/hosting/?id_property=${req.params.id_property}`);
+    });
+});
+
+router.get('/cancel/:id_property/:id_booking', (req, res) =>{
+    client.query("UPDATE bookings SET status='canceled' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
+        if(err) {console.log(err); return;}
+        if(!req.query.path) res.redirect(`/hosting/?id_property=${req.params.id_property}`);
+        else {
+            if(req.query.path == 'userTrips')
+            res.redirect('/booking/userTrips');
+        }
+    });
+});
+
+router.get('/userTrips', (req, res) =>{
+    if(req.session && req.session.user){
+        var toSend = new Object;
+        var queryGetUpcomingBookings = 'SELECT b.*, p.title, a.city, a.country FROM bookings b INNER JOIN properties p USING(id_property) INNER JOIN address a USING(id_property) WHERE id_user=$1 AND b.checkin>CURRENT_DATE ORDER BY b.checkin';
+        client.query(queryGetUpcomingBookings, [req.session.user.id_user], (err, result) =>{
+            if(err) {console.log(err); return }
+            var queryGetOlderBookings = 'SELECT b.*, p.title, a.city, a.country FROM bookings b INNER JOIN properties p USING(id_property) INNER JOIN address a USING(id_property) WHERE id_user=$1 AND b.checkin<CURRENT_DATE AND b.checkout<CURRENT_DATE ORDER BY b.checkout DESC';
+            client.query(queryGetOlderBookings, [req.session.user.id_user], (err, result1) =>{
+                if(err) {console.log(err); return }
+                var queryGetCurrentBooking = "SELECT b.*, p.title, a.city, a.country FROM bookings b INNER JOIN properties p USING(id_property) INNER JOIN address a USING(id_property) WHERE id_user=$1 AND b.status='confirmed' AND b.checkin<=CURRENT_DATE AND b.checkout>=CURRENT_DATE";
+                client.query(queryGetCurrentBooking, [req.session.user.id_user], (err, result2) =>{
+                    if(err) {console.log(err); return }
+                    res.render('pages/userTrips', {
+                        upcomingTrips: result.rows,
+                        olderTrips: result1.rows,
+                        currentTrip: result2.rows[0]
+                    });
+                });
+            });
+        });       
+    }else{   // if not logged in
+        res.render('pages/login',{path: '/booking/userTrips'});
+    }
+});
+
 
 module.exports = router;

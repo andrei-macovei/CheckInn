@@ -26,6 +26,7 @@
     "express-session": "^1.17.2",
     "flowbite": "^1.4.5",
     "formidable": "^2.0.1",
+    "fs": "^0.0.1-security",
     "nodemailer": "^6.7.3",
     "pg": "^8.7.3"
   },

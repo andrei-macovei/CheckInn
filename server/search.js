@@ -93,11 +93,11 @@ router.get('/results', (req, res) =>{
 });
 
 router.get('/result/:id_property', (req, res) =>{
-    var queryGetDetails = `SELECT p.*, a.*, firstname, lastname, count(id_room) as rooms_number FROM properties p
+    var queryGetDetails = `SELECT p.*, a.*, firstname, lastname, profile_pic, count(id_room) as rooms_number FROM properties p
                             INNER JOIN address a USING(id_property) INNER JOIN users u ON p.id_host=u.id_user
                             INNER JOIN rooms USING(id_property)
                             WHERE id_property=$1
-                            GROUP BY p.id_property, a.id_address, u.firstname, u.lastname`;
+                            GROUP BY p.id_property, a.id_address, u.firstname, u.lastname, u.profile_pic`;
     var paramsGetDetails = [req.params.id_property];
     client.query(queryGetDetails, paramsGetDetails, (err, result) =>{
         if(err) {console.log(err); return;}
@@ -113,7 +113,7 @@ router.get('/result/:id_property', (req, res) =>{
                     var queryGetBathAmenities = `SELECT * FROM bathroom_amenities WHERE id_property=$1`;
                     client.query(queryGetBathAmenities, [req.params.id_property], (err5, result5) =>{
                         if(err5) {console.log(err5); return;}
-                        var queryGetReviews = `SELECT r.*, u.firstname, u.lastname FROM reviews r INNER JOIN users u USING(id_user) WHERE id_property=$1`;
+                        var queryGetReviews = `SELECT r.*, u.firstname, u.lastname, u.profile_pic FROM reviews r INNER JOIN users u USING(id_user) WHERE id_property=$1`;
                         client.query(queryGetReviews, [req.params.id_property], (err6, result6) =>{
                             if(err6) {console.log(err6); return;}
                             var queryGetNumberOfReviews = `SELECT count(id_review) FROM reviews WHERE id_property=$1 GROUP BY id_property`;
@@ -122,15 +122,20 @@ router.get('/result/:id_property', (req, res) =>{
                                 var numberReviews;
                                 if(result7.rowCount == 0) numberReviews = 0;
                                 else numberReviews = result7.rows[0].count;
-                                res.render('pages/result', {
-                                    prop: result.rows[0], 
-                                    rooms: result2.rows,
-                                    g_amenities: result3.rows[0],
-                                    k_amenities: result4.rows[0],
-                                    b_amenities: result5.rows[0],
-                                    reviews: result6.rows,
-                                    numberReviews: numberReviews,
-                                    error: req.query.error
+                                var queryGetPhotos = `SELECT * FROM photos WHERE id_property=$1`;
+                                client.query(queryGetPhotos, [req.params.id_property], (err8, result8) =>{
+                                    if(err8) {console.log(err8); return;}
+                                    res.render('pages/result', {
+                                        prop: result.rows[0], 
+                                        rooms: result2.rows,
+                                        g_amenities: result3.rows[0],
+                                        k_amenities: result4.rows[0],
+                                        b_amenities: result5.rows[0],
+                                        reviews: result6.rows,
+                                        numberReviews: numberReviews,
+                                        error: req.query.error,
+                                        photos: result8.rows[0]
+                                    });
                                 });
                             })
                         })

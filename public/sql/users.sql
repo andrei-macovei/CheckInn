@@ -10,4 +10,5 @@ CREATE TABLE IF NOT EXISTS users (
    profile_picture VARCHAR(300),
    token VARCHAR(50),
    confirmed BOOLEAN DEFAULT false,
+   description TEXT
 );

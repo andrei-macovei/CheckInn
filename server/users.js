@@ -3,6 +3,7 @@ const router = express.Router();
 const formidable = require('formidable')
 const { Client } = require('pg')
 const bcrypt = require('bcrypt');
+const fs = require('fs');
 const { sendTokenEmail, generateToken, sendResetEmail } = require('./emailSender');
 
 
@@ -261,6 +262,102 @@ router.get('/confirm/:email/:token', (req, res) => {
             res.render('pages/error', {type:"invalid_token"});
         }
     });
+});
+
+router.get('/profile', (req, res) =>{
+    if(req.session && req.session.user){
+        var queryGetProfile = 'SELECT * FROM users WHERE id_user=$1';
+        client.query(queryGetProfile, [req.session.user.id_user], (err, result) =>{
+            if(err) {console.log(err); return; }
+            res.render('pages/profile', {details: result.rows[0]});
+        });
+    }else{   // if not logged in
+        res.render('pages/login',{path: `/users/profile`});
+    }
+});
+
+router.post('/editProfile', (req, res) =>{
+    var form = new formidable.IncomingForm();
+    console.log('editProfile')
+
+    form.parse(req, (err, text_fields) =>{
+        var queryUpdateProfile = `UPDATE users SET firstname=$1, lastname=$2, phone=$3, birthday=$4, description=$5 WHERE id_user=$6`;
+        var paramsUpdateProfile = [text_fields.firstname, text_fields.lastname, text_fields.phone, text_fields.birthday ? text_fields.birthday : null, text_fields.description, req.session.user.id_user];
+        client.query(queryUpdateProfile, paramsUpdateProfile, (err, result) =>{
+            if(err) {console.log(err); return; }
+            res.redirect('/users/profile');
+        });
+    });
+});
+
+router.post('/changePassword', (req,res) =>{
+    var form = new formidable.IncomingForm();
+
+    form.parse(req, async (err, text_fields) => {
+        if(text_fields.password != text_fields.password_conf){
+            res.redirect('/users/profile?msg=notmatched');
+        }
+        else{
+            var queryCheckPassword = `SELECT password FROM users WHERE id_user=$1`;
+            client.query(queryCheckPassword, [req.session.user.id_user],(err, result) =>{
+                if(err) {console.log(err); return;}
+    
+                bcrypt.compare(text_fields.password_old, result.rows[0].password, async (err, compare_result) => {
+                    if(compare_result){
+                        // update password in db
+                        const salt = await bcrypt.genSalt();
+                        const hashedPassword = await bcrypt.hash(text_fields.password, salt);
+                        var queryUpdatePassword = `UPDATE users SET password=$1 WHERE id_user=$2`;
+                        var parametersUpdatePassword = [hashedPassword, req.session.user.id_user];
+                        client.query(queryUpdatePassword, parametersUpdatePassword, (err1, result1) => {
+                            if (err1){
+                                console.log(err1);
+                                return;
+                            }
+                            if(result1.rowCount > 0){
+                                res.redirect('/users/profile?msg=success');
+                            }
+                            else{
+                                res.render('pages/error');
+                            }
+                        });
+                    } else {
+                        res.redirect('/users/profile?msg=oldpass');
+                    }
+                });
+            });
+        }
+    });
+});
+
+router.post('/addProfilePicture', (req, res) =>{
+    var form = new formidable.IncomingForm();
+    var profilePicturePath = '';
+
+    form.parse(req, (err, text_fields) =>{
+        var queryAddImage = `UPDATE users SET profile_pic=$1 WHERE id_user=$2`;
+        client.query(queryAddImage, [profilePicturePath, req.session.user.id_user], (err, result) =>{
+            if(err) {console.log(err); return;}
+            console.log('profilePicturePath' + profilePicturePath)
+            res.redirect('/users/profile');
+        });
+    });
+    form.on("fileBegin", (name, file) =>{
+        if(!file.originalFilename) return;
+        picturesFolder = __dirname + '/../public/photos/users/' + req.session.user.id_user + '/';
+        console.log('Pictures folder: ' + picturesFolder);
+        if(!fs.existsSync(picturesFolder)){  
+            fs.existsSync(picturesFolder)   // if folder for current property doesn't exist, create it
+            fs.mkdirSync(picturesFolder);
+        }
+        extension = file.originalFilename.split('.');
+        file.filepath = picturesFolder + name + '.' + extension[extension.length-1];
+
+        profilePicturePath = `public/photos/users/${req.session.user.id_user}/${name}.${extension[extension.length-1]}`;
+    });
+    form.on('file', (name, file) =>{
+        console.log(`Added profile picture file.`);
+    })
 });
 
 router.get('/logout', (req, res) =>{

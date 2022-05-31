@@ -1,7 +1,9 @@
+const { query } = require('express');
 const express = require('express');
 const router = express.Router();
 const formidable = require('formidable')
-const { Client } = require('pg')
+const { Client } = require('pg');
+const fs = require('fs');
 
 // database connection
 const conn = require("../public/json/connection.json");
@@ -17,15 +19,43 @@ function loggedInGuard(path, req, res){
 
 router.get('/', (req,res) =>{
     if(req.session && req.session.user){
-        var queryGetProperties = `SELECT id_property, title, property_type, guests, rating FROM properties WHERE id_host=$1`;
+        var queryGetProperties = `SELECT id_property, title FROM properties WHERE id_host=$1`;
         client.query(queryGetProperties, [req.session.user.id_user], (err, result) =>{
             if(err) console.log(err);
             else{
-                res.render('pages/hostDashboard', {properties: result.rows})
+                var property;
+                if(req.query && req.query.id_property) property = req.query.id_property;
+                else if(result.rowCount > 0) property = result.rows[0].id_property;
+                else return; // ERROR
+            
+                var queryGetConfirmedBookings = `SELECT b.* FROM bookings b JOIN users u USING(id_user) WHERE id_property=$1 AND b.status!='pending' AND b.checkin>CURRENT_DATE ORDER BY status`;
+                client.query(queryGetConfirmedBookings, [property], (err1, result1) =>{
+                    if(err1) {console.log(err1); return;}
+                    var queryGetUnconfirmedBookings = `SELECT b.* FROM bookings b JOIN users u USING(id_user) WHERE id_property=$1 AND b.status='pending' AND b.checkin>=CURRENT_DATE`;
+                    client.query(queryGetUnconfirmedBookings, [property], (err2, result2) =>{
+                        if(err2) {console.log(err2); return;}
+                        var queryGetCurrentBooking = `SELECT b.*, u.firstname, u.lastname FROM bookings b JOIN users u USING(id_user) WHERE id_property=$1 AND b.status='confirmed' AND b.checkin<=CURRENT_DATE AND checkout>CURRENT_DATE`;
+                        client.query(queryGetCurrentBooking, [property], (err3, result3) =>{
+                            if(err3) {console.log(err3); return;}
+                            var queryGetPropertyDetails = `SELECT id_property, title, property_type, guests, rating, privacy, property_type, guests FROM properties WHERE id_property=$1`;
+                            client.query(queryGetPropertyDetails, [property], (err4, result4) =>{
+                                if(err4) {console.log(err4); return;}
+                                res.render('pages/hostDashboard', {
+                                    properties: result.rows,
+                                    confirmedBookings: result1.rows,
+                                    unconfirmedBookings: result2.rows,
+                                    currentBooking: result3.rows[0],
+                                    currentProperty: result4.rows[0],
+                                    numberOfProperties: result.rowCount
+                                });
+                            });
+                        });
+                    });
+                });
             }
-        })
+        });
     }else{   // if not logged in
-        res.render('pages/login',{path: '/hosting'});
+        res.render('pages/login',{path: (req.query.id_property ? `/hosting/?id_property=${req.query.id_property}` : '/hosting')});
     }
 });
 
@@ -315,8 +345,8 @@ router.post('/addListingDetails/:id_property', (req, res) =>{
                                             console.log(queryUpdateBathroomAmenities);
                                             client.query(queryUpdateBathroomAmenities, [req.params.id_property], (err6, result6) =>{
                                                 if(err6) {console.log(err6); return}
-                                                if(text_fields.save_btn == '') res.redirect(`/hosting/`);
-                                                if(text_fields.rules_btn == '')res.redirect(`/hosting/listingRules/${req.params.id_property}`);
+                                                if(text_fields.save_btn == '') res.redirect(`/hosting/listingDetails/${req.params.id_property}`);
+                                                if(text_fields.rules_btn == '')res.redirect(`/hosting/listingPhotos/${req.params.id_property}`);
                                             });
                                         });
                                     }
@@ -330,6 +360,69 @@ router.post('/addListingDetails/:id_property', (req, res) =>{
     });
 });
 
+router.get('/listingPhotos/:id_property', (req, res) =>{
+
+    var queryGetPhotos = `SELECT * FROM photos WHERE id_property=$1`;
+    client.query(queryGetPhotos, [req.params.id_property], (err, result)=>{
+        if(err) {console.log(err); return;}
+        res.render('pages/listingPhotos', {id_property: req.params.id_property, photos: result.rows[0]});
+    })
+});
+
+router.post('/addListingPhotos/:id_property', (req, res) =>{
+    var form = new formidable.IncomingForm();
+    var images_path = new Object;
+    form.parse(req, (err, text_fields) =>{
+        var queryImageExists = `SELECT id_photos FROM photos WHERE id_property=$1`;
+        client.query(queryImageExists, [req.params.id_property], (err, result) =>{
+            if(err) {console.log(err); return;}
+            if(result.rowCount == 0){
+                client.query('INSERT INTO photos(id_property) VALUES($1)', [req.params.id_property], (err1, result1) =>{
+                    if(err1) {console.log(err1); return;}
+                });
+            }
+            for(const image in images_path){
+                var queryAddImage = `UPDATE photos SET ${image}=$1 WHERE id_property=$2`;
+                client.query(queryAddImage, [images_path[image], req.params.id_property], (err2, result2) =>{
+                    if(err2) console.log(err2);
+                });
+            }
+            if(text_fields.save_btn == '') res.redirect(`/hosting/listingPhotos/${req.params.id_property}`);
+            if(text_fields.rules_btn == '')res.redirect(`/hosting/listingRules/${req.params.id_property}`);
+        });
+    });
+    form.on("fileBegin", (name, file) =>{
+        if(!file.originalFilename) return;
+        propertyFolder = __dirname + '/../public/photos/properties/' + req.params.id_property + '/';
+        console.log(propertyFolder)
+        if(!fs.existsSync(propertyFolder)){     // if folder for current property doesn't exist, create it
+            fs.mkdirSync(propertyFolder);
+        }
+
+        extension = file.originalFilename.split('.');
+        file.filepath = propertyFolder + name + '.' + extension[extension.length-1];
+        switch(name){
+            case 'big_picture':
+                images_path.big_picture = `public/photos/properties/${req.params.id_property}/${name}.${extension[extension.length-1]}`;
+                break;
+            case 'small_pic_1':
+                images_path.small_pic_1 = `public/photos/properties/${req.params.id_property}/${name}.${extension[extension.length-1]}`;
+                break;
+            case 'small_pic_2':
+                images_path.small_pic_2 = `public/photos/properties/${req.params.id_property}/${name}.${extension[extension.length-1]}`;
+                break;
+            case 'small_pic_3':
+                images_path.small_pic_3 = `public/photos/properties/${req.params.id_property}/${name}.${extension[extension.length-1]}`;
+                break;
+            case 'small_pic_4':
+                images_path.small_pic_4 = `public/photos/properties/${req.params.id_property}/${name}.${extension[extension.length-1]}`;
+                break;
+        }
+    });
+    form.on('file', (name, file) =>{
+        console.log(`Added file.`);
+    })
+});
 // router.post('/addRoom', (req, res) =>{
 //     var form = new formidable.IncomingForm();
 //     form.parse(req, (err, text_fields) =>{
@@ -425,7 +518,9 @@ router.post('/addRules/:id_property', (req, res) =>{
         client.query(queryUpdateProperty, paramsUpdateProperty, (err, result) =>{
             if(err) console.log(err);
             else{
-                res.redirect(`/hosting/`);
+                // res.redirect(`/hosting/`);
+                if(text_fields.save_btn == '') res.redirect(`/hosting/listingRules/${req.params.id_property}`);
+                if(text_fields.finish_btn == '') res.redirect(`/hosting/?id_property=${req.params.id_property}`);
             }
         });
     });

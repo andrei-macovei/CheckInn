@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+
+        <title>CheckInn Home</title>
+        <%-include("../fragments/head.ejs")%>
+    </head>
+    <body>
+        <%-include("../fragments/header.ejs")%>
+        <main class="px-36">
+            <form method="POST" action="/hosting/addListingPhotos/<%-locals.id_property%>" class="" enctype="multipart/form-data">
+                <p class="text-xl font-semibold p-4">Add 5 pictures for your property. Users will see them in the layout below</p>
+                <div id="picture-grid" class="grid grid-cols-4 grid-rows-[repeat(2,_15vw)] gap-4 p-4 pt-3">
+                    <div id="big-picture" class="row-span-2 col-span-2 bg-slate-200 rounded-l-xl relative">
+                        <% if(locals.photos && locals.photos.big_picture) {%>
+                        <img src="../../<%-locals.photos.big_picture%>" id="big-picture" class="row-span-2 bg-slate-200 w-full h-full object-cover rounded-l-xl"></img>
+                        <% } else {%>
+                        <div id="big-picture" class="row-span-2 bg-slate-200 w-full h-full object-cover rounded-l-xl"></div>
+                        <%}%>
+                        <input class="block w-[1/2] text-sm text-gray-900 bg-gray-50 rounded-lg border absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input1" name="big_picture" type="file">
+                    </div>
+                    <div id="small-pic-1" class="bg-slate-200 col-span-1 row-span-1 relative">
+                        <% if(locals.photos && locals.photos.small_pic_1) {%>
+                        <img src="../../<%-locals.photos.small_pic_1%>" id="small-pic-1" class="w-full h-full object-cover"></img>
+                        <% } else {%>
+                            <div id="small-pic-1" class="row-span-1 col-span-1 bg-slate-200 w-full h-full object-cover rounded-l-xl"></div>
+                        <%}%>
+                        <input class="block w-[80%] text-sm text-gray-900 bg-gray-50 rounded-lg border absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input2" name="small_pic_1" type="file">
+                    </div>
+                    <div id="small-pic-2" class="bg-slate-200 col-span-1 row-span-1 rounded-tr-xl relative">
+                        <% if(locals.photos && locals.photos.small_pic_2) {%>
+                        <img src="../../<%-locals.photos.small_pic_2%>" id="small-pic-2" class="w-full h-full object-cover"></img>
+                        <% } else {%>
+                            <div id="small-pic-2" class="row-span-1 col-span-1 bg-slate-200 w-full h-full object-cover rounded-r-xl"></div>
+                        <%}%>
+                        <input class="block w-[80%] text-sm text-gray-900 bg-gray-50 rounded-lg border absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input3" name="small_pic_2" type="file">
+                    </div>
+                    <div id="small-pic-3" class="bg-slate-200 col-span-1 row-span-1 relative">
+                        <% if(locals.photos && locals.photos.small_pic_3) {%>
+                        <img src="../../<%-locals.photos.small_pic_3%>" id="small-pic-3" class="w-full h-full object-cover"></img>
+                        <% } else {%>
+                            <div id="small-pic-3" class="row-span-1 col-span-1 bg-slate-200 w-full h-full object-cover rounded-l-xl"></div>
+                        <%}%>
+                        <input class="block w-[80%] text-sm text-gray-900 bg-gray-50 rounded-lg border absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input4" name="small_pic_3" type="file">
+                    </div>
+                    <div id="small-pic-4" class="bg-slate-200 col-span-1 row-span-1 rounded-br-xl relative">
+                        <% if(locals.photos && locals.photos.small_pic_4) {%>
+                        <img src="../../<%-locals.photos.small_pic_4%>" id="small-pic-4" class="w-full h-full object-cover"></img>
+                        <% } else {%>
+                            <div id="small-pic-4" class="row-span-1 col-span-1 bg-slate-200 w-full h-full object-cover rounded-r-xl"></div>
+                        <%}%>
+                        <input class="block w-[80%] text-sm text-gray-900 bg-gray-50 rounded-lg border absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input5" name="small_pic_4" type="file">
+                    </div>
+                </div>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-300 p-4" id="file_input_help">SVG, PNG or JPG (MAX. 800x400px).</p>
+                <button type="submit" name="save_btn" class="mx-4 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Save changes</button>
+                <button type="submit" name="rules_btn" class=" text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none my-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Listing Rules
+                    <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                </button>
+            </form>
+        </main>
+    </body>
+</html>
