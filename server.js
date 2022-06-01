@@ -32,6 +32,7 @@ app.use("/users", require('./server/users'));
 app.use("/hosting", require('./server/hosting'));
 app.use("/search", require('./server/search'));
 app.use("/booking", require('./server/booking'));
+app.use("/reviews", require('./server/reviews'));
 
 app.get('/favicon.ico' , function(req , res){/*code*/}); // silence weird errors
 app.get('/*.js' , function(req , res){/*code*/}); // silence weird errors

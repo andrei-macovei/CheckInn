@@ -6,6 +6,7 @@
 
         <title>CheckInn Home</title>
         <%-include("../fragments/head.ejs")%>
+        <script src="/public/js/addReview.js" defer></script>
     </head>
     <body>
         <%-include("../fragments/header.ejs")%>
@@ -107,7 +108,7 @@
                         
                         <div class="flex flex-row justify-between">
                             <p>Between <%-trip.checkin.toDateString()%> and <%-trip.checkout.toDateString()%></p>
-                            <% if(trip.status == 'confirmed') {%>
+                            <% if(trip.status == 'confirmed' || trip.status == 'reviewed') {%>
                                 <p class="">Booking status: <span class="text-cyan-500 text-lg font-semibold">Completed</span></p>
                             <%} else {%>
                                 <p class="">Booking status: <span class="<%- trip.status == 'pending' ? 'text-gray-400' : 'text-red-500' %> text-lg font-semibold"><%- trip.status == 'pending' ? 'Expired' : capitalize(trip.status)%></span></p>
@@ -115,14 +116,90 @@
                         </div>
                         <div class="flex flex-row justify-between">
                             <p><%-trip.guests%> guests</p>
-                            <% if(trip.status == 'confirmed') {%>
+                            <% if(trip.status == 'confirmed' || trip.status == 'reviewed') {%>
                             <p>Been there <span class="font-semibold"><%- days(trip.checkout, new Date)%> days ago</span></p>
                             <%}%>
                         </div>
                         <div class="flex flex-row justify-between items-center">
                             <p>Total price: <span class="text-lg font-semibold"><%-trip.total_price%>€</span></p>
                             <% if(trip.status == 'confirmed') {%>
-                                <a href="/booking/cancel/<%-trip.id_property%>/<%-trip.id_booking%>?path=userTrips" class="focus:outline-none border border-cyan-500 text-cyan-500 hover:bg-cyan-100 focus:ring-4 focus:ring-cyan-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-900">Review your stay</a>
+                                <!-- <a href="/booking/cancel/<%-trip.id_property%>/<%-trip.id_booking%>?path=userTrips" class="focus:outline-none border border-cyan-500 text-cyan-500 hover:bg-cyan-100 focus:ring-4 focus:ring-cyan-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-900">Review your stay</a> -->
+                                <button value="<%-trip.id_property%>/<%-locals.user.id_user%>?id_booking=<%-trip.id_booking%>" class="review-btn focus:outline-none border border-cyan-500 text-cyan-500 hover:bg-cyan-100 focus:ring-4 focus:ring-cyan-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-900" type="button" data-modal-toggle="defaultModal">
+                                    Review your stay
+                                </button>
+                                  
+                                  <!-- Main modal -->
+                                  <div id="defaultModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full">
+                                    <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
+                                        <!-- Modal content -->
+                                        <form method="POST" id="review-form" action="/reviews/add/" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                            <!-- Modal header -->
+                                            <div class="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
+                                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                                    Add a review
+                                                </h3>
+                                                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="defaultModal">
+                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>  
+                                                </button>
+                                            </div>
+                                            <!-- Modal body -->
+                                            <div class="p-6 space-y-6">
+                                                <div class="flex flex-col">
+                                                    <h1 class="font-bold">Scores</h1>
+                                                    <p class="text-sm font-light">Rate each category between 1 and 5</p>
+                                                </div>
+                                                <div class="grid grid-rows-2 grid-cols-2 gap-4">
+                                                    <div class="px-2 pb-2">
+                                                        <label id="label-clean" for="clean-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Cleanliness<span id="clean-val"></span></label>
+                                                        <div class="flex flex-row content-center">
+                                                            <div>1</div>
+                                                            <input id="clean-range" type="range" name="clean_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                                            <div>5</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="px-2 pb-2">
+                                                        <label id="label-location" for="location-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Location<span id="location-val"></span></label>
+                                                        <div class="flex flex-row content-center">
+                                                            <div>1</div>
+                                                            <input id="location-range" type="range" name="location_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                                            <div>5</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="px-2 pb-2">
+                                                        <label id="label-comfort" for="comfort-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Comfort<span id="comfort-val"></span></label>
+                                                        <div class="flex flex-row content-center">
+                                                            <div>1</div>
+                                                            <input id="comfort-range" type="range" name="comfort_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                                            <div>5</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="px-2 pb-2">
+                                                        <label id="label-value" for="value-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Value for money<span id="value-val"></span></label>
+                                                        <div class="flex flex-row content-center">
+                                                            <div>1</div>
+                                                            <input id="value-range" type="range" name="value_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                                            <div>5</div>
+                                                        </div>
+                                                    </div>                                                    
+                                                </div>
+                                                <div class="border-t py-2">
+                                                    <label for="review-text" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Describe your stay in a few words</label>
+                                                    <textarea id="review-text" name="review_text" rows="4" class="block p-2.5 w-full text-sm text-gray-900  rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Think of the pros and cons of the property"></textarea>
+                                                </div>
+                                                
+                                            </div>
+                                            <!-- Modal footer -->
+                                            <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
+                                                <button data-modal-toggle="defaultModal" id="add-review-btn" type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add Review</button>
+                                                <button data-modal-toggle="defaultModal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <%} else if(trip.status == 'reviewed') {%>
+                                    <button class="review-btn focus:outline-none border border-cyan-500 text-cyan-500 focus:ring-4 focus:ring-cyan-300 font-medium cursor-not-allowed rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-cyan-600  dark:focus:ring-cyan-900" type="button" disabled>
+                                        Review added!
+                                    </button>
                                 <%}%>
                         </div>
                     </div>

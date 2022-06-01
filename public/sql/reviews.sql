@@ -2,11 +2,11 @@ CREATE TABLE IF NOT EXISTS reviews(
     id_review BIGSERIAL PRIMARY KEY,
     id_property BIGINT,
     id_user BIGINT,
-    clean_score NUMERIC(3,2) NOT NULL,
-    location_score NUMERIC(3,2) NOT NULL,
-    comfort_score NUMERIC(3,2) NOT NULL,
-    value_score NUMERIC(3,2) NOT NULL,
-    total_score NUMERIC(3,2) NOT NULL,
+    clean_score FLOAT NOT NULL,
+    location_score FLOAT NOT NULL,
+    comfort_score FLOAT NOT NULL,
+    value_score FLOAT NOT NULL,
+    total_score FLOAT NOT NULL,
     review_text TEXT,
 
     CONSTRAINT fk_property
