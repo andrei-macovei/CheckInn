@@ -1,23 +1,13 @@
-const { query } = require('express');
-const express = require('express');
-const router = express.Router();
 const formidable = require('formidable')
 const { Client } = require('pg');
 const fs = require('fs');
 
 // database connection
-const conn = require("../public/json/connection.json");
+const conn = require("../../public/json/connection.json");
 var client = new Client(conn);
 client.connect();
 
-function loggedInGuard(path, req, res){
-    if(req.session.user == null){   // if not logged in
-        // ask for login
-        res.redirect('/users/login');
-    }   
-}
-
-router.get('/', (req,res) =>{
+const getHostDashboard = (req, res) =>{
     if(req.session && req.session.user){
         var queryGetProperties = `SELECT id_property, title FROM properties WHERE id_host=$1`;
         client.query(queryGetProperties, [req.session.user.id_user], (err, result) =>{
@@ -57,16 +47,16 @@ router.get('/', (req,res) =>{
     }else{   // if not logged in
         res.render('pages/login',{path: (req.query.id_property ? `/hosting/?id_property=${req.query.id_property}` : '/hosting')});
     }
-});
+}
 
-router.get('/becomeHost', (req, res) =>{
+const getBecomeHost = (req, res) =>{
     if(req.session && req.session.user) res.render('pages/becomeHost')
     else{   // if not logged in
         res.render('pages/login',{path: '/hosting/becomeHost'});
     }
-});
+}
 
-router.post('/newListing', (req, res) =>{
+const postNewListing = (req, res) =>{
     if(req.session == null && req.session.user == null){
         res.send(403).render('pages/403');
         return;
@@ -112,9 +102,9 @@ router.post('/newListing', (req, res) =>{
         });
     });
     } // else TODO: show error: need to be logged in
-});
+}
 
-router.get('/listingAddress/:id_property', (req, res) =>{
+const getListingAddress = (req, res) =>{
     queryGetAddress = `SELECT * FROM address WHERE id_property= $1`;
     client.query(queryGetAddress, [req.params.id_property], (err, result) =>{
         if(err) console.log(err);
@@ -131,42 +121,9 @@ router.get('/listingAddress/:id_property', (req, res) =>{
             else res.render('pages/listingAddress', {id_property: req.params.id_property});
         }
     })
-})
+}
 
-router.post('/addAddress', (req, res) =>{
-    var {id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng} = req.body;
-    queryAddAddress = `INSERT INTO address (id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
-    // removes diacritics and special characters
-    if(street_and_number) street_and_number = street_and_number.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(neighbourhood) neighbourhood = neighbourhood.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(city) city = city.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(region) region = region.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(country) country = country.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    paramsAddAddress = [id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng];
-    client.query(queryAddAddress, paramsAddAddress, (err, result) => {
-        if(err) console.log(err);
-        else res.status(201);
-    })
-});
-
-router.put('/addAddress', (req, res) =>{
-    var {id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng} = req.body;
-    // removes diacritics and special characters
-    if(street_and_number) street_and_number = street_and_number.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(neighbourhood) neighbourhood = neighbourhood.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(city) city = city.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(region) region = region.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(country) country = country.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-    queryUpdateAddress = `UPDATE address SET street_and_number=$1, neighbourhood=$2, city=$3, region=$4, country=$5, postal_code=$6, lat=$7, lng=$8 WHERE id_property=$9`;
-    paramsUpdateAddress = [street_and_number, neighbourhood, city, region, country, postal_code, lat, lng, id_property];
-    client.query(queryUpdateAddress, paramsUpdateAddress, (err, result) =>{
-        if(err) console.log(err);
-        else res.status(200).send(`{"message": "Address modified succesfully"}`);
-    });
-});
-
-router.get('/listingDetails/:id_property', (req, res) =>{
+const getListingDetails = (req, res) =>{
     // gets amenities column names from db
     var queryGetBathroomAmenities = `SELECT column_name FROM information_schema.columns WHERE table_name = 'bathroom_amenities'`
     client.query(queryGetBathroomAmenities, (err, result) =>{
@@ -206,9 +163,9 @@ router.get('/listingDetails/:id_property', (req, res) =>{
             });
         }
     });
-});
+}
 
-router.post('/addListingDetails/:id_property', (req, res) =>{
+const postListingDetails = (req, res) =>{
     var form = new  formidable.IncomingForm();
 
     form.parse(req, (err, text_fields) =>{
@@ -358,18 +315,17 @@ router.post('/addListingDetails/:id_property', (req, res) =>{
             }           
         });
     });
-});
+}
 
-router.get('/listingPhotos/:id_property', (req, res) =>{
-
+const getListingPhotos = (req, res) =>{
     var queryGetPhotos = `SELECT * FROM photos WHERE id_property=$1`;
     client.query(queryGetPhotos, [req.params.id_property], (err, result)=>{
         if(err) {console.log(err); return;}
         res.render('pages/listingPhotos', {id_property: req.params.id_property, photos: result.rows[0]});
     })
-});
+}
 
-router.post('/addListingPhotos/:id_property', (req, res) =>{
+const postListingPhotos = (req, res) =>{
     var form = new formidable.IncomingForm();
     var images_path = new Object;
     form.parse(req, (err, text_fields) =>{
@@ -422,72 +378,9 @@ router.post('/addListingPhotos/:id_property', (req, res) =>{
     form.on('file', (name, file) =>{
         console.log(`Added file.`);
     })
-});
-// router.post('/addRoom', (req, res) =>{
-//     var form = new formidable.IncomingForm();
-//     form.parse(req, (err, text_fields) =>{
-//         // TODO: validate data
+}
 
-//         var queryAddRoom = `INSERT INTO rooms (id_property, room_type, single_beds, double_beds, bunk_beds, other) VALUES ($1, $2, $3, $4, $5, $6)`;
-//         var paramsAddRoom = [text_fields.id_property, text_fields.room_type, text_fields.single_beds, text_fields.double_beds, text_fields.bunk_beds, text_fields.other];
-
-//         client.query(queryAddRoom, paramsAddRoom, (err, result) =>{
-//             if(err) console.log(err);
-//             else{
-//                 console.log(result.rows);
-//                 res.render('pages/listingDetails', {id_property: text_fields.id_property});
-//             }
-//         });
-//     });
-// });
-
-router.get('/rooms', (req, res) =>{
-    client.query(`SELECT * FROM rooms WHERE id_property = $1`, [req.query.id_property], (err, result) =>{
-        if(err) console.log(err);
-        else{
-            res.status(200).json(result.rows);
-        }
-    });
-});
-
-router.get('/rooms/:id_room', (req, res) =>{
-    client.query(`SELECT * FROM rooms WHERE id_room = $1`, [req.params.id_room], (err, result) =>{
-        if(err) console.log(err);
-        else{
-            res.status(200).json(result.rows[0]);
-        }
-    });
-})
-
-router.post('/rooms', (req, res) =>{
-    const {id_property, room_type, single_beds, double_beds, bunk_beds, other} = req.body;
-    queryAddRoom = `INSERT INTO rooms (id_property, room_type, single_beds, double_beds, bunk_beds, other) VALUES ($1, $2, $3, $4, $5, $6)`;
-    paramsAddRoom = [id_property, room_type, single_beds, double_beds, bunk_beds, other];
-    client.query(queryAddRoom, paramsAddRoom, (err, result) => {
-        if(err) console.log(err);
-        else res.status(201);
-    })
-});
-
-router.put('/rooms/:id_room', (req, res) =>{
-    const {id_property, room_type, single_beds, double_beds, bunk_beds, other} = req.body;
-    queryUpdateRoom = `UPDATE rooms SET room_type=$1, single_beds=$2, double_beds=$3, bunk_beds=$4, other=$5 WHERE id_room=$6`;
-    paramsUpdateRoom = [room_type, single_beds, double_beds, bunk_beds, other, req.params.id_room];
-    client.query(queryUpdateRoom, paramsUpdateRoom, (err, result) =>{
-        if(err) console.log(err);
-        else res.status(200);
-    })
-    
-});
-
-router.delete('/rooms/:id_room', (req, res) =>{
-    client.query('DELETE FROM rooms WHERE id_room = $1', [req.params.id_room], (err, result) =>{
-        if(err) console.log(err);
-        else res.status(200);
-    })
-});
-
-router.get('/listingRules/:id_property', (req, res) =>{
+const getListingRules = (req, res) =>{
     var queryGetRules = `SELECT price, week_discount, checkin, checkout, for_kids, smoking_allowed, pets_allowed, events_allowed FROM properties WHERE id_property= $1`;
     client.query(queryGetRules, [req.params.id_property], (err, result) =>{
         res.render('pages/listingRules', {
@@ -502,9 +395,9 @@ router.get('/listingRules/:id_property', (req, res) =>{
             events_allowed: result.rows[0].events_allowed,
         });
     });
-});
+}
 
-router.post('/addRules/:id_property', (req, res) =>{
+const postAddRules = (req, res) =>{
     var form = new  formidable.IncomingForm();
     form.parse(req, (err, text_fields) =>{
         console.log(text_fields)
@@ -524,13 +417,17 @@ router.post('/addRules/:id_property', (req, res) =>{
             }
         });
     });
-})
+}
 
-router.delete('/deleteProperty/:id_property', (req, res) =>{
-    client.query('DELETE FROM properties WHERE id_property = $1', [req.params.id_property], (err, result) =>{
-        if(err) console.log(err);
-        else res.status(200);
-    })
-});
-
-module.exports = router
+module.exports = {
+    getHostDashboard,
+    getBecomeHost,
+    postNewListing,
+    getListingAddress,
+    getListingDetails,
+    postListingDetails,
+    getListingPhotos,
+    postListingPhotos,
+    getListingRules,
+    postAddRules,
+};

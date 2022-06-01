@@ -28,11 +28,11 @@ app.get(["/", "/index", "/home"], function(req, res){
 });
 
 // inclusion of controllers
-app.use("/users", require('./server/users'));
-app.use("/hosting", require('./server/hosting'));
-app.use("/search", require('./server/search'));
-app.use("/booking", require('./server/booking'));
-app.use("/reviews", require('./server/reviews'));
+app.use("/users", require('./src/routes/users'));
+app.use("/hosting", require('./src/routes/hosting'));
+app.use("/search", require('./src/routes/search'));
+app.use("/booking", require('./src/routes/booking'));
+app.use("/reviews", require('./src/routes/reviews'));
 
 app.get('/favicon.ico' , function(req , res){/*code*/}); // silence weird errors
 app.get('/*.js' , function(req , res){/*code*/}); // silence weird errors

@@ -1,35 +1,29 @@
-const express = require('express');
-const router = express.Router();
 const formidable = require('formidable')
 const { Client } = require('pg')
 const bcrypt = require('bcrypt');
 const fs = require('fs');
-const { sendTokenEmail, generateToken, sendResetEmail } = require('./emailSender');
+const { sendTokenEmail, generateToken, sendResetEmail } = require('../controllers/emailSender');
 
 
 // database connection
-const conn = require("../public/json/connection.json");
+const conn = require("../../public/json/connection.json");
 const IncomingForm = require('formidable/src/Formidable');
 var client = new Client(conn);
 client.connect();
 
-// login page
-router.get("/login", (req, res) => {
+const getLoginPage = (req, res) => {
     res.render('pages/login');
-});
+}
 
-// register page
-router.get("/register", (req, res) => {
+const getRegisterPage = (req, res) => {
     res.render('pages/register');
-});
+}
 
-// forgot password page
-router.get("/forgot", (req, res) => {
+const getForgotPage = (req, res) => {
     res.render('pages/forgot');
-});
+}
 
-// accesed when submitting the register form
-router.post('/registerUser',(req, res) => {
+const postRegisterUser = (req, res) => {
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, text_fields){
         if(err) console.log(err);
@@ -89,10 +83,9 @@ router.post('/registerUser',(req, res) => {
         }
         else res.render("pages/register", {msg:err_message});
     });
-});
+}
 
-// accesed when clicking login
-router.post('/authenticate', (req, res) => {
+const postAuthenticate = (req, res) => {
     var form = new formidable.IncomingForm();
     
     form.parse(req, (err, text_fields) => {
@@ -149,9 +142,9 @@ router.post('/authenticate', (req, res) => {
             });
         });
     });
-});
+}
 
-router.post('/sendResetEmail', (req, res) => {
+const postSendResetEmail = (req, res) => {
     var form = new formidable.IncomingForm();
     
     form.parse(req, (err, text_fields) => {
@@ -195,10 +188,9 @@ router.post('/sendResetEmail', (req, res) => {
             }
         });
     });
-});
+}
 
-// reset password page
-router.get('/reset/:email/:token', (req, res) => {
+const getResetPassword = (req, res) => {
     var queryCheckToken = `SELECT id_user FROM users WHERE email=$1 AND code=$2`;
     var parametersCheckToken = [req.params.email, req.params.token];
     client.query(queryCheckToken, parametersCheckToken, (err, result) => {
@@ -213,9 +205,9 @@ router.get('/reset/:email/:token', (req, res) => {
             res.render('pages/error', {type:"invalid_token"});
         }
     });
-});
+}
 
-router.post('/updatePassword', (req, res) =>{
+const postUpdatePassword = (req, res) =>{
     var form = new formidable.IncomingForm();
 
     form.parse(req, async (err, text_fields) => {
@@ -244,9 +236,9 @@ router.post('/updatePassword', (req, res) =>{
             });
         }
     });
-});
+}
 
-router.get('/confirm/:email/:token', (req, res) => {
+const getConfirmEmail = (req, res) => {
     // if email and code match then the address is confirmed and the token deleted from db
     var queryUpdateConfirmed = `UPDATE users SET confirmed=true, code=NULL WHERE email=$1 AND code=$2`;
     var parametersUpdateConfirmed = [req.params.email, req.params.token];
@@ -262,9 +254,9 @@ router.get('/confirm/:email/:token', (req, res) => {
             res.render('pages/error', {type:"invalid_token"});
         }
     });
-});
+}
 
-router.get('/profile', (req, res) =>{
+const getProfile = (req, res) =>{
     if(req.session && req.session.user){
         var queryGetProfile = 'SELECT * FROM users WHERE id_user=$1';
         client.query(queryGetProfile, [req.session.user.id_user], (err, result) =>{
@@ -274,9 +266,9 @@ router.get('/profile', (req, res) =>{
     }else{   // if not logged in
         res.render('pages/login',{path: `/users/profile`});
     }
-});
+}
 
-router.post('/editProfile', (req, res) =>{
+const postEditProfile = (req, res) =>{
     var form = new formidable.IncomingForm();
     console.log('editProfile')
 
@@ -288,9 +280,9 @@ router.post('/editProfile', (req, res) =>{
             res.redirect('/users/profile');
         });
     });
-});
+}
 
-router.post('/changePassword', (req,res) =>{
+const postChangePassword = (req,res) =>{
     var form = new formidable.IncomingForm();
 
     form.parse(req, async (err, text_fields) => {
@@ -328,9 +320,9 @@ router.post('/changePassword', (req,res) =>{
             });
         }
     });
-});
+}
 
-router.post('/addProfilePicture', (req, res) =>{
+const postProfilePicture = (req, res) =>{
     var form = new formidable.IncomingForm();
     var profilePicturePath = '';
 
@@ -358,12 +350,27 @@ router.post('/addProfilePicture', (req, res) =>{
     form.on('file', (name, file) =>{
         console.log(`Added profile picture file.`);
     })
-});
+}
 
-router.get('/logout', (req, res) =>{
+const getLogout = (req, res) =>{
     req.session.destroy(); // ends the session
     // req.locals.user = null;          //// might be required
     res.redirect('/');
-});
+}
 
-module.exports = router
+module.exports = {
+    getLoginPage,
+    getRegisterPage,
+    getForgotPage,
+    postRegisterUser,
+    postAuthenticate,
+    postSendResetEmail,
+    getResetPassword,
+    postUpdatePassword,
+    getConfirmEmail,
+    getProfile,
+    postEditProfile,
+    postChangePassword,
+    postProfilePicture,
+    getLogout
+};

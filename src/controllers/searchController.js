@@ -1,14 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const formidable = require('formidable');
+const formidable = require('formidable')
 const { Client } = require('pg');
 
 // database connection
-const conn = require("../public/json/connection.json");
+const conn = require("../../public/json/connection.json");
 var client = new Client(conn);
 client.connect();
 
-router.get('/', (req, res) =>{
+const getResultsPage = (req, res) =>{
     if(!req.query.city) {}// TOADD: must have city!
     var queryGetPriceRange = `SELECT min(price), max(price), avg(price) FROM properties p INNER JOIN address a ON p.id_property=a.id_property WHERE a.city=$1;` // TOMODIF: WHERE
     client.query(queryGetPriceRange, [req.query.city], (err, result) =>{
@@ -34,9 +32,9 @@ router.get('/', (req, res) =>{
             });
         }
     });
-});
+}
 
-router.get('/results', (req, res) =>{
+const getResults = (req, res) =>{
     var i=1;
     var queryGetResults = `SELECT p.id_property, title, description, price, rating, property_type, guests, city, count(id_room) FROM properties p INNER JOIN address a ON p.id_property = a.id_property LEFT JOIN rooms r ON p.id_property = r.id_property WHERE 1=1`;
     var paramsGetResults = [];
@@ -90,9 +88,9 @@ router.get('/results', (req, res) =>{
             res.status(200).json(result.rows);
         }
     });
-});
+}
 
-router.get('/result/:id_property', (req, res) =>{
+const getResultDetails = (req, res) =>{
     var queryGetDetails = `SELECT p.*, a.*, firstname, lastname, profile_pic, count(id_room) as rooms_number FROM properties p
                             INNER JOIN address a USING(id_property) INNER JOIN users u ON p.id_host=u.id_user
                             INNER JOIN rooms USING(id_property)
@@ -144,6 +142,10 @@ router.get('/result/:id_property', (req, res) =>{
             })
         }) 
     });
-});
+}
 
-module.exports = router;
+module.exports = { 
+    getResultsPage,
+    getResults,
+    getResultDetails
+ };

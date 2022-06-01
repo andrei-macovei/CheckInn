@@ -1,15 +1,12 @@
-const express = require('express');
-const router = express.Router();
 const formidable = require('formidable')
-const { Client } = require('pg')
-
+const { Client } = require('pg');
 
 // database connection
-const conn = require("../public/json/connection.json");
+const conn = require("../../public/json/connection.json");
 var client = new Client(conn);
 client.connect();
 
-router.post('/add/:id_property/:id_user', (req, res) =>{
+const postAddReview = (req, res) =>{
     var form = new  formidable.IncomingForm();
 
     form.parse(req, (err, text_fields) =>{
@@ -43,6 +40,6 @@ router.post('/add/:id_property/:id_user', (req, res) =>{
             });
         });
     });
-});
+}
 
-module.exports = router;
+module.exports = { postAddReview };

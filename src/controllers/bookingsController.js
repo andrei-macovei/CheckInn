@@ -1,15 +1,12 @@
-const { text } = require('express');
-const express = require('express');
-const router = express.Router();
-const formidable = require('formidable');
+const formidable = require('formidable')
 const { Client } = require('pg');
 
 // database connection
-const conn = require("../public/json/connection.json");
+const conn = require("../../public/json/connection.json");
 var client = new Client(conn);
 client.connect();
 
-router.post('/add/:price', (req, res) =>{
+const postBooking = (req, res) =>{
     var form = new  formidable.IncomingForm();
 
     form.parse(req, (err, text_fields) =>{
@@ -64,23 +61,23 @@ router.post('/add/:price', (req, res) =>{
             }
         });
     });
-});
+}
 
-router.get('/confirm/:id_property/:id_booking', (req, res) =>{
+const getConfirmBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='confirmed' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
         res.redirect(`/hosting/?id_property=${req.params.id_property}`);
     });
-});
+}
 
-router.get('/refuse/:id_property/:id_booking', (req, res) =>{
+const getRefuseBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='refused' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
         res.redirect(`/hosting/?id_property=${req.params.id_property}`);
     });
-});
+}
 
-router.get('/cancel/:id_property/:id_booking', (req, res) =>{
+const getCancelBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='canceled' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
         if(!req.query.path) res.redirect(`/hosting/?id_property=${req.params.id_property}`);
@@ -89,9 +86,9 @@ router.get('/cancel/:id_property/:id_booking', (req, res) =>{
             res.redirect('/booking/userTrips');
         }
     });
-});
+}
 
-router.get('/userTrips', (req, res) =>{
+const getUserTrips = (req, res) =>{
     if(req.session && req.session.user){
         var toSend = new Object;
         var queryGetUpcomingBookings = 'SELECT b.*, p.title, a.city, a.country FROM bookings b INNER JOIN properties p USING(id_property) INNER JOIN address a USING(id_property) WHERE id_user=$1 AND b.checkin>CURRENT_DATE ORDER BY b.checkin';
@@ -114,7 +111,12 @@ router.get('/userTrips', (req, res) =>{
     }else{   // if not logged in
         res.render('pages/login',{path: '/booking/userTrips'});
     }
-});
+}
 
-
-module.exports = router;
+module.exports = {
+    postBooking,
+    getConfirmBooking,
+    getRefuseBooking,
+    getCancelBooking,
+    getUserTrips
+}
