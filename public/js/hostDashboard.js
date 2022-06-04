@@ -1,4 +1,4 @@
-var deleteButtons = document.querySelectorAll(".btn-del");
+var deleteButtons = document.querySelector(".btn-del");
 var pressedButtonId;
 
 deleteButtons.forEach(function(but){

@@ -62,14 +62,20 @@ function getResults(){
             resultsContainer.textContent = '';
             for(result of data){
                 const resultDiv = document.createElement('div');
-                if(result.rating) rating = result.rating; else rating = "No rating yet";
+                var propertyImage = '';
+                if(result.rating) rating = result.rating + ' <i class="fa-solid fa-star text-yellow-400"></i>'; else rating = "No rating yet";
                 if(result.property_type == 'bedandbreakfast') result.property_type = 'Bed and Breakfast';
+                if(result.big_picture){
+                    propertyImage = `<img src="../../${result.big_picture}" class="col-start-1 col-end-2 row-span-3 min-h-[200px] min-w-[200px] max-w-[220px] rounded-lg bg-slate-200 text-slate-200">`;
+                } else {
+                    propertyImage = `<div class="col-start-1 col-end-2 row-span-3 min-h-[200px] min-w-[200px] max-w-[220px] rounded-lg bg-slate-200 text-slate-200">
+                        #IMAGE
+                        </div>`;
+                }
                 resultDiv.innerHTML = `
                 <a href="/search/result/${result.id_property}">
                 <div class="search-result grid grid-cols-[1fr_3fr] border rounded-lg min-h-[200px] p-2 m-2 hover:cursor-pointer">
-                    <div class="col-start-1 col-end-2 row-span-3 min-h-[200px] min-w-[200px] max-w-[220px] rounded-lg bg-slate-200 text-slate-200">
-                        #IMAGE
-                    </div>
+                    ${propertyImage}
                     <div class="col-start-2 row-start-1 px-4">
                         <div class="flex justify-between">
                             <h2 class="text-xl font-bold text-blue-600">

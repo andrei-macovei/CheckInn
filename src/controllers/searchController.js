@@ -36,7 +36,7 @@ const getResultsPage = (req, res) =>{
 
 const getResults = (req, res) =>{
     var i=1;
-    var queryGetResults = `SELECT p.id_property, title, description, price, rating, property_type, guests, city, count(id_room) FROM properties p INNER JOIN address a ON p.id_property = a.id_property LEFT JOIN rooms r ON p.id_property = r.id_property WHERE 1=1`;
+    var queryGetResults = `SELECT p.id_property, title, description, price, rating, property_type, guests, city, count(id_room), ph.big_picture FROM properties p INNER JOIN address a ON p.id_property = a.id_property LEFT JOIN rooms r ON p.id_property = r.id_property LEFT JOIN photos ph ON p.id_property = ph.id_property WHERE 1=1`;
     var paramsGetResults = [];
 
     if(req.query.city) {queryGetResults += ` AND city=\$${i}`; paramsGetResults.push(req.query.city); i++}
@@ -79,7 +79,7 @@ const getResults = (req, res) =>{
     if(Array.isArray(req.query.amenities)) for(amen of req.query.amenities){   // TOADD: verify for sql injection
         queryGetResults += ` AND ${amen} IS TRUE`;
     } else if(req.query.amenities) queryGetResults += ` AND ${req.query.amenities} IS TRUE`;
-    queryGetResults += ` GROUP BY p.id_property, a.city;`
+    queryGetResults += ` GROUP BY p.id_property, a.city, ph.big_picture;`
     // console.log(queryGetResults);
     client.query(queryGetResults, paramsGetResults, (err, result) =>{
         if(err) console.log("Error" + err);

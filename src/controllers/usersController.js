@@ -129,7 +129,7 @@ const postAuthenticate = (req, res) => {
                             join_date : result.rows[0].join_date,
                             birthday :  result.rows[0].birthday,
                             profile_picture : result.rows[0].profile_picture,
-                            host: result.rows[0].host
+                            role: result.rows[0].role
                         }
                     }
                     if(text_fields.path) res.redirect(text_fields.path);

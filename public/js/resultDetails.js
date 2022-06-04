@@ -97,3 +97,41 @@ bookingInputs.forEach(function(opt){
         }
     });
 });
+
+// Calendar
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var id_property = document.getElementById('id_property').value;
+
+    fetch(`/booking/${id_property}`)
+        .then(res => res.json())
+        .then(data => {
+            var events = new Array();
+            for(booking of data){
+                var event = new Object;
+                event.id = booking.id_booking;
+                event.title = 'Booked';
+                event.start = booking.checkin;
+                event.end = booking.checkout;
+                event.allDay = true;
+                event.backgroundColor = '#CB3957';
+                event.borderColor = 'red';
+                events.push(event);
+            }
+
+            console.log(events);
+            
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                timeZone: 'UTC',
+                initialView: 'dayGridMonth',
+                events: events,
+                editable: false,
+                selectable: false,
+            });
+            
+            // events = [];
+            calendar.render();
+            
+        });
+  });

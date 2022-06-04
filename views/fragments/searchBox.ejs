@@ -2,25 +2,25 @@
     <form method="GET" action="/search" class="flex flex-row justify-center items-center gap-1 my-4">
         <div class="flex flex-col">
             <label>Destination:</label>
-            <input id="inp-city" type="text" name="city" value="<%-locals.city ? locals.city : ""%>" placeholder="Where to?" class="">
+            <input id="inp-city" type="text" name="city" value="<%-locals.city ? locals.city : ""%>" placeholder="Where to?" class="h-10">
         </div>
         <div class="flex flex-col">
             <label>Starting:</label>
             <input id="inp-checkin" type="date" name="checkin" value="<%-locals.checkin ? locals.checkin : ""%>" placeholder="Check-in date" 
-            class="">
+            class="h-10">
         </div>
         <div class="flex flex-col">
             <label>Until:</label>
             <input id="inp-checkout" type="date" name="checkout" value="<%-locals.checkout ? locals.checkout : ""%>" placeholder="Check-out date"
-            class="">
+            class="h-10">
         </div>
         <div class="flex flex-col">
             <label>Guests:</label>
-            <input id="inp-guests" type="number" name="guests" value="<%-locals.guests ? locals.guests : ""%>"placeholder="How many?" class="">
+            <input id="inp-guests" type="number" name="guests" value="<%-locals.guests ? locals.guests : ""%>"placeholder="How many?" class="h-10">
         </div>
         <div class="flex flex-col">
             <label class="invisible">invisible</label>
-            <button type="submit" class="btn-primary">Search</button>
+            <button type="submit" class="btn-primary py-2">Search</button>
         </div>
     </form>
 </div>

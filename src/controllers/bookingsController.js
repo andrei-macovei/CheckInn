@@ -63,6 +63,14 @@ const postBooking = (req, res) =>{
     });
 }
 
+const getPropertyBookings = (req, res) =>{ 
+    var queryGetBookings = `SELECT * FROM bookings WHERE id_property=$1 AND checkout>CURRENT_DATE AND (status='pending' OR status='confirmed')`;
+    client.query(queryGetBookings, [req.params.id_property], (err, result) =>{
+        if(err) {console.log(err); return;}
+        res.status(200).json(result.rows);
+    });
+}
+
 const getConfirmBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='confirmed' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
@@ -115,6 +123,7 @@ const getUserTrips = (req, res) =>{
 
 module.exports = {
     postBooking,
+    getPropertyBookings,
     getConfirmBooking,
     getRefuseBooking,
     getCancelBooking,

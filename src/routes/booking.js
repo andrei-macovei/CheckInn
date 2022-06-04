@@ -4,7 +4,7 @@ const router = express.Router();
 const formidable = require('formidable');
 const { Client } = require('pg');
 
-const {postBooking, getConfirmBooking, getRefuseBooking, getCancelBooking, getUserTrips} = require('../controllers/bookingsController');
+const {postBooking, getPropertyBookings, getConfirmBooking, getRefuseBooking, getCancelBooking, getUserTrips} = require('../controllers/bookingsController');
 
 // database connection
 const conn = require("../../public/json/connection.json");
@@ -12,6 +12,8 @@ var client = new Client(conn);
 client.connect();
 
 router.post('/add/:price', postBooking);
+
+router.get('/:id_property', getPropertyBookings);
 
 router.get('/confirm/:id_property/:id_booking', getConfirmBooking);
 
