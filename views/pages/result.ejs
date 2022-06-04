@@ -12,6 +12,8 @@
         <script src="https://unpkg.com/flowbite@1.4.7/dist/datepicker.js"></script>
         <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.css' rel='stylesheet' />
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.js'></script>
+        <!-- FontAwesome script -->
+        <script src="https://kit.fontawesome.com/374b3caa1d.js" crossorigin="anonymous"></script>
     </head>
     <body>
         <%-include("../fragments/header.ejs")%>
@@ -116,26 +118,37 @@
                         <h3 class="font-bold"><%-capitalize(room.room_type).split("_").join(" ")%></h3>
                         <% if(room.single_beds != 0) {%>
                             <div>
-                                <%-room.single_beds%> <%- room.single_beds == 1 ? "single bed" : "single beds"%>
+                                <%-room.single_beds%> <%- room.single_beds == 1 ? "single bed" : "single beds"%> 
                             </div>
                         <%}%>
                         <% if(room.double_beds != 0) {%>
                             <div>
-                                <%-room.double_beds%> <%- room.double_beds == 1 ? "double bed" : "double beds"%>
+                                <%-room.double_beds%> <%- room.double_beds == 1 ? "double bed" : "double beds"%> 
                             </div>
                         <%}%>
                         <% if(room.bunk_beds != 0) {%>
                             <div>
-                                <%-room.bunk_beds%> <%- room.bunk_beds == 1 ? "bunk bed" : "bunk beds"%>
+                                <%-room.bunk_beds%> <%- room.bunk_beds == 1 ? "bunk bed" : "bunk beds"%> 
                             </div>
                         <%}%>
                         <% if(room.other != 0) {%>
                             <div>
-                                <%-room.other%> <%- room.other == 1 ? "other" : "others"%>
+                                <%-room.other%> <%- room.other == 1 ? "other" : "others"%> 
                             </div>
                         <%}%>
-                        <div class="bed-pictograms">
-    
+                        <div class="bed-pictograms flex justify-center">
+                            <% for (i = 0; i < room.single_beds; i++) { %>
+                                <i class="fa-solid fa-bed m-2"></i>
+                            <% }%>
+                            <% for (i = 0; i < room.double_beds; i++) { %>
+                                <i class="fa-solid fa-bed m-2"></i>
+                            <% }%>
+                            <% for (i = 0; i < room.bunk_beds; i++) { %>
+                                <i class="fa-solid fa-bed-bunk m-2"></i>
+                            <% }%>
+                            <% for (i = 0; i < room.other; i++) { %>
+                                <i class="fa-solid fa-couch m-2"></i>
+                            <% }%>
                         </div>
                     </div>
                     <%}%>
