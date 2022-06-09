@@ -6,6 +6,9 @@ module.exports = {
     container: {
       center: true,
     },
+    fontFamily: {
+      'logo' : ['Knewave']
+    },
   },
   plugins: [
      require('flowbite/plugin')

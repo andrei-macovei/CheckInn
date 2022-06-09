@@ -6,7 +6,7 @@ var client = new Client(conn);
 client.connect();
 
 const getRooms = (req, res) =>{
-    client.query(`SELECT * FROM rooms WHERE id_property = $1`, [req.query.id_property], (err, result) =>{
+    client.query(`SELECT * FROM rooms WHERE id_property = $1 ORDER BY (single_beds + double_beds + bunk_beds + other)/4::float desc`, [req.query.id_property], (err, result) =>{
         if(err) console.log(err);
         else{
             res.status(200).json(result.rows);

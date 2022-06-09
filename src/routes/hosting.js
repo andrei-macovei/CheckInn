@@ -23,7 +23,7 @@ router.post('/addListingDetails/:id_property', hostingController.postListingDeta
 
 router.get('/listingPhotos/:id_property', hostingController.getListingPhotos);
 
-router.post('/addListingPhotos/:id_property', );
+router.post('/addListingPhotos/:id_property', hostingController.postListingPhotos);
 
 router.get('/rooms', roomsController.getRooms);
 

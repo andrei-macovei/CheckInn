@@ -49,24 +49,43 @@ window.onload = () => {
                 const roomDiv = document.createElement('div');
                 // roomDiv.classList.add("border");
                 var detailsDiv = '';
+                var pictogramsDiv = '';
                 if(parseInt(room.single_beds) != 0) detailsDiv += `<p>Single beds: ${room.single_beds}</p>`;
                 if(parseInt(room.double_beds) != 0) detailsDiv += `<p>Double beds: ${room.double_beds}</p>`
                 if(parseInt(room.bunk_beds) != 0) detailsDiv += `<p>Bunk beds: ${room.bunk_beds}</p>`;
                 if(parseInt(room.other) != 0) detailsDiv += `<p>Sofas/ Other: ${room.other}</p>`;
+
+                for(i = 0; i < room.single_beds; i++){
+                    pictogramsDiv += `<i class="fa-solid fa-bed m-2"></i>`;
+                }
+                for(i = 0; i < room.double_beds; i++){
+                    pictogramsDiv += `<i class="fa-solid fa-bed m-2"></i>`;
+                }
+                for(i = 0; i < room.bunk_beds; i++){
+                    pictogramsDiv += `<i class="fa-solid fa-bed m-2"></i>`;
+                }
+                for(i = 0; i < room.other; i++){
+                    pictogramsDiv += `<i class="fa-solid fa-couch m-2"></i>`;
+                }
+                
+
+
                 roomDiv.innerHTML = `
-                <div class="room border rounded-lg m-3">
-                    <div class="room-title border-b flex flex-row justify-between px-4 py-2 bg-gray-100">
-                        <h3 class="text-xl font-medium">${capitalize(room.room_type).split("_").join(" ")}</h3>
-                    </div>
-                    <div class="prop-body flex justify-between">
-                        <div>
-                            ${detailsDiv}
-                        </div>
-                        <div class="flex flex-col">
-                            <button value="${room.id_room}" class="btn-del text-left focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" type="button" data-modal-toggle="popup-modal">
+                <div class="room border rounded-lg m-3 min-w-[300px]">
+                    <div class="room-title border-b flex flex-row items-center justify-between px-4 py-2 bg-gray-100">
+                        <h3 class="text-lg font-medium">${capitalize(room.room_type).split("_").join(" ")}</h3>
+                        <button value="${room.id_room}" class="btn-del focus:outline-none font-medium text-red-600 hover:text-red-800 rounded-lg " type="button" data-modal-toggle="popup-modal">
                                 Delete Room
-                            </button>
+                        </button>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="p-4">
+                            ${detailsDiv}
+                            
                         </div>
+                    </div>
+                    <div class="bed-pictograms flex justify-center">
+                            ${pictogramsDiv}
                     </div>
                 </div>
                 `           

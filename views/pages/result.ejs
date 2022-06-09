@@ -10,6 +10,7 @@
         <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQy7k2Ww3zcmNYGGkCLGw84z3XAnqqpnY&callback=initMap&v=weekly" defer></script> -->
         <script src="/public/js/resultDetails.js" defer></script>
         <script src="https://unpkg.com/flowbite@1.4.7/dist/datepicker.js"></script>
+        <!-- FullCalendar -->
         <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.css' rel='stylesheet' />
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.js'></script>
         <!-- FontAwesome script -->
@@ -19,22 +20,34 @@
         <%-include("../fragments/header.ejs")%>
         <main class="px-36">
             <% prop = locals.prop; function capitalize(string) {return string.charAt(0).toUpperCase() + string.slice(1);} %>
-           <div id="headline" class="p-4 pb-0">
-               <h1 class="text-3xl font-bold">
-                   <%-prop.title%>
-               </h1>
-               <div class="flex flex-row">
-                    <div class="mr-2 font-light">
-                        <%-prop.rating ? prop.rating + '<i class="fa-solid fa-star text-yellow-400"></i>' : "No rating yet"%>
+            <div class="flex justify-between">
+                <div id="headline" class="p-4 pb-0">
+                    <h1 class="text-3xl font-bold">
+                        <%-prop.title%>
+                    </h1>
+                    <div class="flex flex-row">
+                         <div class="mr-2 font-light">
+                             <%-prop.rating ? prop.rating + '<i class="fa-solid fa-star text-yellow-400"></i>' : "No rating yet"%>
+                         </div>
+                         <div class="mr-2">
+                             -
+                         </div>
+                         <div class="mr-1">
+                             <%-prop.street_and_number%>, <%- prop.city%>, <%- prop.country%>
+                         </div>
                     </div>
-                    <div class="mr-2">
-                        -
-                    </div>
-                    <div class="mr-1">
-                        <%-prop.street_and_number%>, <%- prop.city%>, <%- prop.country%>
-                    </div>
-               </div>
+                 </div>
+                 <div class="self-end px-8">
+                     <label>
+                        <input type="hidden" name="favourite" value="False" />
+                        <input id="custom-checkbox-input" class="hidden scale-125 hover-text-gray-500 hover:scale-100" name="favourite" value="True" type="checkbox">
+                        <i id="heart" class="fa-solid fa-heart text-gray-300 fa-2xl hover:text-gray-500 hover:scale-125 p-4"></i>
+                     </label>
+                     <p id="heart-text" class="text-gray-300">Favourite</p>
+                 </div>
+                 
             </div>
+           
             <div id="picture-grid" class="grid grid-cols-4 grid-rows-[repeat(2,_14vw)] gap-4 p-4">
                 <div id="big-picture" class="row-span-2 col-span-2 bg-slate-200 rounded-l-xl">
                     <img src="../../<%-locals.photos ? locals.photos.big_picture : ''%>" id="big-picture" class="row-span-2 bg-slate-200 w-full h-full object-cover rounded-l-xl"></img>
@@ -97,9 +110,9 @@
                                 </div>
                                 <%}%>
                                 <% if(locals.user) { %>
-                                <button type="submit" id="booking-btn" class="text-white w-full bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 my-3">Book now</button>
+                                <button type="submit" id="booking-btn" class="text-white w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 my-3">Book now</button>
                                 <% } else { %>
-                                    <button type="button" id="booking-btn" class="text-white w-full bg-gradient-to-br from-pink-400 to-orange-300 focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 my-3 cursor-not-allowed" disabled>Log in to book stay</button>
+                                    <button type="button" id="booking-btn" class="text-white w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 my-3 cursor-not-allowed" disabled>Log in to book stay</button>
                                 <% } %>
                             </form>
                             <div id="price-calc" class="flex flex-col">
@@ -114,7 +127,7 @@
                 <h2 class="text-lg font-semibold px-4">Rooms available</h2>
                 <div id="rooms" class="m-4 pb-4 border-b flex justify-start">
                     <% for(let room of locals.rooms){%>
-                    <div class="room-content border rounded-lg p-4 mx-4">
+                    <div class="room-content border rounded-lg p-4 mx-4 bg-gray-50">
                         <h3 class="font-bold"><%-capitalize(room.room_type).split("_").join(" ")%></h3>
                         <% if(room.single_beds != 0) {%>
                             <div>
@@ -144,7 +157,7 @@
                                 <i class="fa-solid fa-bed m-2"></i>
                             <% }%>
                             <% for (i = 0; i < room.bunk_beds; i++) { %>
-                                <i class="fa-solid fa-bed-bunk m-2"></i>
+                                <i class="fa-solid fa-bed m-2"></i>
                             <% }%>
                             <% for (i = 0; i < room.other; i++) { %>
                                 <i class="fa-solid fa-couch m-2"></i>
@@ -166,7 +179,7 @@
                             <%  for(const property in genAmenities){%>
                                 <% if(property == 'id_amenities' || property == 'id_property') continue %>
                                 <% if(genAmenities[property] == true) { %>
-                                    <p class="amenity my-4 <%- (i>5) ? 'hidden' : ''%>"><%-capitalize(property).split("_").join(" ")%></p>
+                                    <p class="amenity my-4 <%- (i>5) ? 'hidden' : ''%>"><i class="fa-solid fa-check text-green-500 px-2"></i><%-capitalize(property).split("_").join(" ")%></p>
                                 <%i++;}%>
                             <%}%>
                         </div>
@@ -176,7 +189,7 @@
                             <%  for(const property in kitAmenities){%>
                                 <% if(property == 'id_amenities' || property == 'id_property') continue %>
                                 <% if(kitAmenities[property] == true) { %>
-                                    <p class="amenity my-4 <%- (i>5) ? 'hidden' : ''%>"><%-capitalize(property).split("_").join(" ")%></p>
+                                    <p class="amenity my-4 <%- (i>5) ? 'hidden' : ''%>"><i class="fa-solid fa-check text-green-500 px-2"></i><%-capitalize(property).split("_").join(" ")%></p>
                                 <%i++;}%>
                             <%}%>
                         </div>
@@ -186,7 +199,7 @@
                             <%  for(const property in bathAmenities){%>
                                 <% if(property == 'id_amenities' || property == 'id_property') continue %>
                                 <% if(bathAmenities[property] == true) { %>
-                                    <p class="amenity my-4 <%- (i>5) ? 'hidden' : ''%>"><%-capitalize(property).split("_").join(" ")%></p>
+                                    <p class="amenity my-4 <%- (i>5) ? 'hidden' : ''%>"><i class="fa-solid fa-check text-green-500 px-2"></i><%-capitalize(property).split("_").join(" ")%></p>
                                 <%i++;}%>
                             <%}%>
                         </div>

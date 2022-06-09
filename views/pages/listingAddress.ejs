@@ -7,40 +7,42 @@
         <title>CheckInn Home</title>
         <%-include("../fragments/head.ejs")%>
         <script src="/public/js/addAddress.js" defer></script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQy7k2Ww3zcmNYGGkCLGw84z3XAnqqpnY&callback=initMap&v=weekly"
-      defer
-    ></script>
+        <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQy7k2Ww3zcmNYGGkCLGw84z3XAnqqpnY&callback=initMap&v=weekly"
+        defer
+        ></script> -->
     </head>
     <body>
         <%-include("../fragments/header.ejs")%>
-        <main class="px-20">
-            <p> NEW ADDRESS</p>
+        <main class="px-36">
+            <h2 class="text-2xl font-bold p-4 my-6">Enter your property's address</h2>
             <p id="id_property" class="hidden"><%-locals.id_property%></p>
             <div id="latitude" class="hidden"><%-locals.lat%></div>
             <div id="longitude" class="hidden"><%-locals.lng%></div>
-            <div id="form-container" class="flex flex-row"></div>
+            <div id="container" class="grid grid-cols-3">
                 <input type="hidden" name="id_property" value="<%-locals.id_property%>">
-                <div class="relative my-2">
-                    <input type="text" id="country-inp" name="country" value="<%-locals.country%>" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
-                    <label for="country-inp" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Country</label>
+                <p class="text-sm px-4">Make sure to introduce the correct address</p>
+                <div id="map" class="h-[400px] mx-10 row-span-5 col-span-2 w-auto rounded-xl bg-slate-200"></div>
+                <div class="relative my-2 mx-4">
+                    <label for="country-inp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Country</label>
+                    <input type="text" id="country-inp" name="country" value="<%-locals.country%>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder="" />
                 </div>
-                <div class="relative my-2">
-                    <input type="text" id="city-inp" name="city" value="<%-locals.city%>" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
-                    <label for="city-inp" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">City/Town</label>
+                <div class="relative my-2 mx-4">
+                    <label for="city-inp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">City/Town</label>
+                    <input type="text" id="city-inp" name="city" value="<%-locals.city%>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder=" " />
                 </div>
-                <div class="relative my-2">
-                    <input type="text" id="street-inp" name="street" value="<%-locals.street_and_number%>" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
-                    <label for="street-inp" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Street & Number</label>
+                <div class="relative my-2 mx-4">
+                    <label for="street-inp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Street & Number</label>
+                    <input type="text" id="street-inp" name="street" value="<%-locals.street_and_number%>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder=" " />
                 </div>
-
-                <button id="add-address-btn" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add Address</button>
-
-                <div id="map" class="h-96 w-auto"></div>
-                <a href="/hosting/listingDetails/<%-locals.id_property%>" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Listing Details
-                    <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                </a>
+                <div class="flex justify-center items-center">
+                    <button id="add-address-btn" type="button" class="my-4 mr-2 text-white bg-sky-500 hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800">Add Address</button>
+                    <a href="/hosting/listingDetails/<%-locals.id_property%>" class="my-4 ml-2 text-white bg-gradient-to-r from-sky-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800">
+                        Listing Details
+                        <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    </a>
+                </div>
             </div>
+            
         </main>
     </body>
 </html>

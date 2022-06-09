@@ -25,7 +25,7 @@ function initMap(){
         var addressCoords = new google.maps.LatLng(parseFloat(latitude.textContent), parseFloat(longitude.textContent));
         // const addressCoords = {lat: 44.4199725, lng: 26.0408733};
         options = {
-            zoom: 11,
+            zoom: 13,
             center: addressCoords,
         }
     }

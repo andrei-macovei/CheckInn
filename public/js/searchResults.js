@@ -25,7 +25,7 @@ filterOptions.forEach(function(opt){
 });
 
 priceRange.addEventListener('change', e=>{
-    labelPrice.innerText = `Results under: ${priceRange.value}`; 
+    labelPrice.innerText = `Results under: ${priceRange.value}€/night`; 
     getResults();
 })
 
@@ -36,6 +36,14 @@ function getResults(){
     if(checkin) url += `&checkin=${checkin}`;
     if(checkout) url += `&checkout=${checkout}`;
     if(guests) url += `&guests=${parseInt(guests)}`;
+
+    if(checkin && checkout && guests){
+        var totalPrice = `
+        <div class="">
+            
+        </div>`
+    }
+
     for (let opt of filterOptions){
         if (opt.checked){
             console.log(opt);
@@ -72,31 +80,49 @@ function getResults(){
                         #IMAGE
                         </div>`;
                 }
+
+                var favourite = '';
+                if(document.querySelector('#dropdownUserOptions')){
+                    favourite = `<label class="favourite self-end">
+                    <input type="hidden" name="favourite" value="False"/>
+                    <input class="custom-checkbox-input hidden scale-125 hover-text-gray-500 hover:scale-100" name="favourite" value="${result.id_property}" type="checkbox">
+                    <i class="heart fa-solid fa-heart text-gray-300 fa-xl hover:text-gray-500 hover:scale-125 p-4"></i>
+                    </label>`
+                }
+
                 resultDiv.innerHTML = `
                 <a href="/search/result/${result.id_property}">
-                <div class="search-result grid grid-cols-[1fr_3fr] border rounded-lg min-h-[200px] p-2 m-2 hover:cursor-pointer">
+                <div class="search-result grid grid-cols-[1fr_3fr] bg-slate-100 border border-gray-300 rounded-lg min-h-[200px] p-2 m-2 hover:cursor-pointer">
                     ${propertyImage}
                     <div class="col-start-2 row-start-1 px-4">
                         <div class="flex justify-between">
-                            <h2 class="text-xl font-bold text-blue-600">
+                            <h2 class="text-xl font-bold text-sky-500">
                                 ${result.title}
                             </h2>
-                            <p class="font-extralight">${rating}</p>
+                            <div class="flex flex-col">
+                                <p class="font-extralight">${rating}</p>
+                                
+                            </div>
                         </div>
-                        <div class="flex ">
-                            <p class="text-xs mr-2">${capitalize(result.property_type)}</p>
-                            <p class="text-xs mr-2">${result.guests} guests</p>
-                            <p class="text-xs mr-2">${result.count} rooms</p>
+                        <div class="flex justify-between">
+                            <div class="flex">
+                                <p class="text-xs mr-2">${capitalize(result.property_type)}</p>
+                                <p class="text-xs mr-2">${result.guests} guests</p>
+                                <p class="text-xs mr-2">${result.count} rooms</p>
+                            </div>
+                            <div>
+                                ${favourite}
+                            </div>
                         </div>
                     </div>
-                    <div class="col-start-2 row-start-2 px-4">
+                    <div class="col-start-2 row-start-2 px-6">
                         ${result.description}
                     </div>
-                    <div class="col-start-2 row-start-3 justify-self-end self-end text-blue-800 px-4">
-                        <div>
-                            ${result.price}
+                    <div class="col-start-2 row-start-3 justify-self-end self-end text-sky-500 p-4">
+                        <div class="font-semibold text-lg">
+                            ${result.price}€/night
                         </div>
-                        <div>
+                        <div class="hidden">
                             #TOTAL_PRICE
                         </div>
                     </div>
@@ -105,5 +131,51 @@ function getResults(){
                 `
                 resultsContainer.append(resultDiv);
             }
+
+            // Favourite buttons
+            favCheckboxes = document.querySelectorAll(".custom-checkbox-input");
+
+            favCheckboxes.forEach(function(checkbox){
+                checkbox.addEventListener('change', e =>{
+                    // TODO: Add to favourites in DB
+
+                    heart = checkbox.parentElement.querySelector('.heart');
+                    if(checkbox.checked){
+                        (async () =>{
+                            const rawResponse = await fetch(`/users/addFavourite/${checkbox.value}`, {
+                                method: "POST",
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                            });
+                            const content = await rawResponse.json();
+
+                        })();
+                        console.log("Favourite added");
+                        heart.classList.remove("hover:text-gray-500", "hover:scale-125", "text-gray-300");
+                        heart.classList.add("scale-125", "text-red-500", "hover:scale-100", "hover:text-gray-500");
+                        // heartText.innerText = "Favourite added!"
+                        // heartText.classList.remove("text-gray-300");
+                        // heartText.classList.add("text-red-500");
+                    } 
+                    else{
+                        (async () =>{
+                            const rawResponse = await fetch(`/users/removeFavourite/${checkbox.value}`, {
+                                method: "DELETE",
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                            });
+                            const content = await rawResponse.json();
+                        })();
+                        console.log("Favourite removed");
+                        heart.classList.remove("scale-125", "text-red-500", "hover:scale-100", "hover:text-gray-500");
+                        heart.classList.add("hover:text-gray-500", "hover:scale-125", "text-gray-300");
+                        // heartText.classList.add("text-gray-300");
+                        // heartText.classList.remove("text-red-500");
+                    }
+                });
+            });
         });
 }
+

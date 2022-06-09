@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-gray-50">
     <head>
         <meta name="keywords" content="">
         <meta name="description" content="">
@@ -15,11 +15,11 @@
         <main class="px-36">
             <div id="grid-container" class="grid grid-cols-[1.2fr_4fr]">
                 <!-- SearchBox -->
-                <div class="col-start-1 col-end-3 row-start-1 row-end-2 border border- min-h-[100px] m-1">
+                <div class="col-start-1 col-end-3 row-start-1 row-end-2 min-h-[100px] m-1">
                     <%-include("../fragments/searchBox.ejs")%>
                 </div>
                 <!-- Filters -->
-                <div class="col-start-1 col-end-2 row-start-2 row-end-auto border m-1 p-1 flex flex-col">
+                <div class="col-start-1 col-end-2 row-start-2 row-end-auto border rounded-xl m-1 p-1 flex flex-col">
                     <h1 class="text-lg font-bold px-2">
                         Filter by:
                     </h1>
@@ -29,82 +29,107 @@
                     <div class="px-2 border-b pb-2">
                         <% let minPrice = parseFloat(locals.minPrice); let maxPrice = parseFloat(locals.maxPrice); let avgPrice = parseFloat(locals.avgPrice); %>
                         <h1 class="font-bold">Price</h1>
-                        <label id="label-price" for="price-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Average price in <%-locals.city%> is : <%-avgPrice%></label>
+                        <label id="label-price" for="price-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Average price in <%-locals.city%> is : <%-Math.round(avgPrice)%>€</label>
                         <div class="flex flex-row content-center">
-                            <div><%-minPrice%></div>
-                            <input id="price-range" type="range" name="price" min="<%-minPrice%>" max="<%-maxPrice%>" value="<%-avgPrice%>" class="to-filter w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-                            <div><%-maxPrice%></div>
+                            <div><%-minPrice%>€</div>
+                            <input id="price-range" type="range" name="price" min="<%-minPrice%>" max="<%-maxPrice%>" value="<%-avgPrice%>" class="to-filter aspect-sky-500 w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                            <div><%-maxPrice%>€</div>
                         </div>
                     </div>
                     <div class="px-2 border-b">
-                        <h1 class="font-bold">Rooms</h1>
+                        <h1 class="font-bold py-2">Rooms</h1>
                         <div class="flex items-center mb-2">
-                            <input id="one-room-checkbox" type="checkbox" value="" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="one-room-checkbox" type="checkbox" value="" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="one-room-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">One room</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="two-rooms-checkbox" type="checkbox" value="" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="two-rooms-checkbox" type="checkbox" value="" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="two-rooms-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Two rooms</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="three-rooms-checkbox" type="checkbox" value="" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="three-rooms-checkbox" type="checkbox" value="" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="three-rooms-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Three rooms</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="four-rooms-checkbox" type="checkbox" value="" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="four-rooms-checkbox" type="checkbox" value="" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="four-rooms-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Four or more</label>
                         </div>
                     </div>
                     <div class="px-2 border-b">
-                        <h1 class="font-bold">Rules</h1>
+                        <h1 class="font-bold py-2">Rules</h1>
                         <div class="flex items-center mb-2">
-                            <input id="kids-checkbox" type="checkbox" name="rules" value="for_kids" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="kids-checkbox" type="checkbox" name="rules" value="for_kids" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="kids-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Infants welcome</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="pets-checkbox" type="checkbox" name="rules" value="pets_allowed" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="pets-checkbox" type="checkbox" name="rules" value="pets_allowed" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="pets-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Pets allowed</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="smoking-checkbox" type="checkbox" name="rules" value="smoking_allowed" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="smoking-checkbox" type="checkbox" name="rules" value="smoking_allowed" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="smoking-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Smoking allowed</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="events-checkbox" type="checkbox" name="rules" value="events_allowed" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="events-checkbox" type="checkbox" name="rules" value="events_allowed" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="events-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Events allowed</label>
                         </div>
                     </div>
                     <div class="px-2 border-b">
-                        <h1 class="font-bold">Rating</h1>
+                        <h1 class="font-bold py-2">Rating</h1>
                         <div class="flex items-center mb-2">
-                            <input id="superb-checkbox" type="radio" name="rating" value="4.5" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="superb-checkbox" type="radio" name="rating" value="4.5" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="superb-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Superb: 4.5+</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="v-good-checkbox" type="radio" name="rating" value="4" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="v-good-checkbox" type="radio" name="rating" value="4" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="v-good-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Very good: 4+</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="good-checkbox" type="radio" name="rating" value="3" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="good-checkbox" type="radio" name="rating" value="3" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="good-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Good: 3+</label>
+                        </div>
+                        <div class="flex items-center mb-2">
+                            <input id="all-checkbox" type="radio" name="rating" value="0" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="all-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Any rating</label>
                         </div>
                     </div>
                     <div class="px-2">
-                        <h1 class="font-bold">Amenities</h1>
+                        <h1 class="font-bold py-2">Amenities</h1>
                         <% function capitalize(string) {return string.charAt(0).toUpperCase() + string.slice(1);} let i=0;%>
                         <% for(let amenity of locals.amenities) { %>
                             <% if(amenity.column_name == 'id_amenities' || amenity.column_name == 'id_property') continue %>
                             <div class="amenity flex items-center mb-2 <% if(i >= 5){%> hidden <%}%>">
-                                <input id="<%-amenity.column_name%>-check" name="amenities" type="checkbox" value="<%-amenity.column_name%>" class="to-filter w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <input id="<%-amenity.column_name%>-check" name="amenities" type="checkbox" value="<%-amenity.column_name%>" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="<%-amenity.column_name%>-check" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"><%-capitalize(amenity.column_name.split("_").join(" "))%></label>
                             </div>
                         <% i++; }%>
-                        <button id="more-amenities-btn" class="underline text-sm text-blue-400">Show all...</button>
+                        <button id="more-amenities-btn" class="underline text-sm text-sky-400">Show all...</button>
                     </div>
                 </div>
-                <!-- Search results -->
-                <div id="results-container" class="col-start-2 col-end-3 row-start-2 row-end-auto border min-h-[500px] m-1">
-                    
+                
+                <div class="col-start-2 col-end-3 row-start-2 row-end-auto border rounded-xl min-h-[500px] m-1 flex flex-col">
+                    <!-- Sorting options -->
+                    <div class="flex space-x-8 justify-center border-b">
+                        <div class="px-4 py-1 my-1">
+                            Sort by:
+                        </div>
+                        <div class="border rounded-full px-4 py-1 my-1 border-sky-300 text-sky-50 bg-sky-500 font-semibold">
+                            Default
+                        </div>
+                        <div class="border rounded-full px-4 py-1 my-1 bg-sky-50 text-sky-500 border-sky-500 font-semibold">
+                            Price
+                        </div>
+                        <div class="border rounded-full px-4 py-1 my-1 bg-sky-50 text-sky-500 border-sky-500 font-semibold">
+                            Rating
+                        </div>
+                        <div class="border rounded-full px-4 py-1 my-1 bg-sky-50 text-sky-500 border-sky-500 font-semibold">
+                            Reviews number
+                        </div>
+                    </div>
+                    <!-- Search results -->
+                    <div id="results-container">
+
+                    </div>
                 </div>
             </div>
         </main>

@@ -78,6 +78,11 @@ const postNewListing = (req, res) =>{
                     var queryAddProperty = `INSERT INTO properties (id_host, title, property_type, privacy) VALUES ($1, $2, $3, $4)`;
                     paramsAddProperty = [req.session.user.id_user, text_fields.title, text_fields.property_type, text_fields.privacy];
 
+                    var queryUpdateRole = `UPDATE users SET role='host' WHERE id_user=$1`;
+                    client.query(queryUpdateRole, [req.session.user.id_user], (err, result) =>{
+                        if(err) { console.log(err); return;}
+                    });
+
                     client.query(queryAddProperty, paramsAddProperty, (err1, result1) =>{
                         if(err1){
                             console.log(err1);
@@ -349,7 +354,7 @@ const postListingPhotos = (req, res) =>{
     });
     form.on("fileBegin", (name, file) =>{
         if(!file.originalFilename) return;
-        propertyFolder = __dirname + '/../public/photos/properties/' + req.params.id_property + '/';
+        propertyFolder = __dirname + '/../../public/photos/properties/' + req.params.id_property + '/';
         console.log(propertyFolder)
         if(!fs.existsSync(propertyFolder)){     // if folder for current property doesn't exist, create it
             fs.mkdirSync(propertyFolder);

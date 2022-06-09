@@ -8,7 +8,7 @@
         <%-include("../fragments/head.ejs")%>
     </head>
     <body>
-        <%-include("../fragments/header.ejs")%>
+        <%-include("../fragments/header2.ejs")%>
         <main>
             <div class="py-20 flex justify-center items-center mx-auto ">
                 <!-- <form method="POST" action="/users/authenticate">
@@ -28,7 +28,7 @@
                             <p class="text-red-600">
                                 <%- locals.msg %> 
                                 <% if(locals.createAccLink) {%>
-                                <a href='/users/register' class='text-blue-400 underline mx-auto'>Create a new account</a>
+                                <a href='/users/register' class='text-sky-400 underline mx-auto'>Create a new account</a>
                             <% } %>
                             </p>
                         <% } %>
@@ -36,7 +36,7 @@
                         </div>
                         <button type="submit" class="btn-primary">Log in</button>
                         <div class="mx-auto">
-                            <a href="/users/forgot" class="text-blue-400 text-sm underline">Forgot my password</a>
+                            <a href="/users/forgot" class="text-sky-400 text-sm underline">Forgot my password</a>
                         </div>
                     </div>
                 </form> -->
@@ -45,11 +45,11 @@
                         <h2 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h2>
                         <div>
                             <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your email</label>
-                            <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required>
+                            <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@email.com" required>
                         </div>
                         <div>
                             <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your password</label>
-                            <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
+                            <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
                         </div>
                         <div class="flex items-start">
                             <div class="flex items-start">
@@ -57,18 +57,18 @@
                                     <p class="text-red-600 ml-auto text-sm font-semibold">
                                         <%- locals.msg %> 
                                         <% //if(locals.createAccLink) {%>
-                                        <!-- <a href='/users/register' class='text-blue-400 underline mx-auto'>Create a new account</a> -->
+                                        <!-- <a href='/users/register' class='text-sky-400 underline mx-auto'>Create a new account</a> -->
                                     <% //} %>
                                     </p>
                                 <% } %>
                             </div>
-                            <a href="/users/forgot" class="ml-auto text-sm text-blue-700 hover:underline dark:text-blue-500">Forgot Password?</a>
+                            <a href="/users/forgot" class="ml-auto text-sm text-sky-700 hover:underline dark:text-sky-500">Forgot Password?</a>
                         </div>
                         
                                     
-                        <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login to your account</button>
+                        <button type="submit" class="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700">Login to your account</button>
                         <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-                            Not registered? <a href="/users/register" class="text-blue-700 hover:underline dark:text-blue-500">Create account</a>
+                            Not registered? <a href="/users/register" class="text-sky-700 hover:underline dark:text-sky-500">Create account</a>
                         </div>
                     </form>
                 </div>

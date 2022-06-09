@@ -8,21 +8,29 @@
         <%-include("../fragments/head.ejs")%>
         <script src="/public/js/hostDashboard.js" defer></script>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
+        <!-- FontAwesome script -->
+        <!-- <script src="https://kit.fontawesome.com/374b3caa1d.js" crossorigin="anonymous"></script> -->
+        <!-- FullCalendar -->
+        <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.css' rel='stylesheet' />
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.js'></script>
     </head>
     <body>
         <%-include("../fragments/header.ejs")%>
         <main class="px-36 flex flex-col">
             <!-- <h1 class="text-2xl font-bold p-4">HOST DASHBOARD</h1> -->
-            <% if (locals.numberOfProperties > 1) { %>
             <div class="inline-flex rounded-md shadow-sm self-center my-4">
+                <% if (locals.numberOfProperties > 1) { %>
                 <% var i =0; %>
                 <% for (let prop of locals.properties) {%>
-                <a href="/hosting/?id_property=<%-prop.id_property%>" aria-current="page" class="py-2 px-4  font-medium <%- locals.currentProperty.id_property == prop.id_property ? 'text-blue-700' : 'text-gray-900'%> bg-white <%-i == 0 ? 'rounded-l-lg' : ''%>  <%-i == locals.numberOfProperties-1 ? 'rounded-r-lg' : ''%> border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+                <a href="/hosting/?id_property=<%-prop.id_property%>" aria-current="page" class="py-2 px-4 font-medium <%- locals.currentProperty.id_property == prop.id_property ? 'text-sky-500 border-sky-500' : 'text-gray-900 border-gray-200'%> bg-white <%-i == 0 ? 'rounded-l-lg' : ''%> border  hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-sky-500 focus:text-sky-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
                   <%-prop.title%>
                 </a>
                 <% i++; } %>
+                <%}%>
+                <a href="/hosting/becomeHost" aria-current="page" class="py-2 px-4 <%- locals.numberOfProperties < 2 ? 'rounded-l-lg' : ''%> font-medium text-blue-500 rounded-r-lg bg-white border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-sky-500 focus:text-sky-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+                    Add Property <i class="fa-solid fa-plus"></i>
+                </a>
             </div>
-            <%}%>
 
             <div class="flex flex-col p-4">
                 <% var privacy, prop_type, prop = locals.currentProperty;
@@ -50,6 +58,7 @@
                         break;
                 }                            
                 %>
+                <input type="hidden" id="id_property" value="<%-prop.id_property%>" class="ring-sky-500">
                 <!-- Title -->
                 <div class="flex flex-row justify-between  border-b">
                     <!-- <h2 class="text-2xl font-bold"><%-prop.title%></h2> -->
@@ -69,13 +78,13 @@
                         </a>
                       </li>
                       <li>
-                        <a href="/hosting/listingPhotos/<%-prop.id_property%>" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                            Edit Photos
+                        <a href="/hosting/listingDetails/<%-prop.id_property%>" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                            Edit Details
                         </a>
                       </li>
                       <li>
-                        <a href="/hosting/listingDetails/<%-prop.id_property%>" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                            Edit Details
+                        <a href="/hosting/listingPhotos/<%-prop.id_property%>" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                            Edit Photos
                         </a>
                       </li>
                       <li>
@@ -191,6 +200,19 @@
                     </div>
                 </div>
             </div>
+
+            <div class="grid grid-cols-[3fr_1fr] border-t">
+                <!-- Calendar -->
+                <div class="">
+                    <h2 class="px-4 pt-4 text-lg font-bold">Upcoming Bookings Calendar</h2>
+                    <div id='calendar' class="h-[530px] p-4"></div>
+                </div>
+                <!-- Statistics -->
+                <div class="h-full border-l">
+                    <h2 class="px-4 pt-4 text-lg font-bold">This month's stats</h2>
+                </div>
+            </div>
+            
 
             <!-- Delete property popup modal -->
             <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 md:inset-0 h-modal md:h-full">

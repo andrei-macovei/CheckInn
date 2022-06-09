@@ -16,20 +16,34 @@ function generateToken(length) {
 }
 
 async function sendTokenEmail(firstname, email, token){
-    var transp= nodemailer.createTransport({
-		service: "gmail",
-		secure: false,
-		auth:{//login credentials
-			user:"macomobility.noreply@gmail.com",
-			pass:"tehniciWeb"
+    // var transp= nodemailer.createTransport({
+	// 	service: "gmail",
+	// 	secure: false,
+	// 	auth:{//login credentials
+	// 		user:"checkinn_dontreply@outlook.com",
+	// 		pass:"tehniciWeb"
+	// 	},
+	// 	tls:{
+	// 		rejectUnauthorized:false
+	// 	}
+	// });
+
+	// Outlook email connection
+	const transporter = nodemailer.createTransport({
+		service: "hotmail",
+		auth:{
+			//login credentials
+			user:"checkinn_dontreply@outlook.com",
+			pass:"licenta2022"
 		},
 		tls:{
 			rejectUnauthorized:false
 		}
-	});
+	})
+
 	//generate html within email
-	await transp.sendMail({
-		from:"macomobility.noreply@gmail.com",
+	await transporter.sendMail({
+		from:"checkinn_dontreply@outlook.com",
 		to:email,
 		subject:"Your new CheckInn account",
 		html:
@@ -46,11 +60,10 @@ async function sendTokenEmail(firstname, email, token){
 
 async function sendResetEmail(email, token){
     var transp= nodemailer.createTransport({
-		service: "gmail",
-		secure: false,
+		service: "hotmail",
 		auth:{//login credentials
-			user:"macomobility.noreply@gmail.com",
-			pass:"tehniciWeb"
+			user:"checkinn_dontreply@outlook.com",
+			pass:"licenta2022"
 		},
 		tls:{
 			rejectUnauthorized:false
@@ -58,7 +71,7 @@ async function sendResetEmail(email, token){
 	});
 	//generate html within email
 	await transp.sendMail({
-		from:"macomobility.noreply@gmail.com",
+		from:"checkinn_dontreply@outlook.com",
 		to:email,
 		subject:"Reset your CheckInn password",
 		html:

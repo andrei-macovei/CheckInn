@@ -35,6 +35,10 @@ router.post('/changePassword', usersController.postChangePassword);
 
 router.post('/addProfilePicture', usersController.postProfilePicture);
 
+router.post('/addFavourite/:id_property', usersController.postFavourite);
+
+router.delete('/deleteFavourite/:id_property', usersController.deleteFavourite);
+
 router.get('/logout', usersController.getLogout);
 
 module.exports = router

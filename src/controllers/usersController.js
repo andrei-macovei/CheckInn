@@ -129,7 +129,8 @@ const postAuthenticate = (req, res) => {
                             join_date : result.rows[0].join_date,
                             birthday :  result.rows[0].birthday,
                             profile_picture : result.rows[0].profile_picture,
-                            role: result.rows[0].role
+                            role: result.rows[0].role, 
+                            favourites: result.rows[0].favourites
                         }
                     }
                     if(text_fields.path) res.redirect(text_fields.path);
@@ -352,6 +353,34 @@ const postProfilePicture = (req, res) =>{
     })
 }
 
+const postFavourite = (req, res) =>{
+    // :id_property
+    if(req.session && req.session.user){
+        console.log("postfav")
+        var queryAddFavourite = `UPDATE users SET favourites = favourites || ${req.params.id_property} WHERE id_user=$1`;
+        client.query(queryAddFavourite, [req.session.user.id_user], (err, result) =>{
+            if(err) { console.log(err); return;}
+            // req.session.user.favourites.append(parseInt(req.params.id_property));
+            console.log(typeof req.session.user.favourites);
+            res.status(201);
+        });
+    } else res.status(403);
+}
+
+const deleteFavourite = (req, res) =>{
+    // :id_property
+    var queryRemoveFavourite = `UPDATE users SET favourites = array_remove(favourites, $1) WHERE id_user=$2`;
+    client.query(queryRemoveFavourite, [req.params.id_property], (err, result) =>{
+        if(err) { console.log(err); return;}
+        // req.session.user.favourites.append(req.params.id_property);
+        const index = req.session.user.favourites.indexOf(req.params.id_property);
+        if (index > -1) {
+            req.session.user.favourites.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        res.status(200);
+    });
+}
+
 const getLogout = (req, res) =>{
     req.session.destroy(); // ends the session
     // req.locals.user = null;          //// might be required
@@ -372,5 +401,7 @@ module.exports = {
     postEditProfile,
     postChangePassword,
     postProfilePicture,
+    postFavourite,
+    deleteFavourite,
     getLogout
 };
