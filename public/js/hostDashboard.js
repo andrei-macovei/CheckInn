@@ -34,23 +34,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.id = booking.id_booking;
                 if(booking.status == "pending"){
                     event.title = 'Pending';
-                    event.backgroundColor = '#0ea5e9';
+                    event.backgroundColor = '#fbbf24';
                     event.borderColor = '#2563eb';
                 } else {
                     event.title = 'Confirmed';
-                    event.backgroundColor = '#fbbf24';
+                    event.backgroundColor = '#0ea5e9';
                     event.borderColor = '#2563eb';
                 }
-                
-                event.start = booking.checkin;
-                event.end = booking.checkout;
+                var checkin = new Date(booking.checkin);
+                event.start = checkin;
+                var checkout = new Date(booking.checkout);
+                event.end = checkout.setDate( checkout.getDate() + 1);
                 event.allDay = true;
-                event.backgroundColor = '#0ea5e9';
-                event.borderColor = '#2563eb';
                 events.push(event);
             }
 
-            console.log(events);
+            // console.log(events);
             
 
             var calendar = new FullCalendar.Calendar(calendarEl, {

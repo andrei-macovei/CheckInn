@@ -24,19 +24,24 @@ const getHostDashboard = (req, res) =>{
                     var queryGetUnconfirmedBookings = `SELECT b.* FROM bookings b JOIN users u USING(id_user) WHERE id_property=$1 AND b.status='pending' AND b.checkin>=CURRENT_DATE`;
                     client.query(queryGetUnconfirmedBookings, [property], (err2, result2) =>{
                         if(err2) {console.log(err2); return;}
-                        var queryGetCurrentBooking = `SELECT b.*, u.firstname, u.lastname FROM bookings b JOIN users u USING(id_user) WHERE id_property=$1 AND b.status='confirmed' AND b.checkin<=CURRENT_DATE AND checkout>CURRENT_DATE`;
+                        var queryGetCurrentBooking = `SELECT b.*, u.firstname, u.lastname, u.profile_pic FROM bookings b JOIN users u USING(id_user) WHERE id_property=$1 AND b.status='confirmed' AND b.checkin<=CURRENT_DATE AND checkout>CURRENT_DATE`;
                         client.query(queryGetCurrentBooking, [property], (err3, result3) =>{
                             if(err3) {console.log(err3); return;}
                             var queryGetPropertyDetails = `SELECT id_property, title, property_type, guests, rating, privacy, property_type, guests FROM properties WHERE id_property=$1`;
                             client.query(queryGetPropertyDetails, [property], (err4, result4) =>{
                                 if(err4) {console.log(err4); return;}
-                                res.render('pages/hostDashboard', {
-                                    properties: result.rows,
-                                    confirmedBookings: result1.rows,
-                                    unconfirmedBookings: result2.rows,
-                                    currentBooking: result3.rows[0],
-                                    currentProperty: result4.rows[0],
-                                    numberOfProperties: result.rowCount
+                                var queryGetStats = `SELECT total_price, status, checkin FROM bookings WHERE checkin >= date_trunc('month', current_date) AND checkin < date_trunc('month', current_date + INTERVAL '1 month') AND id_property=$1`;
+                                client.query(queryGetStats, [property], (err5, result5) =>{
+                                    if(err5) { console.log(err5); return;}
+                                    res.render('pages/hostDashboard', {
+                                        properties: result.rows,
+                                        confirmedBookings: result1.rows,
+                                        unconfirmedBookings: result2.rows,
+                                        currentBooking: result3.rows[0],
+                                        currentProperty: result4.rows[0],
+                                        numberOfProperties: result.rowCount,
+                                        bookingsThisMonth: result5.rows
+                                    });
                                 });
                             });
                         });
@@ -424,6 +429,22 @@ const postAddRules = (req, res) =>{
     });
 }
 
+const getBookingHistory = (req, res) =>{
+    // :id_property
+    var queryGetOldBookings = `SELECT *, u.firstname, u.lastname FROM bookings INNER JOIN users u USING(id_user) WHERE checkout < CURRENT_DATE OR (status != 'confirmed' AND status != 'pending') AND id_property=$1 ORDER BY checkin DESC LIMIT 10`;
+    client.query(queryGetOldBookings, [req.params.id_property], (err, result) =>{
+        if(err) {console.log(err); return;}
+        var queryGetReviews = `SELECT *, u.firstname, u.lastname FROM reviews INNER JOIN users u USING(id_user) WHERE id_property=$1`;
+        client.query(queryGetReviews, [req.params.id_property], (err1, result1) =>{
+            if(err1) {console.log(err1); return;}
+            res.render('pages/bookingHistory', {
+                bookings: result.rows,
+                reviews: result1.rows
+            })
+        });
+    });
+}
+
 module.exports = {
     getHostDashboard,
     getBecomeHost,
@@ -435,4 +456,5 @@ module.exports = {
     postListingPhotos,
     getListingRules,
     postAddRules,
+    getBookingHistory
 };

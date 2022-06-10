@@ -74,21 +74,21 @@ const getPropertyBookings = (req, res) =>{
 const getConfirmBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='confirmed' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
-        res.redirect(`/hosting/?id_property=${req.params.id_property}`);
+        res.redirect(`/hosting/?id_property=${req.query.id_property}`);
     });
 }
 
 const getRefuseBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='refused' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
-        res.redirect(`/hosting/?id_property=${req.params.id_property}`);
+        res.redirect(`/hosting/?id_property=${req.query.id_property}`);
     });
 }
 
 const getCancelBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='canceled' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
-        if(!req.query.path) res.redirect(`/hosting/?id_property=${req.params.id_property}`);
+        if(req.query.id_property) res.redirect(`/hosting/?id_property=${req.params.id_property}`);
         else {
             if(req.query.path == 'userTrips')
             res.redirect('/booking/userTrips');

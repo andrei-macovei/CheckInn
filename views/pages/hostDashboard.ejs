@@ -67,8 +67,8 @@
                 </div>
                 <div id="dropdownDivider" class="z-10 hidden bg-white divide-y divide-gray-100 rounded shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
                     <div class="py-1">
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="popup-modal">
-                            View past bookings and statistics
+                        <a href="/hosting/bookingHistory/<%-prop.id_property%>" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="popup-modal">
+                            View past bookings
                         </a>
                     </div>
                     <ul class=" text-gray-700 dark:text-gray-200 flex flex-col" aria-labelledby="dropdownPropertyTitleBtn">
@@ -89,7 +89,7 @@
                       </li>
                       <li>
                         <a href="/hosting/listingRules/<%-prop.id_property%>" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                            Edit price&rules
+                            Edit Price&rules
                         </a>
                       </li>
                     </ul>
@@ -104,7 +104,7 @@
                 <div class="flex flex-col px-12 m-2">
                     <% if(locals.currentBooking) { var book = locals.currentBooking;%>
                     <h3 class="font-bold text-lg p-2 self-center">Current guests at <%-prop.title%></h3>
-                        <div class="border p-4 rounded-lg self-center bg-gray-50 w-[500px] h-[240px]">
+                        <div class="border p-4 rounded-xl self-center bg-gray-50 w-[500px] h-[240px]">
                             <div class="text-lg font-semibold">Booking #<%-book.id_booking%></div>
                             <div class="flex justify-between p-2">
                                 <div>Checkin: <%-book.checkin ? book.checkin.toDateString().slice(3) : ''%></div>
@@ -121,11 +121,15 @@
                             </div>
                             <div class="flex justify-between p-2">
                                 <div>Guests: <%-book.guests%>/<%-prop.guests%></div>
-                                <div class="p-2">Income: <span class="text-green-500 font-semibold"><%-book.total_price*80/100%>€</span></div>
+                                <div class="p-2">Income: <span class="text-sky-500 font-semibold"><%-book.total_price*80/100%>€</span></div>
                             </div>
                             <div class="flex flex-row justify-center content-center mb-2">
-                                <div id="profile-pic-host" class="justify-self-start min-h-[50px] min-w-[50px] max-h-[50px] max-w-[50px] rounded-full bg-slate-200 mr-2">
-                                </div>
+                                <% if (book.profile_pic) { %>
+                                    <img src="../../<%-book.profile_pic%>" id="profile-pic-host" class="justify-self-start min-h-[50px] min-w-[50px] max-h-[50px] max-w-[50px] rounded-full bg-slate-200 mr-2">
+                                <% }else {%>
+                                    <div id="profile-pic-host" class="justify-self-start min-h-[50px] min-w-[50px] max-h-[50px] max-w-[50px] rounded-full bg-slate-200 mr-2">
+                                    </div>
+                                <% }%>
                                 <h3 class="font-semibold self-center"><%-book.firstname%> <%-book.lastname%></h3>
                             </div>
                         </div>
@@ -137,7 +141,7 @@
                     <div class="flex flex-col justify-center px-12 ">
                         <h3 class="font-bold text-lg p-2 self-center <%-locals.unconfirmedBookings[0] ? '' : 'text-gray-500'%>"><%-locals.unconfirmedBookings[0] ? '' : 'No '%>Unconfirmed bookings</h3>
                         <% for (book of locals.unconfirmedBookings) {%>
-                            <div class="border p-4 rounded-lg bg-gray-50 border-yellow-400 my-4 w-[500px] h-[240px]">
+                            <div class="border p-4 rounded-xl bg-gray-50 border-yellow-400 my-4 w-[500px] h-[240px]">
                                 <div class="text-lg font-semibold">Booking #<%-book.id_booking%></div>
                                 <div class="flex justify-between p-2">
                                     <div>Checkin: <%-book.checkin.toDateString().slice(3)%></div>
@@ -154,11 +158,11 @@
                                 </div>
                                 <div class="flex justify-between p-2">
                                     <div>Guests: <%-book.guests%>/<%-prop.guests%></div>
-                                    <div class="p-2">Income: <span class="text-green-500 font-semibold"><%-book.total_price*80/100%>€</span></div>
+                                    <div class="p-2">Income: <span class="text-sky-500 font-semibold"><%-book.total_price*80/100%>€</span></div>
                                 </div>
                                 <div class="p-2">
-                                    <a href="/booking/confirm/<%-book.id_property%>/<%-book.id_booking%>" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg  px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Confirm</a>
-                                    <a href="/booking/refuse/<%-book.id_property%>/<%-book.id_booking%>" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg  px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Refuse</a>
+                                    <a href="/booking/confirm/<%-book.id_booking%>?id_property=<%-book.id_property%>" class="text-white bg-sky-500 hover:bg-sky-600 focus:ring-4 focus:ring-sky-300 font-medium rounded-lg  px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Confirm</a>
+                                    <a href="/booking/refuse/<%-book.id_booking%>?id_property=<%-book.id_property%>" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg  px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Refuse</a>
                                 </div>
                             </div>
                         <%}%>
@@ -167,7 +171,7 @@
                     <div class="flex flex-col px-12 border-l m-2">
                         <h3 class="font-bold text-lg p-2 self-center <%-locals.confirmedBookings[0] ? '' : 'text-gray-500'%>"><%-locals.confirmedBookings[0] ? '' : 'No '%>Upcoming bookings</h3>
                         <% for (book of locals.confirmedBookings) {%>
-                            <div class="border p-4 rounded-xl my-4 bg-gray-50 w-[500px] h-[240px] <%- book.status == 'confirmed' ? 'border-green-500' : 'border-red-500'%>">
+                            <div class="border p-4 rounded-xl my-4 bg-gray-50 w-[500px] h-[240px] <%- book.status == 'confirmed' ? 'border-sky-500' : 'border-red-500'%>">
                                 <div class="text-lg font-semibold">Booking #<%-book.id_booking%></div>
                                 <div class="flex justify-between p-2">
                                     <div>Checkin: <%-book.checkin.toDateString().slice(3)%></div>
@@ -184,11 +188,11 @@
                                 </div>
                                 <div class="flex justify-between p-2">
                                     <div>Guests: <%-book.guests%>/<%-prop.guests%></div>
-                                    <div class="p-2">Income: <span class="text-green-500 font-semibold"><%-book.total_price*80/100%>€</span></div>
+                                    <div class="p-2">Income: <span class="text-sky-500 font-semibold"><%-book.total_price*80/100%>€</span></div>
                                 </div>
                                 <% if(book.status == 'confirmed') {%>
                                 <div class="p-2">
-                                    <a href="/booking/cancel/<%-book.id_booking%>" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg  px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Cancel booking</a>
+                                    <a href="/booking/cancel/<%-book.id_booking%>?id_property=<%-book.id_property%>" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg  px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Cancel booking</a>
                                 </div>
                                 <%} else {%>
                                 <div>
@@ -201,15 +205,53 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-[3fr_1fr] border-t">
+            <div class="grid grid-cols-[3fr_1.2fr] border-t">
                 <!-- Calendar -->
                 <div class="">
                     <h2 class="px-4 pt-4 text-lg font-bold">Upcoming Bookings Calendar</h2>
-                    <div id='calendar' class="h-[530px] p-4"></div>
+                    <div id='calendar' class="h-[550px] p-4"></div>
                 </div>
                 <!-- Statistics -->
                 <div class="h-full border-l">
                     <h2 class="px-4 pt-4 text-lg font-bold">This month's stats</h2>
+                    <div class="flex flex-col p-4 font-semibold justify-center items-center">
+                        <%  var guaranteedIncome = 0;
+                            var confirmedIncome = 0; 
+                            var pendingIncome = 0; 
+                            var completedBookings = 0; 
+                            var confirmedBookings = 0; 
+                            var allBookings = 0; 
+                            var today = new Date();
+                            for(booking of locals.bookingsThisMonth) {
+                                checkinDate = new Date(booking.checkin);
+                                if(booking.status == 'confirmed' && checkinDate <= today) {
+                                    guaranteedIncome += booking.total_price*80/100; 
+                                    completedBookings++;
+                                }
+                                if(booking.status == 'confirmed' && checkinDate > today){
+                                    confirmedIncome += booking.total_price*80/100;
+                                    confirmedBookings++;
+                                }
+                                if(booking.status == 'pending' && checkinDate > today){
+                                    pendingIncome += booking.total_price*80/100;
+                                }
+                                allBookings++;
+                        }%>
+                        <p class="">Guaranteed income so far:</p>
+                        <p class="text-lg text-sky-500"><%-guaranteedIncome%>€</p>
+                        <p>Upcoming confirmed bookings income:</p>
+                        <p class="text-lg text-sky-500"><%-confirmedIncome%>€</p>
+                        <p>Pending bookings potential income:</p>
+                        <p class="text-lg text-sky-500"><%-pendingIncome%>€</p>
+                        <p>Total potential income:</p>
+                        <p class="text-lg text-sky-500"><%-guaranteedIncome + confirmedIncome + pendingIncome%>€</p>
+                        <p>Bookings completed so far:</p>
+                        <p class="text-lg text-sky-500"><%-completedBookings == 1 ? '1 booking' : completedBookings + ' bookings'%></p>
+                        <p>Upcoming bookings confirmed:</p>
+                        <p class="text-lg text-sky-500"><%-confirmedBookings == 1 ? '1 booking' : confirmedBookings + ' bookings'%></p>
+                        <p>Total bookings made:</p>
+                        <p class="text-lg text-sky-500"><%-allBookings == 1 ? '1 booking' : allBookings + ' bookings'%></p>
+                    </div>
                 </div>
             </div>
             

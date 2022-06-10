@@ -41,4 +41,6 @@ router.post('/addRules/:id_property', hostingController.postAddRules)
 
 router.delete('/deleteProperty/:id_property', hostingAsyncController.deleteProperty);
 
+router.get('/bookingHistory/:id_property', hostingController.getBookingHistory);
+
 module.exports = router

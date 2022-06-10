@@ -57,7 +57,7 @@ bookingInputs.forEach(function(opt){
 
                 const priceTimesNights = document.createElement('div');
                 priceTimesNights.innerHTML = `
-                <p> ${pricePerNight.innerText}€ x ${nights} nights </p>
+                <p> ${pricePerNight.innerText} x ${nights} nights </p>
                 <p> ${parseFloat(pricePerNight.innerText)*nights}€ </p>
                 `;
                 priceTimesNights.classList.add('flex', 'flex-row', 'justify-between', 'p-4');

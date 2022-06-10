@@ -337,7 +337,7 @@ const postProfilePicture = (req, res) =>{
     });
     form.on("fileBegin", (name, file) =>{
         if(!file.originalFilename) return;
-        picturesFolder = __dirname + '/../public/photos/users/' + req.session.user.id_user + '/';
+        picturesFolder = __dirname + '/../../public/photos/users/' + req.session.user.id_user + '/';
         console.log('Pictures folder: ' + picturesFolder);
         if(!fs.existsSync(picturesFolder)){  
             fs.existsSync(picturesFolder)   // if folder for current property doesn't exist, create it

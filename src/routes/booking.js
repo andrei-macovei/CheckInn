@@ -4,15 +4,15 @@ const {postBooking, getPropertyBookings, getConfirmBooking, getRefuseBooking, ge
 
 router.post('/add/:price', postBooking);
 
+router.get('/userTrips', getUserTrips);
+
 router.get('/:id_property', getPropertyBookings);
 
-router.get('/confirm/:id_property/:id_booking', getConfirmBooking);
+router.get('/confirm/:id_booking', getConfirmBooking);
 
-router.get('/refuse/:id_property/:id_booking', getRefuseBooking);
+router.get('/refuse/:id_booking', getRefuseBooking);
 
-router.get('/cancel/:id_property/:id_booking', getCancelBooking);
-
-router.get('/userTrips', getUserTrips);
+router.get('/cancel/:id_booking', getCancelBooking);
 
 
 module.exports = router;
