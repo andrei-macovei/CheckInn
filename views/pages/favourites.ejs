@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+
+        <title>CheckInn Home</title>
+        <%-include("../fragments/head.ejs")%>
+         <!-- FontAwesome script -->
+        <script src="https://kit.fontawesome.com/374b3caa1d.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <%-include("../fragments/header.ejs")%>
+        <main class="px-36">
+            <h2 class="text-xl p-4 font-bold text-center">Your favourite properties</h2>
+            <% function capitalize(string) {return string.charAt(0).toUpperCase() + string.slice(1);} %>
+            <% for (prop of locals.properties) { %>
+            <a href="/search/result/<%-prop.id_property%>" class="flex justify-center">
+                <div class="search-result grid grid-cols-[1fr_3fr] bg-slate-100 border border-gray-300 rounded-lg min-h-[200px] p-2 m-2 hover:cursor-pointer w-[1000px]">
+                    <img src="../../<%-prop.big_picture%>" class="col-start-1 col-end-2 row-span-3 min-h-[200px] min-w-[200px] max-w-[220px] rounded-lg bg-slate-200 text-slate-200">
+                    <div class="col-start-2 row-start-1 px-4">
+                        <div class="flex justify-between">
+                            <h2 class="text-xl font-bold text-sky-500">
+                                <%-prop.title%>
+                            </h2>
+                            <div class="flex flex-col">
+                                <p class="font-extralight"><%-prop.rating ? prop.rating + '<i class="fa-solid fa-star text-yellow-400"></i>' : 'No rating yet'%></p>
+                                
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="flex">
+                                <p class="text-xs mr-2"><%- prop.property_type == 'bedandbreakfast' ? 'Bed and Breakfast' : capitalize(prop.property_type)%></p>
+                                <p class="text-xs mr-2"><%-prop.guests == 1 ? prop.guests + 'guest' : prop.guests + ' guests'%></p>
+                                <!-- <p class="text-xs mr-2">${result.count} rooms</p> -->
+                            </div>
+                            <div>
+                                <label class="favourite self-end">
+                                    <input type="hidden" name="favourite" value="False"/>
+                                    <input class="custom-checkbox-input hidden scale-125 hover-text-gray-500 hover:scale-100" name="favourite" value="${result.id_property}" type="checkbox">
+                                    <i class="heart fa-solid fa-heart text-gray-300 fa-xl hover:text-gray-500 hover:scale-125 p-4"></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-start-2 row-start-2 px-6">
+                        <%-prop.description %>
+                    </div>
+                    <div class="col-start-2 row-start-3 justify-self-end self-end text-sky-500 p-4">
+                        <div class="font-semibold text-lg">
+                            <%-prop.price%>€/night
+                        </div>
+                        <div class="hidden">
+                            #TOTAL_PRICE
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <% } %>
+        </main>
+    </body>
+</html>

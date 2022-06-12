@@ -43,4 +43,6 @@ router.delete('/deleteProperty/:id_property', hostingAsyncController.deletePrope
 
 router.get('/bookingHistory/:id_property', hostingController.getBookingHistory);
 
+router.get('/propertyReviews/:id_property', hostingController.getPropertyReviews);
+
 module.exports = router

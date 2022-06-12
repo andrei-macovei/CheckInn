@@ -49,28 +49,6 @@
                         </div>
                     <%}%>
                 </div>
-                <div id="reviews-container" class="mx-4 py-4 border-y flex flex-col space-y-4 min-w-[400px]">
-                    <% if (locals.reviews.length > 0) {%>
-                    <% for(review of locals.reviews) { %>
-                    <div id="review-<%-review.id_review%>" class="grid grid-cols-2 border rounded-lg p-4 justify-between">
-                        <div class="flex flex-row">
-                            <% if (review.profile_pic) { %>
-                                <img src="../../<%-review.profile_pic%>" class="justify-self-start min-h-[60px] min-w-[60px] max-h-[60px] max-w-[60px] rounded-full bg-slate-200 mr-2">
-                            </img>
-                            <%} else {%>
-                                <div id="profile-pic-host" class="justify-self-start min-h-[60px] min-w-[60px] max-h-[60px] max-w-[60px] rounded-full bg-slate-200 mr-2">
-                                </div>
-                            <%}%>
-                            <h3 class="font-semibold"><%-review.firstname%> <%-review.lastname[0]%>.</h3>
-                        </div>
-                        <div class="font-light justify-self-end"><%-review.total_score%> <i class="fa-solid fa-star text-yellow-400"></i></div>
-                        <div class="col-span-2 justify-self-center"><%-review.review_text%></div>
-                    </div>
-                    <%}%>
-                    <% }else { %>
-                        <div class="p-4">No reviews yet. Reviews will appear here after some of your guests leave one.</div>
-                    <%}%>             
-                </div>
             </div>
         </main>
     </body>

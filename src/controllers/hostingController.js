@@ -434,15 +434,22 @@ const getBookingHistory = (req, res) =>{
     var queryGetOldBookings = `SELECT *, u.firstname, u.lastname FROM bookings INNER JOIN users u USING(id_user) WHERE checkout < CURRENT_DATE OR (status != 'confirmed' AND status != 'pending') AND id_property=$1 ORDER BY checkin DESC LIMIT 10`;
     client.query(queryGetOldBookings, [req.params.id_property], (err, result) =>{
         if(err) {console.log(err); return;}
-        var queryGetReviews = `SELECT *, u.firstname, u.lastname FROM reviews INNER JOIN users u USING(id_user) WHERE id_property=$1`;
+        
+        res.render('pages/bookingHistory', {
+            bookings: result.rows,
+        })
+    });
+}
+
+const getPropertyReviews = (req, res) =>{
+    // :id_property
+    var queryGetReviews = `SELECT r.*, u.firstname, u.lastname, u.profile_pic FROM reviews r INNER JOIN users u USING(id_user) WHERE id_property=$1`;
         client.query(queryGetReviews, [req.params.id_property], (err1, result1) =>{
             if(err1) {console.log(err1); return;}
-            res.render('pages/bookingHistory', {
-                bookings: result.rows,
+            res.render('pages/propertyReviews', {
                 reviews: result1.rows
             })
         });
-    });
 }
 
 module.exports = {
@@ -456,5 +463,6 @@ module.exports = {
     postListingPhotos,
     getListingRules,
     postAddRules,
-    getBookingHistory
+    getBookingHistory,
+    getPropertyReviews
 };

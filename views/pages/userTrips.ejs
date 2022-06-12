@@ -20,11 +20,14 @@
             <!-- <h2 class="text-2xl font-semibold p-4">Your trips</h2> -->
             <% if(locals.currentTrip) { let trip = locals.currentTrip%>
                 <div class="p-4 flex flex-col justify-center border-b">
-                    <h2 class="text-xl font-bold p-4 text-center">Current trip</h2>
+                    <div class="flex flex-row justify-around">
+                        <h2 class="text-xl font-bold p-4 text-center justify-self-center">Current trip</h3>
+                        <button type="button" class="text-white hidden bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View on calendar</button>
+                    </div>
                     <div class="border rounded-xl self-center w-3/4 p-6 my-4 space-y-2 bg-slate-50">
                         <div class="flex flex-row justify-between">
                             <div class="flex flex-col">
-                                <a href="/search/result/<%-trip.id_property%>" class="text-xl text-blue-600 font-semibold">Trip to <%-trip.title%></a>
+                                <a href="/search/result/<%-trip.id_property%>" class="text-xl text-sky-500 font-semibold">Trip to <%-trip.title%></a>
                                 <p class="font-light"><%-trip.city%>,<%-trip.country%></p>
                             </div>
                             <div class="self-center">
@@ -50,13 +53,17 @@
             <%}%>
             </div>
             <div class="p-4 flex flex-col justify-center border-b">
-                <h2 class="text-xl font-bold p-4 text-center">Upcoming trips</h3>
+                <div class="flex flex-row justify-around">
+                    <h2 class="text-xl font-bold m-4 text-center justify-self-center">Upcoming trips</h3>
+                    <button type="button" class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View on calendar</button>
+                </div>
+                
                 <% if(locals.upcomingTrips) {%>
                     <% for(trip of upcomingTrips) { %>
                         <div class="border rounded-xl self-center w-3/4 p-6 my-4 space-y-2 bg-slate-50">
                             <div class="flex flex-row justify-between">
                                 <div class="flex flex-col">
-                                    <a href="/search/result/<%-trip.id_property%>" class="text-xl text-blue-600 font-semibold">Trip to <%-trip.title%></a>
+                                    <a href="/search/result/<%-trip.id_property%>" class="text-xl text-sky-500 font-semibold">Trip to <%-trip.title%></a>
                                     <p class="font-light"><%-trip.city%>,<%-trip.country%></p>
                                 </div>
                                 <div class="self-center">
@@ -92,13 +99,16 @@
                 <%}%>
             </div>
             <div class="p-4 flex flex-col justify-center">
-                <h2 class="text-xl font-bold p-4 text-center">Your past trips</h3>
+                <div class="flex flex-row justify-around">
+                    <h2 class="text-xl font-bold p-4 text-center justify-self-center">Your past trips</h3>
+                    <button type="button" class="text-white invisible bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View on calendar</button>
+                </div>
                 <% if(locals.olderTrips) {%>
                     <% for(trip of olderTrips) { %>
                     <div class="border rounded-xl self-center w-3/4 p-6 my-4 space-y-2 bg-slate-50">
                         <div class="flex flex-row justify-between">
                             <div class="flex flex-col">
-                                <a href="/search/result/<%-trip.id_property%>" class="text-xl text-blue-600 font-semibold">Trip to <%-trip.title%></a>
+                                <a href="/search/result/<%-trip.id_property%>" class="text-xl text-sky-500 font-semibold">Trip to <%-trip.title%></a>
                                 <p class="font-light"><%-trip.city%>,<%-trip.country%></p>
                             </div>
                             <div class="self-center">
@@ -128,74 +138,7 @@
                                     Review your stay
                                 </button>
                                   
-                                  <!-- Main modal -->
-                                  <div id="defaultModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full">
-                                    <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
-                                        <!-- Modal content -->
-                                        <form method="POST" id="review-form" action="/reviews/add/" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                                            <!-- Modal header -->
-                                            <div class="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
-                                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                                    Add a review
-                                                </h3>
-                                                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="defaultModal">
-                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>  
-                                                </button>
-                                            </div>
-                                            <!-- Modal body -->
-                                            <div class="p-6 space-y-6">
-                                                <div class="flex flex-col">
-                                                    <h1 class="font-bold">Scores</h1>
-                                                    <p class="text-sm font-light">Rate each category between 1 and 5</p>
-                                                </div>
-                                                <div class="grid grid-rows-2 grid-cols-2 gap-4">
-                                                    <div class="px-2 pb-2">
-                                                        <label id="label-clean" for="clean-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Cleanliness<span id="clean-val"></span></label>
-                                                        <div class="flex flex-row content-center">
-                                                            <div>1</div>
-                                                            <input id="clean-range" type="range" name="clean_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-                                                            <div>5</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="px-2 pb-2">
-                                                        <label id="label-location" for="location-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Location<span id="location-val"></span></label>
-                                                        <div class="flex flex-row content-center">
-                                                            <div>1</div>
-                                                            <input id="location-range" type="range" name="location_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-                                                            <div>5</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="px-2 pb-2">
-                                                        <label id="label-comfort" for="comfort-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Comfort<span id="comfort-val"></span></label>
-                                                        <div class="flex flex-row content-center">
-                                                            <div>1</div>
-                                                            <input id="comfort-range" type="range" name="comfort_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-                                                            <div>5</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="px-2 pb-2">
-                                                        <label id="label-value" for="value-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Value for money<span id="value-val"></span></label>
-                                                        <div class="flex flex-row content-center">
-                                                            <div>1</div>
-                                                            <input id="value-range" type="range" name="value_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-                                                            <div>5</div>
-                                                        </div>
-                                                    </div>                                                    
-                                                </div>
-                                                <div class="border-t py-2">
-                                                    <label for="review-text" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Describe your stay in a few words</label>
-                                                    <textarea id="review-text" name="review_text" rows="4" class="block p-2.5 w-full text-sm text-gray-900  rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Think of the pros and cons of the property"></textarea>
-                                                </div>
-                                                
-                                            </div>
-                                            <!-- Modal footer -->
-                                            <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
-                                                <button data-modal-toggle="defaultModal" id="add-review-btn" type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add Review</button>
-                                                <button data-modal-toggle="defaultModal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+                                
                                 <%} else if(trip.status == 'reviewed') {%>
                                     <button class="review-btn focus:outline-none border border-cyan-500 text-cyan-500 focus:ring-4 focus:ring-cyan-300 font-medium cursor-not-allowed rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-cyan-600  dark:focus:ring-cyan-900" type="button" disabled>
                                         Review added!
@@ -209,6 +152,75 @@
                         <p class="text-lg font-light">You have no past trips</p>
                     </div>
                 <%}%>
+            </div>
+
+        <!-- Main modal -->
+            <div id="defaultModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full">
+                <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
+                    <!-- Modal content -->
+                    <form method="POST" id="review-form" action="/reviews/add/" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div class="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                Add a review
+                            </h3>
+                            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="defaultModal">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>  
+                            </button>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="p-6 space-y-6">
+                            <div class="flex flex-col">
+                                <h1 class="font-bold">Scores</h1>
+                                <p class="text-sm font-light">Rate each category between 1 and 5</p>
+                            </div>
+                            <div class="grid grid-rows-2 grid-cols-2 gap-4">
+                                <div class="px-2 pb-2">
+                                    <label id="label-clean" for="clean-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Cleanliness<span id="clean-val"></span></label>
+                                    <div class="flex flex-row content-center">
+                                        <div>1</div>
+                                        <input id="clean-range" type="range" name="clean_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                        <div>5</div>
+                                    </div>
+                                </div>
+                                <div class="px-2 pb-2">
+                                    <label id="label-location" for="location-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Location<span id="location-val"></span></label>
+                                    <div class="flex flex-row content-center">
+                                        <div>1</div>
+                                        <input id="location-range" type="range" name="location_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                        <div>5</div>
+                                    </div>
+                                </div>
+                                <div class="px-2 pb-2">
+                                    <label id="label-comfort" for="comfort-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Comfort<span id="comfort-val"></span></label>
+                                    <div class="flex flex-row content-center">
+                                        <div>1</div>
+                                        <input id="comfort-range" type="range" name="comfort_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                        <div>5</div>
+                                    </div>
+                                </div>
+                                <div class="px-2 pb-2">
+                                    <label id="label-value" for="value-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Value for money<span id="value-val"></span></label>
+                                    <div class="flex flex-row content-center">
+                                        <div>1</div>
+                                        <input id="value-range" type="range" name="value_score" min="1" max="5" value="3" step="1" class="w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                                        <div>5</div>
+                                    </div>
+                                </div>                                                    
+                            </div>
+                            <div class="border-t py-2">
+                                <label for="review-text" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Describe your stay in a few words</label>
+                                <textarea id="review-text" name="review_text" rows="4" class="block p-2.5 w-full text-sm text-gray-900  rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Think of the pros and cons of the property"></textarea>
+                            </div>
+                            
+                        </div>
+                        <!-- Modal footer -->
+                        <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
+                            <button data-modal-toggle="defaultModal" id="add-review-btn" type="submit" class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Add Review</button>
+                            <button data-modal-toggle="defaultModal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </main>
     </body>
