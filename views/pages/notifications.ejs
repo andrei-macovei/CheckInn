@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+
+        <title>CheckInn Home</title>
+        <%-include("../fragments/head.ejs")%>
+    </head>
+    <body>
+        <%-include("../fragments/header.ejs")%>
+        <main class="px-36">
+            <h2 class="text-lg font-bold text-center py-4">Your notifications</h2>
+
+            <!-- One notification -->
+            <div class="flex flex-col items-center py-2 ">
+                <div class="flex flex-col border rounded-xl w-[900px] bg-slate-50">
+                    <div class="text-sm font-semibold text-gray-500 px-6 pt-4">
+                        Suggestion
+                    </div>
+                    <div class="px-6 pb-4 flex justify-between items-center">
+                        <p class="text-md font-semibold">
+                            Users with profile pictures have more of their bookings accepted. Add yours now!
+                        </p>
+                        <button type="button" class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Your profile</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- One notification -->
+            <div class="flex flex-col items-center py-2">
+                <div class="flex flex-col border rounded-xl w-[900px] bg-slate-50">
+                    <div class="text-sm font-semibold text-gray-500 px-6 pt-4">
+                        Booking confirmation
+                    </div>
+                    <div class="px-6 pb-4 flex justify-between items-center">
+                        <p class="text-md font-semibold">
+                            Your booking for Bruckenthal House has been confirmed! See you there!
+                        </p>
+                        <button type="button" class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View your trips</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- One notification -->
+            <div class="flex flex-col items-center py-2">
+                <div class="flex flex-col border rounded-xl w-[900px] bg-slate-50">
+                    <div class="text-sm font-semibold text-gray-500 px-6 pt-4">
+                        Booking refused
+                    </div>
+                    <div class="px-6 pb-4 flex justify-between items-center">
+                        <p class="text-md font-semibold">
+                            Your booking for Bruckenthal House has been refused! Sorry about that!
+                        </p>
+                        <button type="button" class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View your trips</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

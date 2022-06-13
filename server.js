@@ -34,6 +34,8 @@ app.use("/search", require('./src/routes/search'));
 app.use("/booking", require('./src/routes/booking'));
 app.use("/reviews", require('./src/routes/reviews'));
 app.use("/favourites", require('./src/routes/favourites'));
+app.use("/notifications", require('./src/routes/notifications'));
+app.use("/admin", require('./src/routes/admin'));
 
 app.get('/favicon.ico' , function(req , res){/*code*/}); // silence weird errors
 app.get('/*.js' , function(req , res){/*code*/}); // silence weird errors
