@@ -1,6 +1,8 @@
 const formidable = require('formidable')
 const { Client } = require('pg');
 
+const notificationsController = require('./notificationsController');
+
 // database connection
 const conn = require("../../public/json/connection.json");
 var client = new Client(conn);
@@ -33,7 +35,6 @@ const postBooking = (req, res) =>{
             var overlap = 0;
             const checkin = new Date
 
-
             for(row of result.rows){
                 if((row.checkin > dates[0]) && (row.checkin < dates[1])){
                     overlap = 1;
@@ -51,13 +52,21 @@ const postBooking = (req, res) =>{
                 res.redirect(`/search/result/${text_fields.id_property}?error=fullyBooked`);
             } else{
                 var queryAddBooking = `INSERT INTO bookings(id_user, id_property, checkin, checkout, guests, total_price) VALUES ($1, $2, $3, $4, $5, $6)`;
-                var paramsAddBooking = [req.session.user.id_user,  text_fields.id_property, dates[0], dates[1], text_fields.guests, req.params.price];
+                var paramsAddBooking = [req.session.user.id_user, text_fields.id_property, dates[0], dates[1], text_fields.guests, req.params.price];
                 client.query(queryAddBooking, paramsAddBooking, (err1, result1) =>{
                     if(err1) {console.log(err1); return;}
 
                     // SUCCESFUL
-                    res.render(`pages/bookingComfirmation`, {property: text_fields.name_property});
-                })
+                    // send new booking notification to host
+                    var queryGetHost = `SELECT u.id_user, p.title from properties p JOIN users u ON p.id_host=u.id_user WHERE id_property=$1`;
+                    client.query(queryGetHost, [text_fields.id_property], (err2, result2) =>{
+                        if(err2) {console.log(err2); return;}
+                        var text = `An user has requested to book ${result2.rows[0].title}`;
+                        var action = `/hosting/?id_property=${text_fields.id_property}`;
+                        notificationsController.sendNotification(result2.rows[0].id_user, 'New booking request', text, action, 'Review bookings');
+                        res.render(`pages/bookingConfirmation`, {property: text_fields.name_property});
+                    });
+                });
             }
         });
     });
@@ -74,6 +83,15 @@ const getPropertyBookings = (req, res) =>{
 const getConfirmBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='confirmed' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
+
+        // send confirmation notification to user who made booking
+        var queryGetProperty = `SELECT p.title, p.id_property, u.id_user FROM bookings b JOIN properties p USING(id_property) JOIN users u USING(id_user) WHERE id_booking=$1`;
+        client.query(queryGetProperty, [req.params.id_booking], (err, result) =>{
+            if(err) {console.log(err); return;}
+            var text = `Your booking to ${result.rows[0].title} was confirmed! See you there!`;
+            var action = `/booking/userTrips`;
+            notificationsController.sendNotification(result.rows[0].id_user, `Booking confirmed - #${req.params.id_booking}`, text, action, 'Your trips');
+        });
         res.redirect(`/hosting/?id_property=${req.query.id_property}`);
     });
 }
@@ -81,6 +99,15 @@ const getConfirmBooking = (req, res) =>{
 const getRefuseBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='refused' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
+
+        // send refusal notification to user who made booking
+        var queryGetProperty = `SELECT p.title, p.id_property, u.id_user FROM bookings b JOIN properties p USING(id_property) JOIN users u USING(id_user) WHERE id_booking=$1`;
+        client.query(queryGetProperty, [req.params.id_booking], (err, result) =>{
+            if(err) {console.log(err); return;}
+            var text = `Your booking to ${result.rows[0].title} was refused! Sorry about that!`;
+            var action = `/booking/userTrips`;
+            notificationsController.sendNotification(result.rows[0].id_user, `Booking refused - #${req.params.id_booking}`, text, action, 'Your trips');
+        });
         res.redirect(`/hosting/?id_property=${req.query.id_property}`);
     });
 }
@@ -88,10 +115,29 @@ const getRefuseBooking = (req, res) =>{
 const getCancelBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='canceled' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
+
+        // if host canceled, send cancel notification to user who made booking
+        var queryGetProperty = `SELECT p.title, p.id_property, u.id_user FROM bookings b JOIN properties p USING(id_property) JOIN users u USING(id_user) WHERE id_booking=$1`;
+        client.query(queryGetProperty, [req.params.id_booking], (err, result) =>{
+            if(err) {console.log(err); return;}
+            var text = `Your booking to ${result.rows[0].title} was canceled! Sorry about that!`;
+            var action = `/booking/userTrips`;
+            notificationsController.sendNotification(result.rows[0].id_user, `Booking canceled - #${req.params.id_booking}`, text, action, 'Your trips');
+        });
         if(req.query.id_property) res.redirect(`/hosting/?id_property=${req.params.id_property}`);
         else {
-            if(req.query.path == 'userTrips')
-            res.redirect('/booking/userTrips');
+            // if user canceled, send notification to host
+            if(req.query.path == 'userTrips'){
+                var queryGetProperty = `SELECT p.title FROM bookings b JOIN properties p USING(id_property) WHERE id_booking=$1`;
+                client.query(queryGetProperty, [req.params.id_booking], (err, result) =>{
+                    if(err) {console.log(err); return;}
+                    var text = `A booking to ${result.rows[0].title} was canceled by the guest.`;
+                    var action = `/hosting/?id_property=${text_fields.id_property}`;
+                    notificationsController.sendNotification(result.rows[0].id_user, `Booking canceled - #${req.params.id_booking}`, text, action, 'Review bookings');
+                });
+
+                res.redirect('/booking/userTrips');
+            }
         }
     });
 }

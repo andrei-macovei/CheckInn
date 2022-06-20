@@ -22,11 +22,11 @@ const propertyGuests = document.querySelector('#guests_nr');
 const divPriceCalc = document.querySelector('#price-calc');
 
 // https://linuxhint.com/calculate-days-between-two-dates-javascript/
-const days = (date_1, date_2) =>{
-    let difference = date_1.getTime() - date_2.getTime();
-    let TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
-    return TotalDays;
-}
+const days = (date_1, date_2) =>{ 
+    let difference = date_2.getTime() - date_1.getTime(); 
+    let TotalDays = Math.ceil(difference / (1000 * 3600 * 24)); 
+    return TotalDays; 
+} 
 
 bookingInputs.forEach(function(opt){
     opt.addEventListener('focusout', e =>{
@@ -133,16 +133,20 @@ document.addEventListener('DOMContentLoaded', function() {
             for(booking of data){
                 var event = new Object;
                 event.id = booking.id_booking;
+                
                 event.title = 'Booked';
-                event.start = booking.checkin;
-                event.end = booking.checkout;
-                event.allDay = true;
                 event.backgroundColor = '#0ea5e9';
                 event.borderColor = '#2563eb';
+                var checkin = new Date(booking.checkin);
+                var checkout = new Date(booking.checkout);
+
+                event.start = checkin.setDate(checkin.getDate() + 1);
+                event.end = checkout.setDate(checkin.getDate() + days(checkin, checkout) + 2);
+                event.allDay = true;
                 events.push(event);
             }
 
-            console.log(events);
+            // console.log(events);
             
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -157,4 +161,4 @@ document.addEventListener('DOMContentLoaded', function() {
             calendar.render();
             
         });
-  });
+});
