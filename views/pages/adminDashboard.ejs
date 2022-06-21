@@ -15,14 +15,14 @@
                 <a href="/admin/manageUsers" class="text-white m-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Manage users</a>
             </div>
             <div class="px-4">
+                <form class="" method="POST" action="/admin/addBackground" enctype="multipart/form-data">
                 <h3 class="text-lg font-semibold px-4">Background image for transparent content pages</h3>
                 <div class="p-4 h-[360px] w-[640px] relative">
                     <img src="../../public/photos/general/<%-locals.background%>" id="background-picture" class="bg-slate-200 w-full h-full object-cover rounded-xl"></img>
-                    <form class="" method="" action="">
-                        <input class="block w-[1/2] text-sm text-gray-900 bg-gray-50 rounded-lg border absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input1" name="big_picture" type="file">    
-                    </form>
+                    <input name="login_background" class="block w-[1/2] text-sm text-gray-900 bg-gray-50 rounded-lg border absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input1" name="big_picture" type="file">    
                 </div>
-                <button type="button" class="text-white m-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Change picture</button>
+                <button type="submit" class="text-white m-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Change picture</button>
+                </form>
             </div>
 
             <div class="px-4 static">

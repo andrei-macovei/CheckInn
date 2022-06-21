@@ -1,6 +1,8 @@
 const formidable = require('formidable')
 const { Client } = require('pg');
 
+const {sendNotification} = require("../controllers/notificationsController");
+
 // database connection
 const conn = require("../../public/json/connection.json");
 var client = new Client(conn);
@@ -23,7 +25,7 @@ const getAdminDashboard = (req, res) =>{
 
 const getUsersManagement = (req, res) =>{
     if(req.session && req.session.user && req.session.user.role == 'admin'){
-        var queryGetUsers = `SELECT email, firstname, lastname, role FROM users WHERE role != 'admin'`;
+        var queryGetUsers = `SELECT id_user, email, firstname, lastname, role FROM users WHERE role != 'admin'`;
         client.query(queryGetUsers, (err, result) =>{
             if(err) { console.log(err); return}
             res.render('pages/adminUsersManagement', {
@@ -67,7 +69,6 @@ const postDestinations = (req, res) =>{
         form.on("fileBegin", (name, file) =>{
             if(!file.originalFilename) return;
             destinationsFolder = __dirname + '/../../public/photos/general/Home Page/Destinations/';
-            console.log('pic')
             extension = file.originalFilename.split('.');
             file.filepath = destinationsFolder + name + '.' + extension[extension.length-1];
             pic_name = name + '.' + extension[extension.length-1];
@@ -99,4 +100,86 @@ const postDestinations = (req, res) =>{
     }    
 }
 
-module.exports = { getAdminDashboard, getUsersManagement, postDestinations };
+const postBackground = (req, res) =>{
+    if(req.session && req.session.user && req.session.user.role == 'admin'){
+        var form = new formidable.IncomingForm();
+
+        form.parse(req, (err, text_fields) => {});
+        form.on("fileBegin", (name, file) =>{
+            if(!file.originalFilename) return;
+            backgroundFolder = __dirname + '/../../public/photos/general/';
+            console.log(backgroundFolder)
+            extension = file.originalFilename.split('.');
+            file.filepath = backgroundFolder + name + '.' + extension[extension.length-1];
+            pic_name = name + '.' + extension[extension.length-1];
+            console.log(pic_name);
+
+            client.query('UPDATE global_settings SET background=$1 WHERE id_settings=1', [pic_name], (err, result) =>{
+                if(err) {console.log(err); return;}
+            });
+        });
+        form.on('file', (name, file) =>{
+            console.log(`Added file.`);
+        });
+
+        res.redirect('/admin?success=true'); 
+    } else {
+        res.render('pages/403');
+    }
+}
+
+const postSendNotification = (req, res)=>{
+    // :id_user
+    if(req.session && req.session.user && req.session.user.role == 'admin'){
+        var form = new formidable.IncomingForm();
+
+        form.parse(req, (err, text_fields) => {
+            if(err) {console.log(err); return;}
+
+            var action = '', action_name = '';
+            switch(text_fields.action){
+                case 'profile':
+                    action = '/users/profile';
+                    action_name = "Review Profile";
+                    break;
+                case 'details':
+                    action = '/hosting';
+                    action_name = "Review Property Details";
+                    break;
+                case 'photos':
+                    action = '/hosting';
+                    action_name = "Review Property Photos";
+                    break;
+                case 'rules':
+                    action = '/hosting';
+                    action_name = "Review Property Rules";
+                    break;
+                case 'change_password':
+                    action = '/users/profile';
+                    action_name = "Change your password";
+                    break;
+                case 'none':
+                    action = '/';
+                    action_name = "Homepage";
+                    break;
+            }
+
+            sendNotification(req.params.id_user, 'Admin message', text_fields.text, action, action_name);
+
+            res.redirect('/admin/manageUsers');
+        });
+    } else {
+        res.render('pages/403');
+    }
+}
+
+const deleteUser = (req, res) =>{
+    //:id_user
+    var queryDeleteUser = `DELETE FROM users WHERE id_user=$1`;
+    client.query(queryDeleteUser, [req.params.id_user], (err, result) =>{
+        if(err) {console.log(err); return;}
+        res.redirect('/admin/manageUsers');
+    })
+}
+
+module.exports = { getAdminDashboard, getUsersManagement, postDestinations, postBackground, postSendNotification, deleteUser };
