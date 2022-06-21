@@ -1,6 +1,12 @@
 const express = require('express');
-const {Client} = require('pg');
 const session = require('express-session');
+
+const { Client } = require('pg');
+
+// database connection
+const conn = require("./public/json/connection.json");
+var client = new Client(conn);
+client.connect();
 
 var app = express();
 const PORT = 8080;
@@ -17,14 +23,25 @@ app.use(session({
 
 app.use(express.json());
 
-app.use("/*", (req, res, next) => {
+app.use(function(req, res, next){
     res.locals.user = req.session.user; // send the user data to all pages
-    next();
+    
+    client.query('SELECT background FROM global_settings', (err, result)=>{
+        if(err) {console.log(err); return;}
+        res.locals.background = result.rows[0].background;
+        next();
+    });
 })
 
 // home page
 app.get(["/", "/index", "/home"], function(req, res){
-    res.render("pages/index");
+    
+    // get image carousel info
+    client.query('SELECT * FROM destinations', (err, result)=>{
+        if(err) {console.log(err); return;}
+        
+        res.render("pages/index", {destinations: result.rows});
+    });
 });
 
 // inclusion of controllers

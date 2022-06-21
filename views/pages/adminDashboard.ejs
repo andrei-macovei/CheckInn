@@ -12,70 +12,70 @@
         <main class="px-36">
             <div class="flex justify-between">
                 <h2 class="text-xl font-bold p-4">Admin Dashboard</h2>
-                <a href="/admin/manageUsers" class="text-white m-4 bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Manage users</a>
+                <a href="/admin/manageUsers" class="text-white m-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Manage users</a>
             </div>
             <div class="px-4">
                 <h3 class="text-lg font-semibold px-4">Background image for transparent content pages</h3>
                 <div class="p-4 h-[360px] w-[640px] relative">
-                    <img src="../../public/photos/general/login_background.jpg" id="login-picture" class="bg-slate-200 w-full h-full object-cover rounded-xl"></img>
+                    <img src="../../public/photos/general/<%-locals.background%>" id="background-picture" class="bg-slate-200 w-full h-full object-cover rounded-xl"></img>
                     <form class="" method="" action="">
                         <input class="block w-[1/2] text-sm text-gray-900 bg-gray-50 rounded-lg border absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input1" name="big_picture" type="file">    
                     </form>
                 </div>
-                <button type="button" class="text-white m-4 bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Change picture</button>
+                <button type="button" class="text-white m-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Change picture</button>
             </div>
 
             <div class="px-4 static">
                 <h3 class="text-lg font-semibold px-4 py-2">Promoted Destinations</h3>
-                <form class="" method="" action="">
-                <div class="flex space-x-2 overflow-x-scroll">
-                    <div class="p-4 border rounded-xl">
-                        <div class="h-[270px] w-[480px] flex flex-col">
-                            <img src="../../public/photos/general/Home Page/suggestion1.jpg" id="login-picture" class="bg-slate-200 w-full h-full object-cover rounded-xl"></img>
+                <form class="" method="POST" action="/admin/addDestinations" enctype="multipart/form-data">
+                    <div class="flex space-x-2 overflow-x-scroll">
+                        <div class="p-4 border rounded-xl">
+                            <div class="h-[270px] w-[480px] flex flex-col">
+                                <img src="../../public/photos/general/Home Page/Destinations/<%-locals.destinations[0].picture%>" id="destination-picture-0" class="bg-slate-200 w-full h-full object-cover rounded-xl"></img>
+                            </div>
+                            <div class="relative z-0 my-3">
+                                <input type="text" id="floating_title_0" value="<%-locals.destinations[0].title%>" name="title_1" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
+                                <label for="floating_title_0" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination title</label>
+                            </div>
+                            <div class="relative z-0 my-3">
+                                <input type="text" id="floating_description-0" value="<%-locals.destinations[0].description%>" name="desc_1" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
+                                <label for="floating_description-0" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination description</label>
+                            </div>
+                            <input name="destination1" class="block w-[1/2] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input1" name="big_picture" type="file">
                         </div>
-                        <div class="relative z-0 my-3">
-                            <input type="text" id="floating_title" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
-                            <label for="floating_title" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination title</label>
+                        
+                        <div class="p-4 border rounded-xl">
+                            <div class="h-[270px] w-[480px] flex flex-col">
+                                <img src="../../public/photos/general/Home Page/Destinations/<%-locals.destinations[1].picture%>" id="destination-picture-1" class="bg-slate-200 w-full h-full object-cover rounded-xl"></img>
+                            </div>
+                            <div class="relative z-0 my-3">
+                                <input type="text" id="floating_title_1" value="<%-locals.destinations[1].title%>" name="title_2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
+                                <label for="floating_title_1" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination title</label>
+                            </div>
+                            <div class="relative z-0 my-3">
+                                <input type="text" id="floating_description-1" value="<%-locals.destinations[1].description%>" name="desc_2" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
+                                <label for="floating_description-1" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination description</label>
+                            </div>
+                            <input name="destination2" class="block w-[1/2] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input1" name="big_picture" type="file">
                         </div>
-                        <div class="relative z-0 my-3">
-                            <input type="text" id="floating_description" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
-                            <label for="floating_description" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination description</label>
-                        </div>
-                        <input class="block w-[1/2] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input1" name="big_picture" type="file">
-                    </div>
-                    
-                    <div class="p-4 border rounded-xl">
-                        <div class="h-[270px] w-[480px] flex flex-col">
-                            <img src="../../public/photos/general/Home Page/suggestion2.jpg" id="login-picture" class="bg-slate-200 w-full h-full object-cover rounded-xl"></img>
-                        </div>
-                        <div class="relative z-0 my-3">
-                            <input type="text" id="floating_title" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
-                            <label for="floating_title" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination title</label>
-                        </div>
-                        <div class="relative z-0 my-3">
-                            <input type="text" id="floating_description" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
-                            <label for="floating_description" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination description</label>
-                        </div>
-                        <input class="block w-[1/2] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input1" name="big_picture" type="file">
-                    </div>
 
-                    <div class="p-4 border rounded-xl">
-                        <div class="h-[270px] w-[480px] flex flex-col">
-                            <img src="../../public/photos/general/Home Page/suggestion3.jpg" id="login-picture" class="bg-slate-200 w-full h-full object-cover rounded-xl"></img>
-                        </div>
-                        <div class="relative z-0 my-3">
-                            <input type="text" id="floating_title" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
-                            <label for="floating_title" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination title</label>
-                        </div>
-                        <div class="relative z-0 my-3">
-                            <input type="text" id="floating_description" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
-                            <label for="floating_description" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination description</label>
-                        </div>
-                        <input class="block w-[1/2] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input1" name="big_picture" type="file">
-                    </div>                    
-                </div>
-                <button type="button" class="text-white m-4 bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Change destinations</button>
-            </form>            
+                        <div class="p-4 border rounded-xl">
+                            <div class="h-[270px] w-[480px] flex flex-col">
+                                <img src="../../public/photos/general/Home Page/Destinations/<%-locals.destinations[2].picture%>" id="destination-picture-2" class="bg-slate-200 w-full h-full object-cover rounded-xl"></img>
+                            </div>
+                            <div class="relative z-0 my-3">
+                                <input type="text" id="floating_title_2" value="<%-locals.destinations[2].title%>" name="title_3" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
+                                <label for="floating_title_2" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination title</label>
+                            </div>
+                            <div class="relative z-0 my-3">
+                                <input type="text" id="floating_description-2" value="<%-locals.destinations[2].description%>" name="desc_3" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-600 peer" placeholder=" " />
+                                <label for="floating_description-2" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-sky-600 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Destination description</label>
+                            </div>
+                            <input name="destination3" class="block w-[1/2] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="photo_input1" name="big_picture" type="file">
+                        </div>                    
+                    </div>
+                    <button type="submit" class="text-white m-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Change destinations</button>
+                </form>            
             </div>
             
         </main>
