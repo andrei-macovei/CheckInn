@@ -8,6 +8,7 @@
         <%-include("../fragments/head.ejs")%>
          <!-- FontAwesome script -->
         <script src="https://kit.fontawesome.com/374b3caa1d.js" crossorigin="anonymous"></script>
+        <script src="/public/js/favouritesPage.js" defer></script>
     </head>
     <body>
         <%-include("../fragments/header.ejs")%>
@@ -37,8 +38,8 @@
                             <div>
                                 <label class="favourite self-end">
                                     <input type="hidden" name="favourite" value="False"/>
-                                    <input class="custom-checkbox-input hidden scale-125 hover-text-gray-500 hover:scale-100" name="favourite" value="${result.id_property}" type="checkbox">
-                                    <i class="heart fa-solid fa-heart text-gray-300 fa-xl hover:text-gray-500 hover:scale-125 p-4"></i>
+                                    <input class="custom-checkbox-input hidden scale-125 hover:text-gray-500 hover:scale-100" name="favourite" value="<%-prop.id_property%>" type="checkbox" checked>
+                                    <i class="heart fa-solid fa-heart fa-xl p-4 scale-125 text-red-500 hover:scale-100 hover:text-gray-500"></i>
                                 </label>
                             </div>
                         </div>

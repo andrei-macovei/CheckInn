@@ -103,23 +103,43 @@ var checkbox = document.querySelector('#custom-checkbox-input');
 var heart = document.querySelector('#heart');
 var heartText = document.querySelector('#heart-text');
 
-checkbox.addEventListener('change', (e) =>{
-    if(checkbox.checked){
-        console.log("Favourite added");
-        heart.classList.remove("hover:text-gray-500", "hover:scale-125", "text-gray-300");
-        heart.classList.add("scale-125", "text-red-500", "hover:scale-100", "hover:text-gray-500");
-        // heartText.innerText = "Favourite added!"
-        heartText.classList.remove("text-gray-300");
-        heartText.classList.add("text-red-500");
-    } 
-    else{
-        console.log("Favourite removed");
-        heart.classList.remove("scale-125", "text-red-500", "hover:scale-100", "hover:text-gray-500");
-        heart.classList.add("hover:text-gray-500", "hover:scale-125", "text-gray-300");
-        heartText.classList.add("text-gray-300");
-        heartText.classList.remove("text-red-500");
-    }
-})
+if(checkbox)
+    checkbox.addEventListener('change', (e) =>{
+        if(checkbox.checked){
+            (async () =>{
+                const rawResponse = await fetch(`/favourites/add/${checkbox.value}`, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+                const content = await rawResponse.json();
+
+            })();
+            console.log("Favourite added");
+            heart.classList.remove("hover:text-gray-500", "hover:scale-125", "text-gray-300");
+            heart.classList.add("scale-125", "text-red-500", "hover:scale-100", "hover:text-gray-500");
+            // heartText.innerText = "Favourite added!"
+            heartText.classList.remove("text-gray-300");
+            heartText.classList.add("text-red-500");
+        } 
+        else{
+            (async () =>{
+                const rawResponse = await fetch(`/favourites/delete/${checkbox.value}`, {
+                    method: "DELETE",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+                const content = await rawResponse.json();
+            })();
+            console.log("Favourite removed");
+            heart.classList.remove("scale-125", "text-red-500", "hover:scale-100", "hover:text-gray-500");
+            heart.classList.add("hover:text-gray-500", "hover:scale-125", "text-gray-300");
+            heartText.classList.add("text-gray-300");
+            heartText.classList.remove("text-red-500");
+        }
+    });
 
 // Calendar
 document.addEventListener('DOMContentLoaded', function() {

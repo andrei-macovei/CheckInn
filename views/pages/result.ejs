@@ -20,6 +20,9 @@
         <%-include("../fragments/header.ejs")%>
         <main class="px-36">
             <% prop = locals.prop; function capitalize(string) {return string.charAt(0).toUpperCase() + string.slice(1);} %>
+            <% if(locals.favourites) for(fav of locals.favourites.favourites){%>
+                <input type="hidden" value="<%-fav%>" class="fav">
+            <%}%>
             <div class="flex justify-between">
                 <div id="headline" class="p-4 pb-0">
                     <h1 class="text-3xl font-bold">
@@ -38,12 +41,21 @@
                     </div>
                  </div>
                  <div class="self-end px-8">
-                     <label>
+                    <% if(locals.favourites && locals.favourites.favourites.includes(prop.id_property)){ %>
+                    <label>
                         <input type="hidden" name="favourite" value="False" />
-                        <input id="custom-checkbox-input" class="hidden scale-125 hover-text-gray-500 hover:scale-100" name="favourite" value="True" type="checkbox">
-                        <i id="heart" class="fa-solid fa-heart text-gray-300 fa-2xl hover:text-gray-500 hover:scale-125 p-4"></i>
-                     </label>
-                     <p id="heart-text" class="text-gray-300">Favourite</p>
+                        <input id="custom-checkbox-input" class="hidden scale-125 hover-text-gray-500 hover:scale-100" name="favourite" value="<%-prop.id_property%>" type="checkbox" checked>
+                        <i id="heart" class="fa-solid fa-heart fa-2xl p-4 scale-125 text-red-500 hover:scale-100 hover:text-gray-500"></i>
+                    </label>
+                    <p id="heart-text" class="text-red-500">Favourite</p>
+                    <%} else if(locals.favourites){%>
+                        <label>
+                            <input type="hidden" name="favourite" value="False" />
+                            <input id="custom-checkbox-input" class="hidden scale-125 hover-text-gray-500 hover:scale-100" name="favourite" value="<%-prop.id_property%>" type="checkbox">
+                            <i id="heart" class="fa-solid fa-heart text-gray-300 fa-2xl hover:text-gray-500 hover:scale-125 p-4"></i>
+                        </label>
+                        <p id="heart-text" class="text-gray-300">Favourite</p>
+                    <%}%>
                  </div>
                  
             </div>
