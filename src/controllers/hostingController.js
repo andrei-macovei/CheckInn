@@ -452,6 +452,24 @@ const getPropertyReviews = (req, res) =>{
         });
 }
 
+function verifyPropertyListing(id_property){
+        var queryGetPropertyInfo = `SELECT id_property, title, guests, bathrooms, r.id_room, a.id_address, p.*, price, checkin, checkout
+        FROM properties 
+        INNER JOIN rooms r USING(id_property) 
+        INNER JOIN address a USING(id_property) 
+        INNER JOIN photos p USING(id_property)
+        WHERE id_property=$1`;
+        client.query(queryGetPropertyInfo, [id_property], (err, result) =>{
+            if(err) {console.log(err); return;}
+            if(result.rowCount == 0) return false;
+            var data = result.rows[0];
+            if(!data.title || !data.guests || !data.bathrooms || !data.price || !data.checkin || !data.checkout || !data.big_picture
+                || !data.small_pic_1 || !data.small_pic_2 || !data.small_pic_3 || !data.small_pic_4)
+                    return false;
+            return true;
+        });
+}
+
 module.exports = {
     getHostDashboard,
     getBecomeHost,
@@ -464,5 +482,6 @@ module.exports = {
     getListingRules,
     postAddRules,
     getBookingHistory,
-    getPropertyReviews
+    getPropertyReviews,
+    verifyPropertyListing
 };

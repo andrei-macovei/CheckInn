@@ -3,9 +3,11 @@ const { Client } = require('pg')
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 const { sendTokenEmail, generateToken, sendResetEmail } = require('../controllers/emailSender');
+const {sendNotification} = require('../controllers/notificationsController');
+const {verifyPropertyListing} = require('../controllers/hostingController');
 
 
-// database connection
+// result.rows[0]base connection
 const conn = require("../../public/json/connection.json");
 const IncomingForm = require('formidable/src/Formidable');
 var client = new Client(conn);
@@ -48,7 +50,7 @@ const postRegisterUser = (req, res) => {
             client.query(queryUniqueEmail, [text_fields.email], async (err, rez) => {
                 if(err){
                     console.log(err);
-                    res.render('pages/register', {msg: "Database Error"});
+                    res.render('pages/register', {msg: "result.rows[0]base Error"});
                     return;
                 }
 
@@ -67,7 +69,7 @@ const postRegisterUser = (req, res) => {
                     client.query(queryAddUser, parametersAddUser, (err, rez) => {
                         if(err){
                             console.log(err);
-                            res.render('pages/register', {msg:"Database Error 1"})
+                            res.render('pages/register', {msg:"result.rows[0]base Error 1"})
                         }
                         else{
                             // send email with token for activation
@@ -82,6 +84,87 @@ const postRegisterUser = (req, res) => {
             });
         }
         else res.render("pages/register", {msg:err_message});
+    });
+}
+
+function sendLoginNotifications(id_user, profile_pic, role, phone, description){
+    // Suggestion - Missing profile pic for hosts
+    if(!profile_pic && role == 'host'){
+        var querySearchWarnings = `SELECT id_notif FROM notifications WHERE id_user=$1 AND (type='Warning' OR type='Suggestion') AND text=$2`;
+        client.query(querySearchWarnings, [id_user, 'Hosts with profile pictures get more booking requests. Add yours now!'], (err, result) =>{
+            if(err) {console.log(err); return}
+            if(result.rowCount == 0)
+                sendNotification(id_user, 'Suggestion', 'Hosts with profile pictures get more booking requests. Add yours now!', '/users/profile', 'Add profile picture');
+        });
+    } else {
+        var queryDeleteWarning = `DELETE FROM notifications WHERE id_user=$1 AND text=$2`;
+        client.query(queryDeleteWarning, [id_user, 'Hosts with profile pictures get more booking requests. Add yours now!'], (err, result) =>{
+            if(err) {console.log(err); return}
+        })
+    }
+
+    // Suggestion - Missing phone number
+    console.log("Phone:" + phone)
+    if(!phone){
+        var querySearchWarnings = `SELECT id_notif FROM notifications WHERE id_user=$1 AND (type='Warning' OR type='Suggestion') AND text=$2`;
+        client.query(querySearchWarnings, [id_user, 'Add your phone number for easier communication with other users!'], (err, result) =>{
+            if(err) {console.log(err); return}
+            if(result.rowCount == 0)
+                sendNotification(id_user, 'Suggestion', 'Add your phone number for easier communication with other users!', '/users/profile', 'Add phone number');
+        });
+    } else {
+        var queryDeleteWarning = `DELETE FROM notifications WHERE id_user=$1 AND text=$2`;
+        client.query(queryDeleteWarning, [id_user, 'Add your phone number for easier communication with other users!'], (err, result) =>{
+            if(err) {console.log(err); return}
+        })
+    }
+    // Suggestion - Missing description for hosts
+    if(!description && role == 'host'){
+        var querySearchWarnings = `SELECT id_notif FROM notifications WHERE id_user=$1 AND (type='Warning' OR type='Suggestion') AND text=$2`;
+        client.query(querySearchWarnings, [id_user, 'Add a short description of yourself to make your guests familiar with you!'], (err, result) =>{
+            if(err) {console.log(err); return}
+            if(result.rowCount == 0)
+                sendNotification(id_user, 'Suggestion', 'Add a short description of yourself to make your guests familiar with you!', '/users/profile', 'Add description');
+        });
+    } else {
+        var queryDeleteWarning = `DELETE FROM notifications WHERE id_user=$1 AND text=$2`;
+        client.query(queryDeleteWarning, [id_user, 'Add a short description of yourself to make your guests familiar with you!'], (err, result) =>{
+            if(err) {console.log(err); return}
+        })
+    }
+    // Warning - Property details not completed
+    var queryGetProperties = `SELECT id_property, title FROM properties WHERE id_host=$1`;
+    client.query(queryGetProperties, [id_user], (err, result0) =>{
+        if(err) {console.log(err); return;}
+        for (let prop of result0.rows){
+            console.log(prop.id_property)
+            var queryGetPropertyInfo = `SELECT id_property, title, guests, count(r.id_room), bathrooms, a.id_address, p.*, price, checkin, checkout
+            FROM properties pr
+            INNER JOIN rooms r USING(id_property)
+            INNER JOIN address a USING(id_property) 
+            INNER JOIN photos p USING(id_property)
+            WHERE id_property=$1
+            GROUP BY pr.id_property, a.id_address, p.id_photos`;
+            client.query(queryGetPropertyInfo, [prop.id_property], (err1, result) =>{
+                if(err1) {console.log(err1); return;}
+                console.log(result.rowCount + ' - ' + prop.id_property);
+                if(result.rowCount == 0 || !result.rows[0].title || !result.rows[0].guests || !result.rows[0].bathrooms || 
+                    !result.rows[0].price || !result.rows[0].checkin || !result.rows[0].checkout || !result.rows[0].big_picture
+                    || !result.rows[0].small_pic_1 || !result.rows[0].small_pic_2 || !result.rows[0].small_pic_3 || !result.rows[0].small_pic_4){
+                        var querySearchWarnings = `SELECT id_notif FROM notifications WHERE id_user=$1 AND (type='Warning' OR type='Suggestion') AND text=$2`;
+                        client.query(querySearchWarnings, [id_user, `Finish the listing for ${prop.title} and you can welcome your first guests!`], (err2, result2) =>{
+                            if(err2) {console.log(err2); return}
+                            if(result2.rowCount == 0)
+                                sendNotification(id_user, 'Warning', `Finish the listing for ${prop.title} and you can welcome your first guests!`, `/hosting?id_property=${prop.id_property}`, 'Finish your listing');
+                        });
+                    } else {
+                        var queryDeleteWarning = `DELETE FROM notifications WHERE id_user=$1 AND text=$2`;
+                        client.query(queryDeleteWarning, [id_user, `Finish the listing for ${prop.title} and you can welcome your first guests!`], (err2, result2) =>{
+                            if(err2) {console.log(err2); return}
+                        });
+                    }
+            });
+        }
     });
 }
 
@@ -118,7 +201,7 @@ const postAuthenticate = (req, res) => {
             }
 
             bcrypt.compare(text_fields.password, result.rows[0].password, (err, compare_result) => {
-                if(compare_result){ // password matches the one in the database
+                if(compare_result){ // password matches the one in the result.rows[0]base
                     if(req.session){
                         req.session.user = {
                             id_user : result.rows[0].id_user,
@@ -128,11 +211,15 @@ const postAuthenticate = (req, res) => {
                             phone : result.rows[0].phone,
                             join_date : result.rows[0].join_date,
                             birthday :  result.rows[0].birthday,
-                            profile_picture : result.rows[0].profile_picture,
+                            profile_picture : result.rows[0].profile_pic,
                             role: result.rows[0].role, 
                             favourites: result.rows[0].favourites
                         }
                     }
+
+                    // send notifications
+                    sendLoginNotifications(result.rows[0].id_user, result.rows[0].profile_pic, result.rows[0].role, result.rows[0].phone, result.rows[0].description);
+
                     if(text_fields.path) res.redirect(text_fields.path);
                     else res.redirect('/');
                 }

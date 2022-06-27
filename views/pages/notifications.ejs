@@ -11,6 +11,27 @@
         <%-include("../fragments/header.ejs")%>
         <main class="px-36">
             <h2 class="text-lg font-bold text-center py-4">Your notifications</h2>
+            <% if(locals.warnings.length !=0) { %>
+            <h3 class="text-sm text-gray-400 border-b text-center p-2">Warnings & Suggestions</h3>
+            <% for (notif of locals.warnings) { %>
+                <!-- Notification -->
+                <div class="flex flex-col items-center py-2 ">
+                    <div class="flex flex-col border rounded-xl w-[900px] bg-slate-50">
+                        <div class="text-sm font-semibold text-gray-500 px-6 pt-4">
+                            <%-notif.type%>
+                        </div>
+                        <div class="px-6 pb-4 flex justify-between items-center">
+                            <p class="text-md font-semibold">
+                                <%-notif.text%>
+                            </p>
+                            <a href="<%-notif.action%>" class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"><%-notif.action_name%></a>
+                        </div>
+                    </div>
+                </div>
+            <% }} %>
+
+            <% if(locals.notifications.length !=0) { %>
+            <h3 class="text-gray-500 border-b text-center font-light p-2">New Notifications</h3>
             <% for (notif of locals.notifications) { %>
             <!-- Notification -->
             <div class="flex flex-col items-center py-2 ">
@@ -26,36 +47,27 @@
                     </div>
                 </div>
             </div>
-            <% } %>
+            <% }} %>
 
-            <!-- One notification -->
-            <!-- <div class="flex flex-col items-center py-2">
+            <% if(locals.oldNotifications.length !=0) { %>
+            <h3 class="text-gray-500 border-b text-center font-light p-2">Older Notifications</h3>
+            <% for (notif of locals.oldNotifications) { %>
+            <!-- Notification -->
+            <div class="flex flex-col items-center py-2 ">
                 <div class="flex flex-col border rounded-xl w-[900px] bg-slate-50">
                     <div class="text-sm font-semibold text-gray-500 px-6 pt-4">
-                        Booking confirmation
+                        <%-notif.type%>
                     </div>
                     <div class="px-6 pb-4 flex justify-between items-center">
                         <p class="text-md font-semibold">
-                            Your booking for Bruckenthal House has been confirmed! See you there!
+                            <%-notif.text%>
                         </p>
-                        <button type="button" class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View your trips</button>
+                        <a href="<%-notif.action%>" class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"><%-notif.action_name%></a>
                     </div>
                 </div>
             </div>
+            <% }} %>
 
-            <div class="flex flex-col items-center py-2">
-                <div class="flex flex-col border rounded-xl w-[900px] bg-slate-50">
-                    <div class="text-sm font-semibold text-gray-500 px-6 pt-4">
-                        Booking refused
-                    </div>
-                    <div class="px-6 pb-4 flex justify-between items-center">
-                        <p class="text-md font-semibold">
-                            Your booking for Bruckenthal House has been refused! Sorry about that!
-                        </p>
-                        <button type="button" class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View your trips</button>
-                    </div>
-                </div>
-            </div> -->
         </main>
     </body>
 </html>
