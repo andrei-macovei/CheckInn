@@ -6,6 +6,7 @@
 
         <title>CheckInn Home</title>
         <%-include("../fragments/head.ejs")%>
+        <script src="/public/js/profileValidation.js" defer></script>
     </head>
     <body>
         <%-include("../fragments/header.ejs")%>
@@ -13,6 +14,14 @@
             <div id="" class="grid grid-cols-[2fr_1fr]">
                 <div class="">
                     <h2 class="text-2xl font-semibold p-4">Profile</h2>
+                    <% if(locals.msg && locals.msg == "Data updated succesfully"){ %>
+                        <p class="text-sky-500 px-4 font-semibold"><%-locals.msg%></p>
+                    <% } else if(locals.msg){%>
+                        <div class="flex pl-4">
+                            <p class="text-red-500 font-semibold">Account details not updated:</p>
+                            <p class="text-red-500 pl-1 font-semibold"><%-locals.msg%></p>
+                        </div>
+                    <%}%>
                     <% details = locals.details %>
                     <div class="xx border-b p-4">
                         <p class="text-sm font-semibold">Name:</p>
@@ -45,11 +54,6 @@
                         <button class="block w-full md:w-auto text-white bg-sky-500 hover:bg-sky-600 focus:ring-4 focus:outline-none focus:ring-sky-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-500 dark:hover:bg-sky-500 dark:focus:ring-sky-500" type="button" data-modal-toggle="small-modal">
                             Change Password
                         </button>
-                        <% if(locals.msg) { %>
-                            <div>
-                                <p class="text-red-500"><%-locals.msg%></p>
-                            </div>
-                        <%}%>
                     </div>
                 </div>
                 <div class="flex flex-col items-center py-8">
@@ -83,27 +87,32 @@
                             </button>
                         </div>
                         <!-- Modal body -->
-                        <form method="POST" action="editProfile" class="">
+                        <form id="eidt-form" method="POST" action="editProfile" class="">
                             <div class="p-6">
                                 <div class="relative py-2">
-                                    <input type="text" id="firstname-inp" name="firstname" value="<%-details.firstname%>" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-500 peer" placeholder=" " />
-                                    <label for="firstname-inp" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-sky-500 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Firstname</label>
+                                    <label for="firstname-inp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Firstname</label>
+                                    <input type="text" id="firstname-inp" name="firstname" value="<%-details.firstname%>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder=" " />
+                                    <span id="firstname-err" class="text-red-500 text-sm"></span>
                                 </div>
                                 <div class="relative py-2">
-                                    <input type="text" id="lastname-inp" name="lastname" value="<%-details.lastname%>" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-500 peer" placeholder=" " />
-                                    <label for="lastname-inp" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-sky-500 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Lastname</label>
+                                    <label for="lastname-inp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Lastname</label>
+                                    <input type="text" id="lastname-inp" name="lastname" value="<%-details.lastname%>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder=" " />
+                                    
+                                    <span id="lastname-err" class="text-red-500 text-sm"></span>
                                 </div>
                                 <div class="relative py-2">
-                                    <input type="text" id="phone-inp" name="phone" value="<%-details.phone ? details.phone : ''%>" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-500 peer" placeholder=" " />
-                                    <label for="phone-inp" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-sky-500 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Phone number</label>
+                                    <label for="phone-inp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Phone number</label>
+                                    <input type="text" id="phone-inp" name="phone" value="<%-details.phone ? details.phone : ''%>" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder=" " />
+                                    <span id="phone-err" class="text-red-500 text-sm"></span>
                                 </div>
                                 <p class="text-xs py-2">Birthday</p>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                       <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
                                     </div>
-                                    <input type="date" name="birthday" value="<%-details.birthday ? `${details.birthday.getFullYear()}-${details.birthday.getMonth()+1 < 10 ? '0' + (details.birthday.getMonth()+1) : details.birthday.getMonth()+1}-${details.birthday.getDate()}` : ''%>"class=" border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder="Select date">
+                                    <input id="birthday-inp" type="date" name="birthday" value="<%-details.birthday ? `${details.birthday.getFullYear()}-${details.birthday.getMonth()+1 < 10 ? '0' + (details.birthday.getMonth()+1) : details.birthday.getMonth()+1}-${details.birthday.getDate()}` : ''%>"class=" border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder="Select date">
                                 </div>
+                                <span id="birthday-err" class="text-red-500 text-sm"></span>
                                 <div class=" py-2">
                                     <label for="message" class="block mb-2 text-xs text-gray-900 dark:text-gray-400">Description</label>
                                     <textarea id="message" name="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900  rounded-lg border border-gray-300 focus:ring-sky-500 focus:border-sky-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder="Describe yourself"><%-details.description%></textarea>
@@ -111,7 +120,7 @@
                             </div>
                             <!-- Modal footer -->
                             <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
-                                <button data-modal-toggle="medium-modal" type="submit" class="text-white bg-sky-500 hover:bg-sky-600 focus:ring-4 focus:outline-none focus:ring-sky-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-500 dark:hover:bg-sky-500 dark:focus:ring-sky-500">Save changes</button>
+                                <button data-modal-toggle="medium-modal" id="edit-submit" type="submit" class="text-white bg-sky-500 hover:bg-sky-600 focus:ring-4 focus:outline-none focus:ring-sky-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-500 dark:hover:bg-sky-500 dark:focus:ring-sky-500">Save changes</button>
                                 <button data-modal-toggle="medium-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
                             </div>
                         </form>
@@ -124,7 +133,7 @@
                 <div class="relative p-4 w-full max-w-md h-full md:h-auto">
                     <!-- Modal content -->
                     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                        <form method="POST" action="changePassword">
+                        <form id="change-pass-form" method="POST" action="changePassword">
                             <!-- Modal header -->
                             <div class="flex justify-between items-center p-5 rounded-t border-b dark:border-gray-600">
                                 <h3 class="text-xl font-medium text-gray-900 dark:text-white">
@@ -144,14 +153,16 @@
                                     <input type="password" id="new-pass-inp" name="password" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-500 peer" placeholder=" " />
                                     <label for="new-pass-inp" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-sky-500 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">New password</label>
                                 </div>
+                                <span id="password-err" class="text-red-500 text-sm"></span>
                                 <div class="relative">
                                     <input type="password" id="conf-pass-inp" name="password_conf" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-sky-500 focus:outline-none focus:ring-0 focus:border-sky-500 peer" placeholder=" " />
                                     <label for="conf-pass-inp" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-focus:text-sky-500 peer-focus:dark:text-sky-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Confirm password</label>
-                                </div>                                
+                                </div>
+                                <span id="password-conf-err" class="text-red-500 text-sm"></span>                                
                             </div>
                             <!-- Modal footer -->
                             <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
-                                <button data-modal-toggle="small-modal" type="submit" class="text-white bg-sky-500 hover:bg-sky-600 focus:ring-4 focus:outline-none focus:ring-sky-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-500 dark:hover:bg-sky-500 dark:focus:ring-sky-500">Change password</button>
+                                <button id="change-pass-submit" data-modal-toggle="small-modal" type="submit" class="text-white bg-sky-500 hover:bg-sky-600 focus:ring-4 focus:outline-none focus:ring-sky-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-500 dark:hover:bg-sky-500 dark:focus:ring-sky-500">Change password</button>
                                 <button data-modal-toggle="small-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
                             </div>
                         </form>

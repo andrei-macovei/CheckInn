@@ -31,26 +31,31 @@ const postRegisterUser = (req, res) => {
         if(err) console.log(err);
         console.log(text_fields);
 
-        var err_message = "";
+        var err_message = [];
         // checks if all fields are not empty
         if(text_fields.email.length == 0 || text_fields.firstname.length == 0 || text_fields.lastname.length == 0 || text_fields.password.length == 0){
-            err_message += "All fields are required\n";
+            err_message.push("All fields are required\n");
         }
 
-        // check for input formats
+        // check for email format
         var re = /^[A-Za-z][\w\.-]*[A-Za-z0-9]@[A-Za-z0-9]+\.[A-Za-z-]{2,3}$/;
-        if(!re.test(text_fields.email)) err_message += "Incorrect e-mail format\n";
+        if(!re.test(text_fields.email)) err_message.push("Incorrect e-mail format\n");
 
-        re = /^[A-Za-z]+([\- ][A-Za-z]*)*$/;
-        if(!re.test(text_fields.firstname)) err_message += "Firstname can only contain letters, spaces and dashes\n";
-        if(!re.test(text_fields.lastname)) err_message += "Lastname can only contain letters, spaces and dashes\n";
+        // check for names format
+        re = /^([A-Za-zÀ-žăîâșțĂÎÂȘȚ\- ])+$/;
+        if(!re.test(text_fields.firstname)) err_message.push("Firstname can only contain letters, spaces and dashes\n");
+        if(!re.test(text_fields.lastname)) err_message.push("Lastname can only contain letters, spaces and dashes\n");
 
-        if(err_message == ""){
+        // check for password validity
+        if(text_fields.password.length < 8) err_message.push("The password must be at least 8 characters long\n");
+        if(text_fields.password != text_fields.password_conf) err_message.push("The passwords do not match\n");
+
+        if(err_message.length == 0){
             queryUniqueEmail = `SELECT * FROM users WHERE email=$1`
             client.query(queryUniqueEmail, [text_fields.email], async (err, rez) => {
                 if(err){
                     console.log(err);
-                    res.render('pages/register', {msg: "result.rows[0]base Error"});
+                    res.render('pages/register', {msg: "Database Error"});
                     return;
                 }
 
@@ -69,7 +74,7 @@ const postRegisterUser = (req, res) => {
                     client.query(queryAddUser, parametersAddUser, (err, rez) => {
                         if(err){
                             console.log(err);
-                            res.render('pages/register', {msg:"result.rows[0]base Error 1"})
+                            res.render('pages/register', {msg:"Database Error 1"})
                         }
                         else{
                             // send email with token for activation
@@ -172,7 +177,7 @@ const postAuthenticate = (req, res) => {
     var form = new formidable.IncomingForm();
     
     form.parse(req, (err, text_fields) => {
-        // check for input format
+        // check if all fields were completed
         if(text_fields.email.length == 0 || text_fields.password.length == 0){
             res.render('pages/login', {msg:"All fields are required!"});
                 return;
@@ -192,11 +197,11 @@ const postAuthenticate = (req, res) => {
                 return;
             }
             if(result.rows.length != 1){    // it either finds one result or none
-                res.render('pages/login', {msg:"E-mail not associated to any account", createAccLink:"true"});
+                res.render('pages/login', {msg:"E-mail address not found", createAccLink:"true"});
                 return;
             }
             if(!result.rows[0].confirmed){
-                res.render('pages/login', {msg:"E-mail address not confirmed. Please check your inbox"});
+                res.render('pages/login', {msg:"E-mail address not confirmed, check inbox"});
                 return;
             }
 
@@ -238,7 +243,7 @@ const postSendResetEmail = (req, res) => {
     form.parse(req, (err, text_fields) => {
         // check for input format
         if(text_fields.email.length == 0){
-            res.render('pages/forgot', {msg:"Please enter an email"});
+            res.render('pages/forgot', {msg:"Please enter an email address"});
                 return;
         }
 
@@ -349,7 +354,38 @@ const getProfile = (req, res) =>{
         var queryGetProfile = 'SELECT * FROM users WHERE id_user=$1';
         client.query(queryGetProfile, [req.session.user.id_user], (err, result) =>{
             if(err) {console.log(err); return; }
-            res.render('pages/profile', {details: result.rows[0]});
+            if(req.query.msg){
+                switch(req.query.msg){
+                    case "blankname":
+                        res.render('pages/profile', {details: result.rows[0], msg: "First name and last name cannot be blank"});
+                        break;
+                    case "wrongname":
+                        res.render('pages/profile', {details: result.rows[0], msg: "Name can only contain letters, dashes and spaces"});
+                        break;
+                    case "wrongphone":
+                        res.render('pages/profile', {details: result.rows[0], msg: "Phone number format is not correct"});
+                        break;
+                    case "wrongbirthday":
+                        res.render('pages/profile', {details: result.rows[0], msg: "Birthday is incorrect. You must be 18 to have an account"});
+                        break;
+                    case "incomplete":
+                        res.render('pages/profile', {details: result.rows[0], msg: "All fields are required"});
+                        break;
+                    case "notmatched":
+                        res.render('pages/profile', {details: result.rows[0], msg: "The passwords don't match"});
+                        break;
+                    case "tooshort":
+                        res.render('pages/profile', {details: result.rows[0], msg: "The password has to be at least 8 characters long"});
+                        break;
+                    case "oldpass":
+                        res.render('pages/profile', {details: result.rows[0], msg: "Old password is incorrect"});
+                        break;
+                    case "success":
+                        res.render('pages/profile', {details: result.rows[0], msg: "Data updated succesfully"});
+                        break;
+                }
+            }
+            else res.render('pages/profile', {details: result.rows[0]});
         });
     }else{   // if not logged in
         res.render('pages/login',{path: `/users/profile`});
@@ -358,14 +394,40 @@ const getProfile = (req, res) =>{
 
 const postEditProfile = (req, res) =>{
     var form = new formidable.IncomingForm();
-    console.log('editProfile')
 
     form.parse(req, (err, text_fields) =>{
+        // data validation
+        if(text_fields.firstname == "" || text_fields.lastname == ""){
+            res.redirect('/users/profile?msg=blankname');
+            return;
+        }
+
+        const re = /^([A-Za-zÀ-žăîâșțĂÎÂȘȚ\- ])+$/;
+        if(!re.test(text_fields.firstname) || !re.test(text_fields.lastname)){
+            res.redirect('/users/profile?msg=wrongname');
+            return;
+        }
+        const rePhone = /^\+*([0-9#*]{8,15})$/;
+        if(text_fields.phone && !rePhone.test(text_fields.phone)){
+            res.redirect('/users/profile?msg=wrongphone');
+            return;
+        }
+
+        if(text_fields.birthday){
+            var birthday = new Date(text_fields.birthday);
+            var eighteenYearsAgo = new Date();
+            eighteenYearsAgo = eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear()-18);
+            if(birthday > eighteenYearsAgo){
+                res.redirect('/users/profile?msg=wrongbirthday');
+                return;
+            }
+        }
+
         var queryUpdateProfile = `UPDATE users SET firstname=$1, lastname=$2, phone=$3, birthday=$4, description=$5 WHERE id_user=$6`;
         var paramsUpdateProfile = [text_fields.firstname, text_fields.lastname, text_fields.phone, text_fields.birthday ? text_fields.birthday : null, text_fields.description, req.session.user.id_user];
         client.query(queryUpdateProfile, paramsUpdateProfile, (err, result) =>{
             if(err) {console.log(err); return; }
-            res.redirect('/users/profile');
+            res.redirect('/users/profile?msg=success');
         });
     });
 }
@@ -374,9 +436,23 @@ const postChangePassword = (req,res) =>{
     var form = new formidable.IncomingForm();
 
     form.parse(req, async (err, text_fields) => {
+
+        //data validation
+        if(text_fields.password_old == "" || text_fields.password == "" || text_fields.password_conf == ""){
+            res.redirect('/users/profile?msg=incomplete');
+            return;
+        }
+
         if(text_fields.password != text_fields.password_conf){
             res.redirect('/users/profile?msg=notmatched');
+            return;
         }
+
+        if(text_fields.password.length < 8){
+            res.redirect('/users/profile?msg=tooshort');
+            return;
+        }
+
         else{
             var queryCheckPassword = `SELECT password FROM users WHERE id_user=$1`;
             client.query(queryCheckPassword, [req.session.user.id_user],(err, result) =>{

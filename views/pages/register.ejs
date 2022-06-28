@@ -6,6 +6,7 @@
 
         <title>CheckInn Home</title>
         <%-include("../fragments/head.ejs")%>
+        <script src="/public/js/usersValidation.js" defer></script>
     </head>
     <body>
         <%-include("../fragments/header2.ejs")%>
@@ -46,43 +47,49 @@
             <!-- </div> -->
 
             <div class="p-4 min-w-[350px] bg-opacity-80 bg-white rounded-lg border border-gray-200 shadow-md sm:p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700">
-                <form class="space-y-2"  method="POST" action="/users/registerUser">
+                <form id='form' class="space-y-2"  method="POST" action="/users/registerUser">
                     <h2 class="text-xl font-medium text-gray-900 dark:text-white">Register on CheckInn</h2>
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your email</label>
                         <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required>
+                        <span id="email-err" class="text-red-500 text-sm"></span>
                     </div>
                     <div>
                         <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your firstname</label>
                         <input type="text" name="firstname" id="firstname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Ion" required>
+                        <span id="firstname-err" class="text-red-500 text-sm"></span>
                     </div>
                     <div>
                         <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your lastname</label>
                         <input type="text" name="lastname" id="lastname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Popescu" required>
+                        <span id="lastname-err" class="text-red-500 text-sm"></span>
                     </div>
                     
                     <div>
                         <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Choose a password</label>
                         <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
+                        <span id="password-err" class="text-red-500 text-sm"></span>
                     </div>
                     <div>
                         <label for="password_conf" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Confirm your password</label>
                         <input type="password" name="password_conf" id="password_conf" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
+                        <span id="pass-conf-err" class="text-red-500 text-sm"></span>
                     </div>
                     <% if(locals.msg) { %>
-                        <div class="flex items-start">
+                        <div class="text-center">
+                            <% for(msg of locals.msg) {%>
                             <% if(locals.succes) {%>
-                                <p class="text-sky-500 ml-auto text-sm font-semibold">
-                                    <%- locals.msg %> 
+                                <p class="text-sky-500 ml-auto text-sm font-semibold self-center">
+                                    <%- msg %> 
                                 </p>
                             <% } else { %>
-                            <p class="text-red-600 ml-auto text-sm font-semibold">
-                                <%- locals.msg %> 
-                            </p>
-                            <% }%>
+                                <p class="text-red-600 ml-auto text-sm font-semibold">
+                                    <%- msg %> 
+                                </p>
+                            <% }}%>
                         </div>
                     <% } %>      
-                    <button type="submit" class="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800">Register</button>
+                    <button id="submit" type="submit" class="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800">Register</button>
                     <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
                         Already have an account? <a href="/users/login" class="text-sky-700 hover:underline dark:text-sky-500">Login</a>
                     </div>
