@@ -6,6 +6,7 @@
 
         <title>CheckInn Home</title>
         <%-include("../fragments/head.ejs")%>
+        <script src="/public/js/searchValidation.js" defer></script>
     </head>
     <body>
         <%-include("../fragments/header.ejs")%>
@@ -21,7 +22,7 @@
                     <div class="hidden duration-700 ease-in-out" data-carousel-item>
                         <a href="/search?city=<%-locals.destinations[0].title%>&checkin=&checkout=&guests=">
                             <span class="absolute top-1/2 left-1/2 text-2xl font-semibold text-white -translate-x-1/2 -translate-y-1/2 sm:text-3xl dark:text-gray-800">First Slide</span>
-                            <img src="../../public/photos/general/Home Page/Destinations/<%-locals.destinations[0].picture%>" class="block absolute top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2" alt="...">
+                            <img src="../../public/photos/general/Home Page/Destinations/destination1-1400.jpg" class="block absolute top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2" alt="...">
                             <div class="z-30 bg-white bg-opacity-80 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl p-4 flex flex-col justify-center items-center w-96">
                                 <h2 class="text-3xl font-bold text-gray-800 "><%-locals.destinations[0].title%></h2>
                                 <p class="text-md"><%-locals.destinations[0].description%></p>
@@ -31,7 +32,7 @@
                     <!-- Item 2 -->
                     <div class="hidden duration-700 ease-in-out" data-carousel-item>
                         <a href="/search?city=<%-locals.destinations[1].title%>&checkin=&checkout=&guests=">
-                            <img src="../../public/photos/general/Home Page/Destinations/<%-locals.destinations[1].picture%>" class="block absolute top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2" alt="...">
+                            <img src="../../public/photos/general/Home Page/Destinations/destination2-1400.jpg" class="block absolute top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2" alt="...">
                             <div class="z-30 bg-white bg-opacity-80 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl p-4 flex flex-col justify-center items-center w-96">
                                 <h2 class="text-3xl font-bold text-gray-800 "><%-locals.destinations[1].title%></h2>
                                 <p class="text-md"><%-locals.destinations[1].description%></p>
@@ -41,7 +42,7 @@
                     <!-- Item 3 -->
                     <div class="hidden duration-700 ease-in-out" data-carousel-item>
                         <a href="/search?city=<%-locals.destinations[2].title%>&checkin=&checkout=&guests=">
-                            <img src="../../public/photos/general/Home Page/Destinations/<%-locals.destinations[2].picture%>" class="block absolute top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2" alt="...">
+                            <img src="../../public/photos/general/Home Page/Destinations/destination3-1400.jpg" class="block absolute top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2" alt="...">
                             <div class="z-30 bg-white bg-opacity-80 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl p-4 flex flex-col justify-center items-center w-96">
                                 <h2 class="text-3xl font-bold text-gray-800 "><%-locals.destinations[2].title%></h2>
                                 <p class="text-md"><%-locals.destinations[2].description%></p>

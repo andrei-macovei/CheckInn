@@ -112,26 +112,54 @@ window.onload = () => {
     }
 
     getRooms();
+    
+    // data validation
+    const roomForm = document.querySelector('#add-room-form');
+    const roomRegex = /^[0-9]+$/;
+    const errorsDiv = document.querySelector('#room-errors');
 
     // Pressing confirm room details - ADD ROOM
     addRoomButton.addEventListener('click', e =>{
-        (async () =>{
-            const rawResponse = await fetch('/hosting/rooms', {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        id_property: id_property.value,
-                        room_type: room_type.value,
-                        single_beds: single.value,
-                        double_beds: double.value,
-                        bunk_beds: bunk.value,
-                        other: other.value
-                    })
-                });
-                const content = await rawResponse.json();
-            })();
-        getRooms();
+        console.log("submit");
+        var error_messages = [];
+        errorsDiv.innerHTML = '';
+        if(room_type.value == "choose"){
+            error_messages.push("Room type not chosen");
+        }
+        console.log(roomRegex.test(single.value), roomRegex.test(double.value), roomRegex.test(bunk.value), roomRegex.test(other.value))
+
+        if(!roomRegex.test(single.value) || !roomRegex.test(double.value) || !roomRegex.test(bunk.value) || !roomRegex.test(other.value)){
+            error_messages.push("Please use positive numbers for the number of beds");
+        }
+
+        if(parseInt(single.value) + parseInt(double.value) + parseInt(bunk.value) + parseInt(other.value) == 0){
+            error_messages.push("Room must have at least one place to sleep");
+        }
+
+        if(error_messages.length > 0){
+            for(error of error_messages){
+                var p = `<p class="text-red-500">${error}</p>`;
+                errorsDiv.innerHTML += p;
+            }
+        } else {
+            (async () =>{
+                const rawResponse = await fetch('/hosting/rooms', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id_property: id_property.value,
+                            room_type: room_type.value,
+                            single_beds: single.value,
+                            double_beds: double.value,
+                            bunk_beds: bunk.value,
+                            other: other.value
+                        })
+                    });
+                    const content = await rawResponse.json();
+                })();
+            getRooms();
+        }
     })
 }

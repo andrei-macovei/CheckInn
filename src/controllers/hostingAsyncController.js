@@ -7,18 +7,25 @@ client.connect();
 
 const postAddress = (req, res) =>{
     var {id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng} = req.body;
-    queryAddAddress = `INSERT INTO address (id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
-    // removes diacritics and special characters
-    if(street_and_number) street_and_number = street_and_number.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(neighbourhood) neighbourhood = neighbourhood.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(city) city = city.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(region) region = region.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if(country) country = country.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    paramsAddAddress = [id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng];
-    client.query(queryAddAddress, paramsAddAddress, (err, result) => {
-        if(err) console.log(err);
-        else res.status(201);
-    })
+
+    if(!country || !street_and_number || !city || !lat || !lng){
+        res.status(500);
+        return;
+    }
+    if(req.body.country && req.body.city && req.body.street_and_number){
+        queryAddAddress = `INSERT INTO address (id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
+        // removes diacritics and special characters
+        if(street_and_number) street_and_number = street_and_number.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if(neighbourhood) neighbourhood = neighbourhood.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if(city) city = city.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if(region) region = region.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if(country) country = country.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        paramsAddAddress = [id_property, street_and_number, neighbourhood, city, region, country, postal_code, lat, lng];
+        client.query(queryAddAddress, paramsAddAddress, (err, result) => {
+            if(err) console.log(err);
+            else res.status(201);
+        })
+    }
 }
 
 const putAddress = (req, res) =>{

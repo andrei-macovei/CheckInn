@@ -9,6 +9,7 @@
         <script src="/public/js/searchResults.js" defer></script>
         <!-- FontAwesome script -->
         <script src="https://kit.fontawesome.com/374b3caa1d.js" crossorigin="anonymous"></script>
+        <script src="/public/js/searchValidation.js" defer></script>
     </head>
     <body>
         <%-include("../fragments/header.ejs")%>
@@ -29,7 +30,11 @@
                     <div class="px-2 border-b pb-2">
                         <% let minPrice = parseFloat(locals.minPrice); let maxPrice = parseFloat(locals.maxPrice); let avgPrice = parseFloat(locals.avgPrice); %>
                         <h1 class="font-bold">Price</h1>
+                        <% if (locals.city){ %>
                         <label id="label-price" for="price-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Average price in <%-locals.city%> is : <%-Math.round(avgPrice)%>€</label>
+                        <% } else { %>
+                            <label id="label-price" for="price-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Results under: <%-avgPrice%>€/night</label>
+                        <% } %>
                         <div class="flex flex-row content-center">
                             <div><%-minPrice%>€</div>
                             <input id="price-range" type="range" name="price" min="<%-minPrice%>" max="<%-maxPrice%>" value="<%-avgPrice%>" class="to-filter aspect-sky-500 w-full mx-2 h-2 self-center bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
@@ -157,7 +162,7 @@
                     <div id="results-container">
 
                     </div>
-                    <% if(locals.favourites) for (fav of locals.favourites.favourites){ %>
+                    <% if(locals.favourites && locals.favourites.favourites) for (fav of locals.favourites.favourites){ %>
                         <input type="hidden" value="<%-fav%>" class="fav">
                     <% }%>
                 </div>

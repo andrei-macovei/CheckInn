@@ -6,33 +6,43 @@
 
         <title>CheckInn Home</title>
         <%-include("../fragments/head.ejs")%>
+        <!-- <script src="../../public/js/rulesValidation.js" defer></script> -->
     </head>
     <body>
         <%-include("../fragments/header.ejs")%>
         <main class="px-36">
             <h2 class="text-2xl font-bold p-4 mt-6">Rules and preferences about your property</h2>
-            <form method="POST" action="/hosting/addRules/<%-locals.id_property%>" class="border rounded-lg ">
+            <form id="rules_form" method="POST" action="/hosting/addRules/<%-locals.id_property%>" class="border rounded-lg ">
                 <h3 class="text-lg font-bold pb-2 p-4">Pricing and discounts</h3>
                 <div class="flex p-4 mx-2 space-x-6">
                     <div>
                         <label for="price_inp" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Price per night</label>
                         <p class="text-sm font-light mb-2">Price in €</p>
-                        <input type="number" min="0" step="5" id="price_inp" name="price" value="<%-locals.price%>" class="min-w-[300px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder="">
+                        <input type="number" min="0" id="price_inp" name="price" value="<%-Math.round(locals.price)%>" class="min-w-[300px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder="">
+                        <span id="price_err" class="text-red-500 text-sm"></span>
                     </div>
 
                     <div>
                         <label for="week_discount_inp" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Weekly discount</label>
                         <p class="text-sm font-light mb-2">Discount given for every full week booked</p>
-                        <input type="number" min="0" step="5" id="week_discount_inp" name="week_discount" value="<%-locals.week_discount ? locals.week_discount : "0"%>" class="min-w-[300px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder="">
+                        <input type="number" min="0" id="week_discount_inp" name="week_discount" value="<%-locals.week_discount ? locals.week_discount : "0"%>" class="min-w-[300px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder="">
+                        <span id="week_discount_err" class="text-red-500 text-sm"></span>
                     </div>
 
                     <div>
                         <label for="less_discount_inp" class="block text-sm font-medium text-gray-900 dark:text-gray-300">Partial occupancy discount</label>
                         <p class="text-sm font-light mb-2">Discount given per missing guest to full occupancy</p>
-                        <input type="number" min="0" step="5" id="less_discount_inp" name="less_guests_discount" value="<%-locals.less_guests_discount_discount ? locals.less_guests_discount_discount : "0"%>" class="min-w-[300px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder="">
+                        <input type="number" min="0" id="less_discount_inp" name="less_guests_discount" value="<%-locals.less_guests_discount_discount ? locals.less_guests_discount_discount : "0"%>" class="min-w-[300px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500" placeholder="">
+                        <span id="less_discount_err" class="text-red-500 text-sm"></span>
                     </div>
 
                 </div>
+
+                <% if(locals.error) { %>
+                    <div>
+                        <span id="err" class="text-red-500 text-sm p-4 px-6">Data not updated: <%-locals.error%></span>
+                    </div>
+                <%}%>
                 
                 <div class="flex p-4 mx-2 space-x-6">
                     <div class="mb-4">
@@ -43,6 +53,7 @@
                         <label for="checkout_inp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Check-out time:</label>
                         <input type="time" id="checkout_inp" name="checkout" value="<%-locals.checkout ? locals.checkout : "10:00"%>" class="text-sky-600 font-semibold rounded-xl">
                     </div>
+                    <span id="times_err" class="text-red-500 text-sm self-center"></span>
                 </div>
                 
                 <div class="p-4 pt-0">
@@ -67,8 +78,8 @@
                     </div>
                 </div>
                 <div class="p-4">
-                    <button type="submit" name="save_btn" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Save changes</button>
-                    <button type="submit" name="finish_btn" class="text-white bg-gradient-to-br from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800">
+                    <button type="submit" name="save_btn" class="btn text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Save changes</button>
+                    <button type="submit" name="finish_btn" class="btn text-white bg-gradient-to-br from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800">
                         Finish your listing
                         <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                     </button>

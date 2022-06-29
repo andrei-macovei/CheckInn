@@ -7,6 +7,7 @@ var client = new Client(conn);
 client.connect();
 
 const getResultsPage = (req, res) =>{
+    var minPrice, maxPrice, avgPrice;
     var queryGetPriceRange = `SELECT min(price), max(price), avg(price) FROM properties p INNER JOIN address a ON p.id_property=a.id_property WHERE a.city=$1;` // TOMODIF: WHERE
     client.query(queryGetPriceRange, [req.query.city], (err, result) =>{
         if(err) console.log(err);
@@ -20,27 +21,48 @@ const getResultsPage = (req, res) =>{
                         var queryGetFavourites = `SELECT favourites FROM users WHERE id_user=$1`;
                         client.query(queryGetFavourites, [req.session.user.id_user], (err3, result3) =>{
                             if(err3) {console.log(err3); return;}
+                            
+                            if(req.query.city != ''){
+                                minPrice = result.rows[0].min;
+                                maxPrice = result.rows[0].max;
+                                avgPrice = result.rows[0].avg;
+                            } else{
+                                // arbitrary values
+                                minPrice = 0;
+                                maxPrice = 1000;
+                                avgPrice = 500;
+                            }
                             var toSend = {
-                                minPrice: result.rows[0].min,
-                                maxPrice: result.rows[0].max,
-                                avgPrice: result.rows[0].avg,
+                                minPrice: minPrice,
+                                maxPrice: maxPrice,
+                                avgPrice: avgPrice,
                                 amenities: result2.rows,
                                 favourites: result3.rows[0]
                             }
-                            toSend.city = req.query.city;
+                            if(req.query.city) toSend.city = req.query.city;
                             if(req.query.checkin) toSend.checkin = req.query.checkin;
                             if(req.query.checkout) toSend.checkout = req.query.checkout;
                             if(req.query.guests) toSend.guests = req.query.guests;
                             res.render('pages/accomodations', toSend);
                         })
                     } else{
+                        if(req.query.city != ''){
+                            minPrice = result.rows[0].min;
+                            maxPrice = result.rows[0].max;
+                            avgPrice = result.rows[0].avg;
+                        } else{
+                            // arbitrary values
+                            minPrice = 0;
+                            maxPrice = 1000;
+                            avgPrice = 500;
+                        }
                         var toSend = {
-                            minPrice: result.rows[0].min,
-                            maxPrice: result.rows[0].max,
-                            avgPrice: result.rows[0].avg,
+                            minPrice: minPrice,
+                            maxPrice: maxPrice,
+                            avgPrice: avgPrice,
                             amenities: result2.rows
                         }
-                        toSend.city = req.query.city;
+                        if(req.query.city) toSend.city = req.query.city;
                         if(req.query.checkin) toSend.checkin = req.query.checkin;
                         if(req.query.checkout) toSend.checkout = req.query.checkout;
                         if(req.query.guests) toSend.guests = req.query.guests;
@@ -141,23 +163,6 @@ const getResults = (req, res) =>{
 
     queryGetResults += ` GROUP BY p.id_property, a.city, ph.big_picture`;
 
-    switch(req.query.order){
-        case 'price':
-            queryGetResults += ` ORDER BY price`;
-            break;
-        case 'rating':
-            queryGetResults += ` ORDER BY rating`;
-            break;
-        case 'reviews':
-            queryGetResults += ` ORDER BY count(id_review)`;
-            break;
-        default:
-            queryGetResults += ` ORDER BY id_property`;
-    }
-
-    // SORT ORDER
-    if(req.query.sortOrder == 'high') queryGetResults += ` DESC`;
-
     // ROOMS NUMBER
     if(Array.isArray(req.query.rooms)){
         queryGetResults += ` HAVING (`;
@@ -177,6 +182,24 @@ const getResults = (req, res) =>{
         paramsGetResults.push(req.query.rooms);
         i++;
     }
+
+    // ORDER
+    switch(req.query.order){
+        case 'price':
+            queryGetResults += ` ORDER BY price`;
+            break;
+        case 'rating':
+            queryGetResults += ` ORDER BY rating`;
+            break;
+        case 'reviews':
+            queryGetResults += ` ORDER BY count(id_review)`;
+            break;
+        default:
+            queryGetResults += ` ORDER BY id_property`;
+    }
+
+    // SORT ORDER
+    if(req.query.sortOrder == 'high') queryGetResults += ` DESC`;
 
     console.log(queryGetResults);
     client.query(queryGetResults, paramsGetResults, (err, result) =>{

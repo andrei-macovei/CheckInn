@@ -127,7 +127,7 @@ function getResults(){
                 if(result.rating) rating = result.rating + ' <i class="fa-solid fa-star text-yellow-400"></i>'; else rating = "No rating yet";
                 if(result.property_type == 'bedandbreakfast') result.property_type = 'Bed and Breakfast';
                 if(result.big_picture){
-                    propertyImage = `<img src="../../${result.big_picture}" class="col-start-1 col-end-2 row-span-3 min-h-[200px] min-w-[200px] max-w-[220px] rounded-lg bg-slate-200 text-slate-200">`;
+                    propertyImage = `<img src="../../public/photos/properties/${result.id_property}/big_picture-800.jpg" class="col-start-1 col-end-2 row-span-3 min-h-[200px] min-w-[200px] max-w-[220px] rounded-lg bg-slate-200 text-slate-200">`;
                 } else {
                     propertyImage = `<div class="col-start-1 col-end-2 row-span-3 min-h-[200px] min-w-[200px] max-w-[220px] rounded-lg bg-slate-200 text-slate-200">
                         #IMAGE

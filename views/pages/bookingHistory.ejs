@@ -10,8 +10,8 @@
     <body>
         <%-include("../fragments/header.ejs")%>
         <main class="px-36">
-            <div class="grid grid-cols-2">
-                <div class="flex flex-col px-12 border-r m-2">
+            <div class="">
+                <div class="flex flex-col px-12 m-2 items-center">
                     <h3 class="font-bold text-lg p-2 self-center">Bookings history</h3>
                     <% for (book of locals.bookings) {%>
                         <div class="border p-4 rounded-xl my-4 bg-gray-50 w-[500px] h-[240px] <%- book.status == 'confirmed' || book.status == 'reviewed' ? 'border-sky-500' : 'border-red-500'%>">

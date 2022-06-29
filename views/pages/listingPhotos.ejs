@@ -15,7 +15,7 @@
                 <div id="picture-grid" class="grid grid-cols-4 grid-rows-[repeat(2,_15vw)] gap-4 px-4 py-3 ">
                     <div id="big-picture" class="row-span-2 col-span-2 bg-slate-200 rounded-l-xl relative">
                         <% if(locals.photos && locals.photos.big_picture) {%>
-                        <img src="../../<%-locals.photos.big_picture%>" id="big-picture" class="row-span-2 bg-slate-200 w-full h-full object-cover rounded-l-xl"></img>
+                        <img src="../../public/photos/properties/<%-locals.id_property%>/big_picture-800.jpg" id="big-picture" class="row-span-2 bg-slate-200 w-full h-full object-cover rounded-l-xl"></img>
                         <% } else {%>
                         <div id="big-picture" class="row-span-2 bg-slate-200 w-full h-full object-cover rounded-l-xl"></div>
                         <%}%>
@@ -23,7 +23,7 @@
                     </div>
                     <div id="small-pic-1" class="bg-slate-200 col-span-1 row-span-1 relative">
                         <% if(locals.photos && locals.photos.small_pic_1) {%>
-                        <img src="../../<%-locals.photos.small_pic_1%>" id="small-pic-1" class="w-full h-full object-cover"></img>
+                        <img src="../../public/photos/properties/<%-locals.id_property%>/small_pic_1-800.jpg" id="small-pic-1" class="w-full h-full object-cover"></img>
                         <% } else {%>
                             <div id="small-pic-1" class="row-span-1 col-span-1 bg-slate-200 w-full h-full object-cover rounded-l-xl"></div>
                         <%}%>
@@ -31,7 +31,7 @@
                     </div>
                     <div id="small-pic-2" class="bg-slate-200 col-span-1 row-span-1 rounded-tr-xl relative">
                         <% if(locals.photos && locals.photos.small_pic_2) {%>
-                        <img src="../../<%-locals.photos.small_pic_2%>" id="small-pic-2" class="w-full h-full object-cover rounded-tr-xl"></img>
+                        <img src="../../public/photos/properties/<%-locals.id_property%>/small_pic_2-800.jpg" id="small-pic-2" class="w-full h-full object-cover rounded-tr-xl"></img>
                         <% } else {%>
                             <div id="small-pic-2" class="row-span-1 col-span-1 bg-slate-200 w-full h-full object-cover rounded-tr-xl"></div>
                         <%}%>
@@ -39,7 +39,7 @@
                     </div>
                     <div id="small-pic-3" class="bg-slate-200 col-span-1 row-span-1 relative">
                         <% if(locals.photos && locals.photos.small_pic_3) {%>
-                        <img src="../../<%-locals.photos.small_pic_3%>" id="small-pic-3" class="w-full h-full object-cover"></img>
+                        <img src="../../public/photos/properties/<%-locals.id_property%>/small_pic_3-800.jpg" id="small-pic-3" class="w-full h-full object-cover"></img>
                         <% } else {%>
                             <div id="small-pic-3" class="row-span-1 col-span-1 bg-slate-200 w-full h-full object-cover rounded-l-xl"></div>
                         <%}%>
@@ -47,7 +47,7 @@
                     </div>
                     <div id="small-pic-4" class="bg-slate-200 col-span-1 row-span-1 rounded-br-xl relative">
                         <% if(locals.photos && locals.photos.small_pic_4) {%>
-                        <img src="../../<%-locals.photos.small_pic_4%>" id="small-pic-4" class="w-full h-full object-cover rounded-br-xl"></img>
+                        <img src="../../public/photos/properties/<%-locals.id_property%>/small_pic_4-800.jpg" id="small-pic-4" class="w-full h-full object-cover rounded-br-xl"></img>
                         <% } else {%>
                             <div id="small-pic-4" class="row-span-1 col-span-1 bg-slate-200 w-full h-full object-cover rounded-br-xl"></div>
                         <%}%>

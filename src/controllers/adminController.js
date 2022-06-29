@@ -1,5 +1,6 @@
 const formidable = require('formidable')
 const { Client } = require('pg');
+const sharp = require('sharp');
 
 const {sendNotification} = require("../controllers/notificationsController");
 
@@ -64,33 +65,46 @@ const postDestinations = (req, res) =>{
                 if(err) {console.log(err); return;}
             });
 
-            res.redirect('/admin?success=true');            
+            res.redirect('/admin?success=true');
         });
         form.on("fileBegin", (name, file) =>{
             if(!file.originalFilename) return;
             destinationsFolder = __dirname + '/../../public/photos/general/Home Page/Destinations/';
             extension = file.originalFilename.split('.');
             file.filepath = destinationsFolder + name + '.' + extension[extension.length-1];
+            
+            var delayInMilliseconds = 1000; //1 second
+            setTimeout(function() {
             pic_name = name + '.' + extension[extension.length-1];
             console.log(pic_name);
-
             switch(name){
                 case 'destination1':
                     client.query('UPDATE destinations SET picture=$1 WHERE id_destination=1', [pic_name], (err, result) =>{
                         if(err) {console.log(err); return;}
+                    
+                        sharp(`${__dirname}/../../public/photos/general/Home Page/Destinations/destination1.jpg`).resize(1400).toFile(`${destinationsFolder}/destination1-1400.jpg`);
+                    
                     });
                     break;
                 case 'destination2':
                     client.query('UPDATE destinations SET picture=$1 WHERE id_destination=2', [pic_name], (err, result) =>{
                         if(err) {console.log(err); return;}
+
+                        sharp(`${__dirname}/../../public/photos/general/Home Page/Destinations/destination2.jpg`).resize(1400).toFile(`${destinationsFolder}/destination2-1400.jpg`);
+                    
                     });
                     break;
                 case 'destination3':
                     client.query('UPDATE destinations SET picture=$1 WHERE id_destination=3', [pic_name], (err, result) =>{
                         if(err) {console.log(err); return;}
+                        
+                        sharp(`${__dirname}/../../public/photos/general/Home Page/Destinations/destination3.jpg`).resize(1400).toFile(`${destinationsFolder}/destination3-1400.jpg`);
+                        
                     });
                     break;
             }
+            }, delayInMilliseconds);
+
         });
         form.on('file', (name, file) =>{
             console.log(`Added file.`);

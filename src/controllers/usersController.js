@@ -2,6 +2,8 @@ const formidable = require('formidable')
 const { Client } = require('pg')
 const bcrypt = require('bcrypt');
 const fs = require('fs');
+const sharp = require('sharp');
+
 const { sendTokenEmail, generateToken, sendResetEmail } = require('../controllers/emailSender');
 const {sendNotification} = require('../controllers/notificationsController');
 const {verifyPropertyListing} = require('../controllers/hostingController');
@@ -495,7 +497,12 @@ const postProfilePicture = (req, res) =>{
         client.query(queryAddImage, [profilePicturePath, req.session.user.id_user], (err, result) =>{
             if(err) {console.log(err); return;}
             console.log('profilePicturePath' + profilePicturePath)
-            res.redirect('/users/profile');
+            var delayInMilliseconds = 1000; //1 second
+            // setTimeout(function() {
+            //     if(profilePicturePath && picturesFolder)
+            //         sharp(profilePicturePath).resize(200).toFile(picturesFolder + '/profile_pic-200.jpg');
+                res.redirect('/users/profile');
+            // }, delayInMilliseconds);
         });
     });
     form.on("fileBegin", (name, file) =>{

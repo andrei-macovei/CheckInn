@@ -20,7 +20,7 @@
         <%-include("../fragments/header.ejs")%>
         <main class="px-36">
             <% prop = locals.prop; function capitalize(string) {return string.charAt(0).toUpperCase() + string.slice(1);} %>
-            <% if(locals.favourites) for(fav of locals.favourites.favourites){%>
+            <% if(locals.favourites && locals.favourites.favourites) for(fav of locals.favourites.favourites){%>
                 <input type="hidden" value="<%-fav%>" class="fav">
             <%}%>
             <div class="flex justify-between">
@@ -41,7 +41,7 @@
                     </div>
                  </div>
                  <div class="self-end px-8">
-                    <% if(locals.favourites && locals.favourites.favourites.includes(prop.id_property)){ %>
+                    <% if(locals.favourites && locals.favourites.favourites && locals.favourites.favourites.includes(prop.id_property)){ %>
                     <label>
                         <input type="hidden" name="favourite" value="False" />
                         <input id="custom-checkbox-input" class="hidden scale-125 hover-text-gray-500 hover:scale-100" name="favourite" value="<%-prop.id_property%>" type="checkbox" checked>
@@ -62,19 +62,19 @@
            
             <div id="picture-grid" class="grid grid-cols-4 grid-rows-[repeat(2,_14vw)] gap-4 p-4">
                 <div id="big-picture" class="row-span-2 col-span-2 bg-slate-200 rounded-l-xl">
-                    <img src="../../<%-locals.photos ? locals.photos.big_picture : ''%>" id="big-picture" class="row-span-2 bg-slate-200 w-full h-full object-cover rounded-l-xl"></img>
+                    <img src="../../<%-locals.photos ? 'public/photos/properties/' + prop.id_property + '/big_picture-800.jpg' : ''%>" id="big-picture" class="row-span-2 bg-slate-200 w-full h-full object-cover rounded-l-xl"></img>
                 </div>
                 <div id="small-pic-1" class="bg-slate-200 col-span-1 row-span-1">
-                    <img src="../../<%-locals.photos ? locals.photos.small_pic_1 : ''%>" id="small-pic-1" class="w-full h-full object-cover"></img>
+                    <img src="../../<%-locals.photos ? 'public/photos/properties/' + prop.id_property + '/small_pic_1-800.jpg' : ''%>" id="small-pic-1" class="w-full h-full object-cover"></img>
                 </div>
                 <div id="small-pic-2" class="bg-slate-200 col-span-1 row-span-1 rounded-tr-xl ">
-                    <img src="../../<%-locals.photos ? locals.photos.small_pic_2 : ''%>" id="small-pic-2" class="w-full h-full object-cover rounded-tr-xl"></img>
+                    <img src="../../<%-locals.photos ? 'public/photos/properties/' + prop.id_property + '/small_pic_2-800.jpg' : ''%>" id="small-pic-2" class="w-full h-full object-cover rounded-tr-xl"></img>
                 </div>
                 <div id="small-pic-3" class="bg-slate-200 col-span-1 row-span-1 ">
-                    <img src="../../<%-locals.photos ? locals.photos.small_pic_3 : ''%>" id="small-pic-3" class="w-full h-full object-cover"></img>
+                    <img src="../../<%-locals.photos ? 'public/photos/properties/' + prop.id_property + '/small_pic_3-800.jpg' : ''%>" id="small-pic-3" class="w-full h-full object-cover"></img>
                 </div>
                 <div id="small-pic-4" class="bg-slate-200 col-span-1 row-span-1 rounded-br-xl ">
-                    <img src="../../<%-locals.photos ? locals.photos.small_pic_4 : ''%>" id="small-pic-4" class="w-full h-full object-cover rounded-br-xl"></img>
+                    <img src="../../<%-locals.photos ? 'public/photos/properties/' + prop.id_property + '/small_pic_4-800.jpg' : ''%>" id="small-pic-4" class="w-full h-full object-cover rounded-br-xl"></img>
                 </div>
             </div>
             <div id="" class="grid grid-cols-[2fr_1fr]">

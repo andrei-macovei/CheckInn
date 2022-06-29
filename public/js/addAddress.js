@@ -5,6 +5,73 @@ const addAddressBtn = document.querySelector('#add-address-btn');
 const latitude = document.querySelector('#latitude');
 const longitude = document.querySelector('#longitude');
 
+// data validation
+const countryErr = document.querySelector('#country-err');
+const cityErr = document.querySelector('#city-err');
+const streetErr = document.querySelector('#street-err');
+
+const but = document.querySelector('#add-address-btn');
+
+countryInp.addEventListener('change', e =>{
+    var error = false;
+    if(!countryInp.value){
+        countryErr.innerText = "This field is required";
+        countryInp.classList.add("border-red-500");
+        error = true;
+    
+        but.disabled = true;
+        but.classList.add("cursor-not-allowed");
+    }
+
+    if(!error){
+        countryErr.innerText = '';
+        countryInp.classList.remove("border-red-500");
+    
+        but.disabled = false;
+        but.classList.remove("cursor-not-allowed");
+    }
+});
+
+cityInp.addEventListener('change', e =>{
+    var error = false;
+    if(!cityInp.value){
+        cityErr.innerText = "This field is required";
+        cityInp.classList.add("border-red-500");
+        error = true;
+    
+        but.disabled = true;
+        but.classList.add("cursor-not-allowed");
+    }
+
+    if(!error){
+        cityErr.innerText = '';
+        cityInp.classList.remove("border-red-500");
+    
+        but.disabled = false;
+        but.classList.remove("cursor-not-allowed");
+    }
+});
+
+streetInp.addEventListener('change', e =>{
+    var error = false;
+    if(!streetInp.value){
+        streetErr.innerText = "This field is required";
+        streetInp.classList.add("border-red-500");
+        error = true;
+    
+        but.disabled = true;
+        but.classList.add("cursor-not-allowed");
+    }
+
+    if(!error){
+        streetErr.innerText = '';
+        streetInp.classList.remove("border-red-500");
+    
+        but.disabled = false;
+        but.classList.remove("cursor-not-allowed");
+    }
+});
+
 var map;
 var marker;
 var addressExists; // 1 if it exists in db, 0 if not

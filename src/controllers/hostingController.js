@@ -1,6 +1,7 @@
 const formidable = require('formidable')
 const { Client } = require('pg');
 const fs = require('fs');
+const sharp = require('sharp');
 
 // database connection
 const conn = require("../../public/json/connection.json");
@@ -163,7 +164,8 @@ const getListingDetails = (req, res) =>{
                                         bathroomAmenities: result.rows,
                                         kitchenAmenities: result1.rows,
                                         generalAmenities: result2.rows,
-                                        propertyAmenities: result4.rows[0]
+                                        propertyAmenities: result4.rows[0],
+                                        error: req.query.error
                                     });
                                 })                                
                             });
@@ -179,6 +181,19 @@ const postListingDetails = (req, res) =>{
     var form = new  formidable.IncomingForm();
 
     form.parse(req, (err, text_fields) =>{
+
+        const numberRegex = /^[1-9]+[0-9]*$/;
+
+        // data validation
+        if(!numberRegex.test(text_fields.guests)){
+            res.redirect(`/hosting/listingDetails/${req.params.id_property}?error=guests`);
+            return;
+        }
+        if(!numberRegex.test(text_fields.bathrooms)){
+            res.redirect(`/hosting/listingDetails/${req.params.id_property}?error=bathrooms`);
+            return;
+        }
+
         var queryUpdateProperty = `UPDATE properties SET title = $1, description = $2, guests = $3, bathrooms = $4 WHERE id_property= $5`
         var paramsUpdateProperty = [text_fields.title, text_fields.description.trim(), text_fields.guests, text_fields.bathrooms, req.params.id_property];
         client.query(queryUpdateProperty, paramsUpdateProperty, (err, result) =>{
@@ -347,14 +362,24 @@ const postListingPhotos = (req, res) =>{
                     if(err1) {console.log(err1); return;}
                 });
             }
+
             for(const image in images_path){
+
                 var queryAddImage = `UPDATE photos SET ${image}=$1 WHERE id_property=$2`;
                 client.query(queryAddImage, [images_path[image], req.params.id_property], (err2, result2) =>{
                     if(err2) console.log(err2);
                 });
+
+                var small_dim = 300;
+                var medium_dim = 800;
+
+                // sharp(`${__dirname}/../../${images_path[image]}`).resize(small_dim).toFile(`${propertyFolder}/${image}-${small_dim}.jpg`);
+                // sharp(`${__dirname}/../../${images_path[image]}`).resize(medium_dim).toFile(`${propertyFolder}/${image}-${medium_dim}.jpg`);
             }
-            if(text_fields.save_btn == '') res.redirect(`/hosting/listingPhotos/${req.params.id_property}`);
-            if(text_fields.rules_btn == '')res.redirect(`/hosting/listingRules/${req.params.id_property}`);
+            // if(text_fields.save_btn == '') res.redirect(`/hosting/listingPhotos/${req.params.id_property}`);
+            // if(text_fields.rules_btn == '') res.redirect(`/hosting/listingRules/${req.params.id_property}`);
+            if(text_fields.save_btn == '') res.redirect(`/hosting/generatePhotos/${req.params.id_property}?save=true`);
+            if(text_fields.rules_btn == '') res.redirect(`/hosting/generatePhotos/${req.params.id_property}`);
         });
     });
     form.on("fileBegin", (name, file) =>{
@@ -364,9 +389,10 @@ const postListingPhotos = (req, res) =>{
         if(!fs.existsSync(propertyFolder)){     // if folder for current property doesn't exist, create it
             fs.mkdirSync(propertyFolder);
         }
-
+        
         extension = file.originalFilename.split('.');
         file.filepath = propertyFolder + name + '.' + extension[extension.length-1];
+
         switch(name){
             case 'big_picture':
                 images_path.big_picture = `public/photos/properties/${req.params.id_property}/${name}.${extension[extension.length-1]}`;
@@ -388,9 +414,77 @@ const postListingPhotos = (req, res) =>{
     form.on('file', (name, file) =>{
         console.log(`Added file.`);
     })
+    // form.on('end', () =>{
+    //     var small_dim = 300;
+    //     var medium_dim = 800;
+    //     propertyFolder = __dirname + '/../../public/photos/properties/' + req.params.id_property + '/';
+
+    //     console.log(images_path);
+    //     // for(const image in images_path){
+    //     //     sharp(`${__dirname}/../../${images_path[image]}`).resize(medium_dim).toFile(`${propertyFolder}/${image}-${medium_dim}.jpg`);
+    //     // }
+
+    //     // sharp(`${__dirname}/../../${images_path[image]}`).resize(small_dim).toFile(`${propertyFolder}/${image}-${small_dim}.jpg`);
+        
+    // })
+}
+
+const generatePhotos = (req, res) =>{
+    //:id_property
+    var small_dim = 300;
+    var medium_dim = 800;
+    var queryGetPhotos = `SELECT big_picture, small_pic_1, small_pic_2, small_pic_3, small_pic_4 FROM photos WHERE id_property=$1`;
+    client.query(queryGetPhotos, [req.params.id_property], (err, result) =>{
+        if(err) {console.log(err); return;}
+        //var images = [result.rows[0].big_picture, result.rows[0].small_pic_1, result.rows[0].small_pic_2, result.rows[0].small_pic_3, result.rows[0].small_pic_4];
+        
+        if(result.rows[0].big_picture){
+            sharp(`${__dirname}/../../${result.rows[0].big_picture}`).resize(medium_dim).toFile(`${propertyFolder}/big_picture-${medium_dim}.jpg`);
+        }
+        if(result.rows[0].small_pic_1){
+            sharp(`${__dirname}/../../${result.rows[0].small_pic_1}`).resize(medium_dim).toFile(`${propertyFolder}/small_pic_1-${medium_dim}.jpg`);
+        }
+        if(result.rows[0].small_pic_2){
+            sharp(`${__dirname}/../../${result.rows[0].small_pic_2}`).resize(medium_dim).toFile(`${propertyFolder}/small_pic_2-${medium_dim}.jpg`);
+        }
+        if(result.rows[0].small_pic_3){
+            sharp(`${__dirname}/../../${result.rows[0].small_pic_3}`).resize(medium_dim).toFile(`${propertyFolder}/small_pic_3-${medium_dim}.jpg`);
+        }
+        if(result.rows[0].small_pic_4){
+            sharp(`${__dirname}/../../${result.rows[0].small_pic_4}`).resize(medium_dim).toFile(`${propertyFolder}/small_pic_4-${medium_dim}.jpg`);
+        }
+        // if(text_fields.save_btn == '') res.redirect(`/hosting/listingPhotos/${req.params.id_property}`);
+        // if(text_fields.rules_btn == '') res.redirect(`/hosting/listingRules/${req.params.id_property}`);
+
+        var delayInMilliseconds = 1000; //1 second
+
+        setTimeout(function() {
+            if(req.query.save == "true") res.redirect(`/hosting/listingPhotos/${req.params.id_property}`);
+            else res.redirect(`/hosting/listingRules/${req.params.id_property}`);
+        }, delayInMilliseconds);
+    })
 }
 
 const getListingRules = (req, res) =>{
+    
+    var error = '';
+    if(req.query.error){
+        switch(req.query.error){
+            case "price":
+                error = 'Price is invalid. Please enter a number greater than 0, without decimals';
+                break;
+            case "discount":
+                error = 'Discount value invalid. Please enter a number greater or equal to 0, without decimals';
+                break;
+            case "discounttoobig":
+                error = "Discount given is too big. Discounts cannot exceed the price per night";
+                break;
+            case "times":
+                error = "Checkin time must be later than checkout time";
+                break;
+        }
+    }
+    
     var queryGetRules = `SELECT price, week_discount, checkin, checkout, for_kids, smoking_allowed, pets_allowed, events_allowed FROM properties WHERE id_property= $1`;
     client.query(queryGetRules, [req.params.id_property], (err, result) =>{
         res.render('pages/listingRules', {
@@ -403,6 +497,7 @@ const getListingRules = (req, res) =>{
             smoking_allowed: result.rows[0].smoking_allowed,
             pets_allowed: result.rows[0].pets_allowed,
             events_allowed: result.rows[0].events_allowed,
+            error: error
         });
     });
 }
@@ -410,14 +505,37 @@ const getListingRules = (req, res) =>{
 const postAddRules = (req, res) =>{
     var form = new  formidable.IncomingForm();
     form.parse(req, (err, text_fields) =>{
-        console.log(text_fields)
+        
+        // data validation
+        const numberRegex = /^[1-9]+[0-9]*$/;
+        const discountRegex = /^[0-9]+$/;
+
+        if(!numberRegex.test(text_fields.price)){
+            res.redirect(`/hosting/listingRules/${req.params.id_property}?error=price`);
+            return;
+        }
+
+        if(!discountRegex.test(text_fields.week_discount) || !discountRegex.test(text_fields.less_guests_discount)){
+            res.redirect(`/hosting/listingRules/${req.params.id_property}?error=discount`);
+            return;
+        }
+
+        if(parseInt(text_fields.week_discount) >= parseInt(text_fields.price) || parseInt(text_fields.less_guests_discount) >= parseInt(text_fields.price)){
+            res.redirect(`/hosting/listingRules/${req.params.id_property}?error=discounttoobig`);
+            return;
+        }
+
+        if(text_fields.checkin <= text_fields.checkout){
+            res.redirect(`/hosting/listingRules/${req.params.id_property}?error=times`);
+            return;
+        }
 
         var queryUpdateProperty = `UPDATE properties SET price = $1, week_discount = $2, checkin = $3, checkout = $4,
-                                    for_kids = $5, smoking_allowed = $6, pets_allowed = $7, events_allowed = $8  WHERE id_property= $9`;
+                                    for_kids = $5, smoking_allowed = $6, pets_allowed = $7, events_allowed = $8, less_guests_discount = $9  WHERE id_property= $10`;
         var paramsUpdateProperty = [text_fields.price, text_fields.week_discount, text_fields.checkin, text_fields.checkout, 
             (text_fields.rules.includes('for_kids')) ? true : false, (text_fields.rules.includes('smoking_allowed')) ? true : false,
             (text_fields.rules.includes('pets_allowed')) ? true : false, (text_fields.rules.includes('events_allowed')) ? true : false,
-            req.params.id_property];
+            text_fields.less_guests_discount, req.params.id_property];
         client.query(queryUpdateProperty, paramsUpdateProperty, (err, result) =>{
             if(err) console.log(err);
             else{
@@ -479,6 +597,7 @@ module.exports = {
     postListingDetails,
     getListingPhotos,
     postListingPhotos,
+    generatePhotos,
     getListingRules,
     postAddRules,
     getBookingHistory,

@@ -25,6 +25,12 @@ const getRoom = (req, res) =>{
 
 const postRoom = (req, res) =>{
     const {id_property, room_type, single_beds, double_beds, bunk_beds, other} = req.body;
+    const roomRegex = /^[0-9]+$/;
+    if(room_type == 'choose' || parseInt(single_beds) + parseInt(double_beds) + parseInt(bunk_beds) + parseInt(other) == 0 || 
+    !roomRegex.test(single_beds), !roomRegex.test(double_beds), !roomRegex.test(bunk_beds)){
+        res.status(500);
+        return;
+    }
     queryAddRoom = `INSERT INTO rooms (id_property, room_type, single_beds, double_beds, bunk_beds, other) VALUES ($1, $2, $3, $4, $5, $6)`;
     paramsAddRoom = [id_property, room_type, single_beds, double_beds, bunk_beds, other];
     client.query(queryAddRoom, paramsAddRoom, (err, result) => {
