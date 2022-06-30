@@ -26,7 +26,73 @@ const days = (date_1, date_2) =>{
     let difference = date_2.getTime() - date_1.getTime(); 
     let TotalDays = Math.ceil(difference / (1000 * 3600 * 24)); 
     return TotalDays; 
-} 
+}
+
+const numberRegex = /^[1-9]+[0-9]*$/;
+
+// data validation
+guestsInp.addEventListener('change', e =>{
+    var error = false;
+    if(parseInt(guestsInp.value) > parseInt(propertyGuests.innerText)){
+        error = true;
+        guestsInp.classList.add('border-red-500');
+        bookingButton.disabled = true;
+        bookingButton.classList.add('cursor-not-allowed');
+    }
+
+    if(!numberRegex.test(guestsInp.value)){
+        error = true;
+        guestsInp.classList.add('border-red-500');
+        bookingButton.disabled = true;
+        bookingButton.classList.add('cursor-not-allowed');
+    }
+
+
+    if(!error){
+        guestsInp.classList.remove('border-red-500');
+        bookingButton.disabled = false;
+        bookingButton.classList.remove('cursor-not-allowed');
+    }
+});
+
+checkinInp.addEventListener('focusout', e =>{
+    var error = false;
+    if(checkinInp.value == checkoutInp.value){
+        error = true;
+        checkinInp.classList.add('border-red-500');
+        checkoutInp.classList.add('border-red-500');
+        bookingButton.disabled = true;
+        bookingButton.classList.add('cursor-not-allowed');
+    }
+    if(!error){
+        checkinInp.classList.remove('border-red-500');
+        checkoutInp.classList.remove('border-red-500');
+        if(bookingButton.innerText == "Book now"){
+            bookingButton.disabled = false;
+            bookingButton.classList.remove('cursor-not-allowed');
+        }
+    }
+})
+
+checkoutInp.addEventListener('focusout', e =>{
+    var error = false;
+    console.log(checkinInp.value, checkoutInp.value);
+    if(checkinInp.value == checkoutInp.value){
+        error = true;
+        checkinInp.classList.add('border-red-500');
+        checkoutInp.classList.add('border-red-500');
+        bookingButton.disabled = true;
+        bookingButton.classList.add('cursor-not-allowed');
+    }
+    if(!error){
+        checkinInp.classList.remove('border-red-500');
+        checkoutInp.classList.remove('border-red-500');
+        if(bookingButton.innerText == "Book now"){
+            bookingButton.disabled = false;
+            bookingButton.classList.remove('cursor-not-allowed');
+        }
+    }
+})
 
 bookingInputs.forEach(function(opt){
     opt.addEventListener('focusout', e =>{
@@ -41,7 +107,7 @@ bookingInputs.forEach(function(opt){
                 dates.push(dbDate);
             }
             if(dates[0] < dates[1]){
-                var nights = days(dates[1], dates[0]);
+                var nights = days(dates[0], dates[1]);
                 var guestsDiscount_calculated = 0;
                 var weekDiscount_calculated = 0;
 
@@ -161,7 +227,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 var checkout = new Date(booking.checkout);
 
                 event.start = checkin.setDate(checkin.getDate() + 1);
-                event.end = checkout.setDate(checkin.getDate() + days(checkin, checkout) + 2);
+                // event.end = checkout.setDate(checkin.getDate() + days(checkin, checkout) + 2);
+                event.end = checkout.setDate(checkout.getDate() + 2);
                 event.allDay = true;
                 events.push(event);
             }

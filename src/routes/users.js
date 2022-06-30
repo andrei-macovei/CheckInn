@@ -29,6 +29,8 @@ router.get('/confirm/:email/:token', usersController.getConfirmEmail);
 
 router.get('/profile', usersController.getProfile);
 
+router.get('/profile/:id_user', usersController.getUserProfile);
+
 router.post('/editProfile', usersController.postEditProfile);
 
 router.post('/changePassword', usersController.postChangePassword);

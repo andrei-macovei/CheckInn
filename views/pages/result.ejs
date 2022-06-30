@@ -80,15 +80,15 @@
             <div id="" class="grid grid-cols-[2fr_1fr]">
                 <div id="subtitle" class="flex border-b m-4 pb-2">
                     <div class="pr-4">
-                        <p class="text-xl font-semibold"><%-capitalize(prop.property_type)%> hosted by <%-prop.firstname%> <%-prop.lastname[0]%>.</p>
+                        <p class="text-xl font-semibold"><%-capitalize(prop.property_type)%> hosted by <a href="/users/profile/<%-prop.id_host%>"><%-prop.firstname%> <%-prop.lastname[0]%></a>.</p>
                         <p><span id="guests_nr"><%-prop.guests%></span> guests - <%-prop.rooms_number%> rooms - <%-prop.bathrooms%> bathrooms</p> 
                     </div>
                     <% if(prop.profile_pic) {%>
-                        <img src="../../<%-prop.profile_pic%>" id="profile-pic-host" class="min-h-[60px] min-w-[60px] max-h-[60px] max-w-[60px] rounded-full bg-slate-200">
-                        </img>
+                        <a href="/users/profile/<%-prop.id_host%>"><img src="../../<%-prop.profile_pic%>" id="profile-pic-host" class="min-h-[60px] min-w-[60px] max-h-[60px] max-w-[60px] rounded-full bg-slate-200">
+                        </img></a>
                     <%} else {%>
-                    <div id="profile-pic-host" class="min-h-[60px] min-w-[60px] max-h-[60px] max-w-[60px] rounded-full bg-slate-200">
-                    </div>
+                        <a href="/users/profile/<%-prop.id_host%>"><div id="profile-pic-host" class="min-h-[60px] min-w-[60px] max-h-[60px] max-w-[60px] rounded-full bg-slate-200">
+                    </div></a>
                     <%}%>
                 </div>
                 <div id="sticky-reserve-container" class="row-[span_7_/_span_7]"> 
@@ -115,10 +115,13 @@
                                 </div>
                                 <input type="hidden" id="id_property" name="id_property" value="<%-prop.id_property%>">
                                 <input type="hidden" name="name_property" value="<%-prop.title%>">
+                                <input type="hidden" name="property_guests" value="<%-prop.guests%>">
                                 <% if (locals.error) { %>
                                 <div class="text-red-600 pt-3">
                                     <%- (locals.error == 'fullyBooked') ? 'The property is unavailable for your chosen dates. Please choose other dates' : '' %>
                                     <%- (locals.error == 'notLoggedIn') ? 'Please log in to book this property' : '' %>
+                                    <%- (locals.error == 'wrongDates') ? 'The checkin and checkout dates are wrong' : '' %>
+                                    <%- (locals.error == 'guests') ? 'Number of guests must be equal or lower to what the property allows' : '' %>
                                 </div>
                                 <%}%>
                                 <% if(locals.user) { %>

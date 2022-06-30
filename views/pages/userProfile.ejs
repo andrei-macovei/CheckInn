@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+
+        <title>CheckInn Home</title>
+        <%-include("../fragments/head.ejs")%>
+        <!-- FontAwesome script -->
+        <script src="https://kit.fontawesome.com/374b3caa1d.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <%-include("../fragments/header.ejs")%>
+        <main class="px-36">
+            <div id="" class="grid grid-cols-[2fr_1fr]">
+                <div class="">
+                    <% details = locals.details%>
+                    <div class="xx border-b p-4 ">
+                        <p class="text-3xl font-bold"><%-details.firstname%> <%-details.lastname%></p>
+                        <p class="font-light self-center">On CheckInn since <%-details.join_date.toDateString().slice(3) %></p>
+                    </div>
+                    <p class="text-lg font-semibold p-4">Contact information:</p>
+                    <div class="flex space-x-4 border-b">
+                        <div class="xx p-4">
+                            <p class="text-sm font-semibold">E-mail address:</p>
+                            <p class="text-lg font-light"><%-details.email%></p>
+                        </div>
+                        <div class="xx  p-4">
+                            <p class="text-sm font-semibold">Phone number: </p>
+                            <p class="text-lg font-light"><%-details.phone ? details.phone : 'Not added yet'%></p>
+                        </div>
+                    </div>
+                    <% if(details.description) { %>
+                    <div class="xx border-b p-4">
+                        <p class="text-sm font-semibold">Self description: </p>
+                        <p class="text-lg font-light"><%-details.description ? details.description : 'Not added yet'%></p>
+                    </div>
+                    <% } %>
+                    <% if(details.birthday) { %>
+                    <div class="xx border-b p-4">
+                        <p class="text-sm font-semibold">Birthday: </p>
+                        <p class="text-lg font-light"><%-details.birthday ? details.birthday.toDateString().slice(3) : 'Not added yet'%></p>
+                    </div>
+                    <% } %>
+                    <% if(details.role == "host") { %>
+                        <div class="flex flex-col space-y-2 p-4">
+                            <h3 class="text-lg font-semibold py-4"><%-details.firstname%> <%-details.lastname%> hosts the following <%- locals.properties.length == 1 ? 'property' : 'properties'%></h3>
+                        <% for(prop of locals.properties) {%>
+                            <a href="/search/result/<%-prop.id_property%>">
+                                <div class="border rounded-xl bg-gray-50 flex justify-between p-4">
+                                    <div class="flex space-x-2">
+                                        <p class="font-semibold"><%-prop.title%> -</p>
+                                        <p><%-prop.city%>, <%-prop.country%></p>
+                                    </div>
+                                    <p><%-prop.rating ? prop.rating + '<i class="fa-solid fa-star text-yellow-400"></i>': "No rating yet"%></p>
+                                </div>
+                            </a>
+                        <% } %>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="flex flex-col items-center py-8">
+                    <div>
+                        <% if(details.profile_pic) { %>
+                            <img src="../../<%-details.profile_pic%>" class="w-80 h-80 rounded-full bg-slate-200">
+                        <%} else {%>
+                            <div id="profile-pic-host" class="w-80 h-80 rounded-full bg-slate-200"></div>
+                        <%}%>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

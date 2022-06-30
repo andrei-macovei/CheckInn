@@ -394,6 +394,29 @@ const getProfile = (req, res) =>{
     }
 }
 
+const getUserProfile = (req, res) =>{
+    //:id_user
+    var queryGetUserInfo = `SELECT * FROM users WHERE id_user=$1`;
+    client.query(queryGetUserInfo, [req.params.id_user], (err, result) =>{
+        if(err) {console.log(err); return;}
+        if(result.rows[0].role == "host"){
+            var queryGetProperties = `SELECT p.title, p.property_type, p.id_property, p.rating , a.city, a.country, ph.big_picture FROM properties p INNER JOIN address a USING(id_property) 
+                                        INNER JOIN photos ph USING(id_property) WHERE id_host=$1`;
+            client.query(queryGetProperties, [req.params.id_user], (err1, result1) =>{
+                if(err1) {console.log(err1); return;}
+                res.render('pages/userProfile',{
+                    details: result.rows[0],
+                    properties: result1.rows
+                })
+            })
+        } else {
+            res.render('pages/userProfile',{
+                details: result.rows[0]
+            })
+        }
+    })
+}
+
 const postEditProfile = (req, res) =>{
     var form = new formidable.IncomingForm();
 
@@ -540,6 +563,7 @@ module.exports = {
     postUpdatePassword,
     getConfirmEmail,
     getProfile,
+    getUserProfile,
     postEditProfile,
     postChangePassword,
     postProfilePicture,

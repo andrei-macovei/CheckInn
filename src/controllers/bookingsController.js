@@ -13,12 +13,24 @@ const postBooking = (req, res) =>{
 
     form.parse(req, (err, text_fields) =>{
         // handling date input
-        //TODO: data validation
-        //TODO: check if user is logged in
+        //DONE: data validation
+        //DONE: check if user is logged in
         console.log(req.params.price);
         if(req.session == null || req.session.user == null) {res.redirect(`/search/result/${text_fields.id_property}?error=notLoggedIn`); return;}
         var checkin = text_fields.checkin;
         var checkout = text_fields.checkout;
+
+        if(checkin >= checkout){
+            res.redirect(`/search/result/${text_fields.id_property}?error=wrongDates`);
+            return;
+        }
+
+        const numberRegex = /^[1-9]+[0-9]*$/;
+        if(text_fields.guests > text_fields.property_guests || !numberRegex.test(text_fields.guests)){
+            res.redirect(`/search/result/${text_fields.id_property}?error=guests`);
+            return;
+        }
+
         var dates = []; // 0 - checkin, 1 - checkout
         for(d of [checkin, checkout]){
             let dateArr = d.split('/');
@@ -28,18 +40,19 @@ const postBooking = (req, res) =>{
             let dbDate = new Date(year, month-1, day);
             dates.push(dbDate);
         }
+
         // check for time collisions with other bookings
         var queryGetBookings = `SELECT checkin, checkout FROM bookings WHERE id_property=$1 AND checkout > $2`;
         client.query(queryGetBookings, [text_fields.id_property, dates[0]], (err, result) =>{
             // console.log(result.rows[0].checkin);
             var overlap = 0;
-            const checkin = new Date
+            const checkin = new Date();
 
             for(row of result.rows){
-                if((row.checkin > dates[0]) && (row.checkin < dates[1])){
+                if((row.checkin >= dates[0]) && (row.checkin < dates[1])){
                     overlap = 1;
                     break;
-                } else if(row.checkout > dates[0] && row.checkout < dates[1]){
+                } else if(row.checkout > dates[0] && row.checkout <= dates[1]){
                     overlap = 1;
                     break;
                 } else if(row.checkin < dates[0] && row.checkout > dates[1]){

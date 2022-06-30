@@ -39,9 +39,11 @@ const deleteFavourite = (req, res) =>{
     client.query(queryRemoveFavourite, [req.params.id_property, req.session.user.id_user], (err, result) =>{
         if(err) { console.log(err); return;}
         // req.session.user.favourites.append(req.params.id_property);
-        const index = req.session.user.favourites.indexOf(req.params.id_property);
-        if (index > -1) {
-            req.session.user.favourites.splice(index, 1); // 2nd parameter means remove one item only
+        if(req.session.user.favourites){
+            const index = req.session.user.favourites.indexOf(req.params.id_property);
+            if (index > -1) {
+                req.session.user.favourites.splice(index, 1); // 2nd parameter means remove one item only
+            }
         }
         res.status(200).json(result.rows);
     });

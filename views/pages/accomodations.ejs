@@ -44,11 +44,11 @@
                     <div class="px-2 border-b">
                         <h1 class="font-bold py-2">Property type</h1>
                         <div class="flex items-center mb-2">
-                            <input id="villa-checkbox" name="property_type" type="checkbox" value="house" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="villa-checkbox" name="property_type" type="checkbox" value="house" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" <%-locals.filter == 'house' ? 'checked' : ''%>>
                             <label for="villa-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">House/Villa</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="apartment-checkbox" name="property_type" type="checkbox" value="apartment" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="apartment-checkbox" name="property_type" type="checkbox" value="apartment" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" <%-locals.filter == 'apartment' ? 'checked' : ''%>>
                             <label for="apartment-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Apartment</label>
                         </div>
                         <div class="flex items-center mb-2">
@@ -60,7 +60,7 @@
                             <label for="hostel-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Hostel</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="special-checkbox" name="property_type" type="checkbox" value="special" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="special-checkbox" name="property_type" type="checkbox" value="special" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" <%-locals.filter == 'unique' ? 'checked' : ''%>>
                             <label for="special-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Special places</label>
                         </div>
                     </div>
@@ -90,7 +90,7 @@
                             <label for="kids-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Infants welcome</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="pets-checkbox" type="checkbox" name="rules" value="pets_allowed" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="pets-checkbox" type="checkbox" name="rules" value="pets_allowed" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" <%-locals.filter == 'pets' ? 'checked' : ''%>>
                             <label for="pets-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Pets allowed</label>
                         </div>
                         <div class="flex items-center mb-2">
@@ -98,7 +98,7 @@
                             <label for="smoking-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Smoking allowed</label>
                         </div>
                         <div class="flex items-center mb-2">
-                            <input id="events-checkbox" type="checkbox" name="rules" value="events_allowed" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <input id="events-checkbox" type="checkbox" name="rules" value="events_allowed" class="to-filter w-4 h-4 text-sky-500 bg-gray-100 rounded border-gray-300 focus:ring-sky-500 dark:focus:ring-sky-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" <%-locals.filter == 'events' ? 'checked' : ''%>>
                             <label for="events-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Events allowed</label>
                         </div>
                     </div>
