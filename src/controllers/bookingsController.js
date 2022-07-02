@@ -93,6 +93,14 @@ const getPropertyBookings = (req, res) =>{
     });
 }
 
+const getUserBookings = (req, res) =>{
+    var queryGetBookings = `SELECT * FROM bookings WHERE id_user=$1 AND checkout>CURRENT_DATE AND (status='pending' OR status='confirmed')`;
+    client.query(queryGetBookings, [req.session.user.id_user], (err, result) =>{
+        if(err) {console.log(err); return;}
+        res.status(200).json(result.rows);
+    });
+}
+
 const getConfirmBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='confirmed' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
@@ -128,7 +136,6 @@ const getRefuseBooking = (req, res) =>{
 const getCancelBooking = (req, res) =>{
     client.query("UPDATE bookings SET status='canceled' WHERE id_booking=$1", [req.params.id_booking], (err, result) =>{
         if(err) {console.log(err); return;}
-
         // if host canceled, send cancel notification to user who made booking
         var queryGetProperty = `SELECT p.title, p.id_property, u.id_user FROM bookings b JOIN properties p USING(id_property) JOIN users u USING(id_user) WHERE id_booking=$1`;
         client.query(queryGetProperty, [req.params.id_booking], (err, result) =>{
@@ -137,19 +144,19 @@ const getCancelBooking = (req, res) =>{
             var action = `/booking/userTrips`;
             notificationsController.sendNotification(result.rows[0].id_user, `Booking canceled - #${req.params.id_booking}`, text, action, 'Your trips');
         });
-        if(req.query.id_property) res.redirect(`/hosting/?id_property=${req.params.id_property}`);
+        if(req.query.id_property) res.redirect(`/hosting/?id_property=${req.query.id_property}`);
         else {
             // if user canceled, send notification to host
             if(req.query.path == 'userTrips'){
-                var queryGetProperty = `SELECT p.title FROM bookings b JOIN properties p USING(id_property) WHERE id_booking=$1`;
+                var queryGetProperty = `SELECT p.title, p.id_host, p.id_property FROM bookings b JOIN properties p USING(id_property) WHERE id_booking=$1`;
                 client.query(queryGetProperty, [req.params.id_booking], (err, result) =>{
                     if(err) {console.log(err); return;}
                     var text = `A booking to ${result.rows[0].title} was canceled by the guest.`;
-                    var action = `/hosting/?id_property=${text_fields.id_property}`;
-                    notificationsController.sendNotification(result.rows[0].id_user, `Booking canceled - #${req.params.id_booking}`, text, action, 'Review bookings');
+                    var action = `/hosting/?id_property=${result.rows[0].id_property}`;
+                    notificationsController.sendNotification(result.rows[0].id_host, `Booking canceled - #${req.params.id_booking}`, text, action, 'Review bookings');
+                    res.redirect('/booking/userTrips');
                 });
 
-                res.redirect('/booking/userTrips');
             }
         }
     });
@@ -183,6 +190,7 @@ const getUserTrips = (req, res) =>{
 module.exports = {
     postBooking,
     getPropertyBookings,
+    getUserBookings,
     getConfirmBooking,
     getRefuseBooking,
     getCancelBooking,

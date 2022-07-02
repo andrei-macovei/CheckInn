@@ -70,21 +70,35 @@ sortOrderButton.addEventListener('click', e=>{
     getResults();
 });
 
+const days = (date_1, date_2) =>{ 
+    let difference = date_2.getTime() - date_1.getTime(); 
+    let TotalDays = Math.ceil(difference / (1000 * 3600 * 24)); 
+    return TotalDays; 
+} 
 
 function getResults(){
     var url = `?`;
     if(city) url += `city=${city}`;
-    if(checkin) url += `&checkin=${checkin}`;
-    if(checkout) url += `&checkout=${checkout}`;
+    // if(checkin) url += `&checkin=${checkin}`;
+    // if(checkout) url += `&checkout=${checkout}`;
     if(guests) url += `&guests=${parseInt(guests)}`;
     if(pressedButtonInfo.value != 'default') url += `&order=${pressedButtonInfo.value}`;
     if(sortOrderButton.value == 'high') url +=`&sortOrder=high`;
 
     if(checkin && checkout && guests){
-        var totalPrice = `
-        <div class="">
-            
-        </div>`
+        let dateArr = checkin.split('-');
+        let year = parseInt(dateArr[0]);
+        let month = parseInt(dateArr[1]);
+        let day = parseInt(dateArr[2]);
+        let dbDate = new Date(year, month-1, day);
+        var checkinDate = dbDate;
+
+        dateArr = checkout.split('-');
+        year = parseInt(dateArr[0]);
+        month = parseInt(dateArr[1]);
+        day = parseInt(dateArr[2]);
+        dbDate = new Date(year, month-1, day);
+        var checkoutDate = dbDate;
     }
 
     for (let opt of filterOptions){
@@ -122,6 +136,20 @@ function getResults(){
             console.log("Get results called");
             resultsContainer.textContent = '';
             for(result of data){
+                var totalPrice = '';
+                if(checkin && checkout && guests){
+                    var daysNumber = days(checkinDate, checkoutDate)
+                    var calculatedPrice = result.price * days(checkinDate, checkoutDate);
+                    if(daysNumber >= 7) calculatedPrice -= parseInt(result.week_discount) * Math.floor(daysNumber/7);
+                    var guestsDifference = result.guests - guests;
+                    if(guestsDifference > 0){
+                        calculatedPrice -= guestsDifference * parseFloat(result.less_guests_discount);
+                    }
+                    totalPrice = `
+                    <div class="font-bold text-lg justify-self-end">
+                        Total: ${calculatedPrice}€
+                    </div>`;
+                }
                 const resultDiv = document.createElement('div');
                 var propertyImage = '';
                 if(result.rating) rating = result.rating + ' <i class="fa-solid fa-star text-yellow-400"></i>'; else rating = "No rating yet";
@@ -186,9 +214,9 @@ function getResults(){
                         <div class="font-semibold text-lg">
                             ${result.price}€/night
                         </div>
-                        <div class="hidden">
-                            #TOTAL_PRICE
-                        </div>
+                        
+                        ${totalPrice}
+                        
                     </div>
                 </div>
                 </a>

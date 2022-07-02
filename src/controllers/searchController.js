@@ -44,8 +44,26 @@ const getResultsPage = (req, res) =>{
                                 favourites: result3.rows[0]
                             }
                             if(req.query.city) toSend.city = capitalize(req.query.city);
-                            if(req.query.checkin) toSend.checkin = req.query.checkin;
-                            if(req.query.checkout) toSend.checkout = req.query.checkout;
+                            if(req.query.checkin){
+                                // toSend.checkin = req.query.checkin;
+                                let dateArr = req.query.checkin.split('-');
+                                let year = parseInt(dateArr[0]);
+                                let month = parseInt(dateArr[1]);
+                                let day = parseInt(dateArr[2]);
+                                let dbDate = new Date(year, month-1, day);
+                                toSend.checkinDate = dbDate;
+                                toSend.checkin = req.query.checkin;
+                            }
+                            if(req.query.checkout){
+                                // toSend.checkout = req.query.checkout;
+                                let dateArr = req.query.checkout.split('-');
+                                let year = parseInt(dateArr[0]);
+                                let month = parseInt(dateArr[1]);
+                                let day = parseInt(dateArr[2]);
+                                let dbDate = new Date(year, month-1, day);
+                                toSend.checkoutDate = dbDate;
+                                toSend.checkout = req.query.checkout;
+                            }
                             if(req.query.guests) toSend.guests = req.query.guests;
                             if(req.query.filter) toSend.filter = req.query.filter;
                             res.render('pages/accomodations', toSend);
@@ -82,7 +100,7 @@ const getResultsPage = (req, res) =>{
 
 const getResults = (req, res) =>{
     var i=1;
-    var queryGetResults = `SELECT p.id_property, title, description, price, rating, property_type, guests, city, 
+    var queryGetResults = `SELECT p.id_property, title, description, price, rating, property_type, guests, city, week_discount, less_guests_discount, 
         count(id_room), ph.big_picture FROM properties p 
         INNER JOIN address a ON p.id_property = a.id_property 
         INNER JOIN rooms r ON p.id_property = r.id_property 

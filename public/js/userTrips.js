@@ -1,37 +1,8 @@
-var deleteButton = document.querySelector(".btn-del");
-var pressedButtonId;
-
-deleteButton.addEventListener('click', e =>{
-    pressedButtonId = deleteButton.value;
-});
-
-const sureButton = document.querySelector('#sure-btn')
-
-sureButton.addEventListener('click', e =>{
-    (async () =>{
-        const rawResponse = await fetch(`/hosting/deleteProperty/${pressedButtonId}`, {
-            method: "DELETE",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
-        const content = await rawResponse.json();
-    })();
-    location.reload(true);
-});
-
-const days = (date_1, date_2) =>{ 
-    let difference = date_2.getTime() - date_1.getTime(); 
-    let TotalDays = Math.ceil(difference / (1000 * 3600 * 24)); 
-    return TotalDays; 
-} 
-
 // Calendar
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
-    var id_property = document.getElementById('id_property').value;
 
-    fetch(`/booking/${id_property}`)
+    fetch(`/booking/user`)
         .then(res => res.json())
         .then(data => {
             var events = new Array();
@@ -68,6 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // events = [];
             calendar.render();
+
+            // document.querySelector('.fc-next-button').click();
+            // document.querySelector('.fc-prev-button').click();
             
         });
 });

@@ -80,7 +80,7 @@ const postRegisterUser = (req, res) => {
                         }
                         else{
                             // send email with token for activation
-                            sendTokenEmail(text_fields.firstname, text_fields.email, token);
+                            // sendTokenEmail(text_fields.firstname, text_fields.email, token);
                             res.render('pages/register', {msg:"Account created. Please activate your account via e-mail", succes:"true"})
                         }
                     });
@@ -222,11 +222,22 @@ const postAuthenticate = (req, res) => {
                             role: result.rows[0].role, 
                             favourites: result.rows[0].favourites
                         }
+
+                        // var queryGetProperties = `SELECT id_property FROM properties WHERE id_host=$1`;
+                        // client.query(queryGetProperties, [result.rows[0].id_user], (err1, result1) =>{
+                        //     if(err1) {console.log(err1); return;}
+                        //     var propertiesArray = [];
+                        //     for(row of result1.rows){
+                        //         propertiesArray.push(row.id_property);
+                        //     }
+                        //     console.log(req.session.user);
+                        //     req.session.user.properties = propertiesArray;
+                        // });
+                        
                     }
 
                     // send notifications
                     sendLoginNotifications(result.rows[0].id_user, result.rows[0].profile_pic, result.rows[0].role, result.rows[0].phone, result.rows[0].description);
-
                     if(text_fields.path) res.redirect(text_fields.path);
                     else res.redirect('/');
                 }

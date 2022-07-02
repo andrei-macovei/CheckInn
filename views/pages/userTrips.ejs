@@ -7,6 +7,10 @@
         <title>CheckInn Home</title>
         <%-include("../fragments/head.ejs")%>
         <script src="/public/js/addReview.js" defer></script>
+        <script src="/public/js/userTrips.js" defer></script>
+        <!-- FullCalendar -->
+        <!-- <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.css' rel='stylesheet' />
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.js'></script> -->
     </head>
     <body>
         <%-include("../fragments/header.ejs")%>
@@ -22,7 +26,7 @@
                 <div class="p-4 flex flex-col justify-center border-b">
                     <div class="flex flex-row justify-around">
                         <h2 class="text-xl font-bold p-4 text-center justify-self-center">Current trip</h3>
-                        <button type="button" class="text-white hidden bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View on calendar</button>
+                        <!-- <button type="button" class="text-white hidden bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View on calendar</button> -->
                     </div>
                     <div class="border rounded-xl self-center w-3/4 p-6 my-4 space-y-2 bg-slate-50">
                         <div class="flex flex-row justify-between">
@@ -55,7 +59,7 @@
             <div class="p-4 flex flex-col justify-center border-b">
                 <div class="flex flex-row justify-around">
                     <h2 class="text-xl font-bold m-4 text-center justify-self-center">Upcoming trips</h3>
-                    <button type="button" class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View on calendar</button>
+                    <!-- <button type="button" class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" data-modal-toggle="large-modal">View on calendar</button> -->
                 </div>
                 
                 <% if(locals.upcomingTrips) {%>
@@ -87,7 +91,7 @@
                             <div class="flex flex-row justify-between items-center">
                                 <p>Total price: <span class="text-lg font-semibold"><%-trip.total_price%>€</span></p>
                                 <% if(trip.status == 'confirmed' || trip.status == 'pending') {%>
-                                <a href="/booking/cancel/<%-trip.id_property%>/<%-trip.id_booking%>?path=userTrips" class="focus:outline-none border border-red-500 text-red-500 hover:bg-red-100 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Cancel booking</a>
+                                <a href="/booking/cancel/<%-trip.id_booking%>?path=userTrips" class="focus:outline-none border border-red-500 text-red-500 hover:bg-red-100 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Cancel booking</a>
                                 <%}%>
                             </div>
                         </div>
@@ -101,7 +105,7 @@
             <div class="p-4 flex flex-col justify-center">
                 <div class="flex flex-row justify-around">
                     <h2 class="text-xl font-bold p-4 text-center justify-self-center">Your past trips</h3>
-                    <button type="button" class="text-white invisible bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View on calendar</button>
+                    <!-- <button type="button" class="text-white invisible bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">View on calendar</button> -->
                 </div>
                 <% if(locals.olderTrips) {%>
                     <% for(trip of olderTrips) { %>
@@ -222,6 +226,7 @@
                     </form>
                 </div>
             </div>
+
         </main>
     </body>
 </html>

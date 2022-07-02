@@ -4,6 +4,8 @@ const streetInp = document.querySelector('#street-inp');
 const addAddressBtn = document.querySelector('#add-address-btn');
 const latitude = document.querySelector('#latitude');
 const longitude = document.querySelector('#longitude');
+const message = document.querySelector('#message');
+message.innerText = '';
 
 // data validation
 const countryErr = document.querySelector('#country-err');
@@ -194,7 +196,7 @@ function geocode(location){
             }
             // refreshes map
             map.setCenter(coords);
-            marker.setPosition(coords); 
+            marker.setPosition(coords);
         })
 }
 
@@ -202,4 +204,5 @@ addAddressBtn.addEventListener('click', e =>{
     var location = streetInp.value + " " + cityInp.value + " " + countryInp.value;
     console.log('Location:' + location);
     geocode(location);  // updates DB and shows marker on map
+    message.innerText = 'Address added!';
 })

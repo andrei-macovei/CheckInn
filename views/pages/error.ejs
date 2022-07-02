@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-[url('/public/photos/general/<%-locals.background%>')] bg-center bg-no-repeat bg-cover">
     <head>
         <meta name="keywords" content="">
         <meta name="description" content="">
@@ -10,7 +10,11 @@
     <body>
         <%-include("../fragments/header.ejs")%>
         <main class="px-20">
-            Error
+            <div class="bg-slate-100 bg-opacity-80 text-center p-52 rounded-xl my-4">
+                <h1 class="text-4xl font-bold p-6"> 500 - General Error </h1>
+                <p class="p-6 pt-0 text-lg">Something didn't work, try again later.</p>
+                <a href="/home" class="btn-primary py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl">Go back to the homepage</a>
+            </div>
         </main>
     </body>
 </html>

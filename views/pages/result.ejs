@@ -80,7 +80,7 @@
             <div id="" class="grid grid-cols-[2fr_1fr]">
                 <div id="subtitle" class="flex border-b m-4 pb-2">
                     <div class="pr-4">
-                        <p class="text-xl font-semibold"><%-capitalize(prop.property_type)%> hosted by <a href="/users/profile/<%-prop.id_host%>"><%-prop.firstname%> <%-prop.lastname[0]%></a>.</p>
+                        <p class="text-xl font-semibold"><%-prop.property_type == 'special' ? 'Unique stay' : (prop.property_type == 'bedandbreakfast' ? 'Bed and Breakfast' : capitalize(prop.property_type)) %> hosted by <a href="/users/profile/<%-prop.id_host%>"><%-prop.firstname%> <%-prop.lastname[0]%></a>.</p>
                         <p><span id="guests_nr"><%-prop.guests%></span> guests - <%-prop.rooms_number%> rooms - <%-prop.bathrooms%> bathrooms</p> 
                     </div>
                     <% if(prop.profile_pic) {%>

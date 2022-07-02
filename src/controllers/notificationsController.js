@@ -8,6 +8,7 @@ client.connect();
 
 const getNotificationsPage = (req, res) =>{
     // new notifications
+    if(req.session && req.session.user){
     var queryGetNotifications = `SELECT * FROM notifications WHERE id_user=$1 AND type != 'Suggestion' AND type != 'Warning' AND viewed=false`;
     client.query(queryGetNotifications, [req.session.user.id_user], (err, result) =>{
         if(err) {console.log(err); return;}
@@ -33,6 +34,9 @@ const getNotificationsPage = (req, res) =>{
             })
         })
     })
+    } else {
+        res.render('pages/login');
+    }
 }
 
 function sendNotification(id_user, type, text, action, action_name){

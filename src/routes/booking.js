@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const {postBooking, getPropertyBookings, getConfirmBooking, getRefuseBooking, getCancelBooking, getUserTrips} = require('../controllers/bookingsController');
+const {postBooking, getPropertyBookings, getUserBookings, getConfirmBooking, getRefuseBooking, getCancelBooking, getUserTrips} = require('../controllers/bookingsController');
 
 router.post('/add/:price', postBooking);
 
 router.get('/userTrips', getUserTrips);
+
+router.get('/user', getUserBookings);
 
 router.get('/:id_property', getPropertyBookings);
 

@@ -1396,6 +1396,18 @@ input:checked + .toggle-bg {
   height: 2.25rem;
 }
 
+.h-\[1000px\] {
+  height: 1000px;
+}
+
+.h-\[700px\] {
+  height: 700px;
+}
+
+.h-\[600px\] {
+  height: 600px;
+}
+
 .max-h-\[400px\] {
   max-height: 400px;
 }

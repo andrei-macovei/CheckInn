@@ -15,6 +15,8 @@ const getUserFavourites = (req, res) =>{
                 properties: result.rows
             })
         });
+    } else {
+        res.render('pages/login');
     }
 };
 

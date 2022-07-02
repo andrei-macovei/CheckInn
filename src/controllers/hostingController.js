@@ -68,7 +68,6 @@ const postNewListing = (req, res) =>{
         return;
     }
     var form = new formidable.IncomingForm();
-    // TODO: check inputs?
     if(req.session.user){
     form.parse(req, (err, text_fields) =>{
         if(err) console.log(err);
@@ -87,6 +86,7 @@ const postNewListing = (req, res) =>{
                     var queryUpdateRole = `UPDATE users SET role='host' WHERE id_user=$1`;
                     client.query(queryUpdateRole, [req.session.user.id_user], (err, result) =>{
                         if(err) { console.log(err); return;}
+                        req.session.user.role = 'host';
                     });
 
                     client.query(queryAddProperty, paramsAddProperty, (err1, result1) =>{
@@ -116,6 +116,7 @@ const postNewListing = (req, res) =>{
 }
 
 const getListingAddress = (req, res) =>{
+    if(req.session && req.session.user){
     queryGetAddress = `SELECT * FROM address WHERE id_property= $1`;
     client.query(queryGetAddress, [req.params.id_property], (err, result) =>{
         if(err) console.log(err);
@@ -132,10 +133,14 @@ const getListingAddress = (req, res) =>{
             else res.render('pages/listingAddress', {id_property: req.params.id_property});
         }
     })
+    } else {
+        res.render('pages/login');
+    }
 }
 
 const getListingDetails = (req, res) =>{
     // gets amenities column names from db
+    if(req.session && req.session.user) {
     var queryGetBathroomAmenities = `SELECT column_name FROM information_schema.columns WHERE table_name = 'bathroom_amenities'`
     client.query(queryGetBathroomAmenities, (err, result) =>{
         if(err) console.log(err);
@@ -175,6 +180,9 @@ const getListingDetails = (req, res) =>{
             });
         }
     });
+    } else {
+        res.render('pages/login');
+    }
 }
 
 const postListingDetails = (req, res) =>{
@@ -203,7 +211,7 @@ const postListingDetails = (req, res) =>{
             const generalAmenitiesArr = ['essentials', 'wifi', 'tv', 'iron', 'heating', 'air_conditioning', 'desk', 'free_parking', 
             'paid_parking', 'security_cameras', 'safe', 'smoke_detectors', 'balcony', 'outdoor_space'];
             var queryUpdateGeneralAmenities;
-            if(text_fields.generalAmenities){
+            // if(text_fields.generalAmenities){
                 // check if property already has general amenities introduced
                 client.query('SELECT id_amenities FROM general_amenities WHERE id_property=$1', [req.params.id_property], (err1, result1) =>{
                     if(err1) {console.log(err1); return;}
@@ -249,7 +257,7 @@ const postListingDetails = (req, res) =>{
                         const kitchenAmenitiesArr = ['kitchen', 'fridge', 'freezer', 'cooker', 'oven', 'microwave', 'cutlery', 'cooking_essentials',
                              'coffee', 'kettle', 'blender', 'dishwasher'];
                         var queryUpdateKitchenAmenities;
-                        if(text_fields.kitchenAmenities){
+                        // if(text_fields.kitchenAmenities){
                             // check if property already has kitchen amenities introduced
                             client.query('SELECT id_amenities FROM kitchen_amenities WHERE id_property=$1', [req.params.id_property], (err3, result3) =>{
                                 if(err3) {console.log(err3); return;}
@@ -290,7 +298,7 @@ const postListingDetails = (req, res) =>{
                                     // add bathroom amenities in db
                                     const bathroomAmenitiesArr = ['shower_gel', 'shampoo', 'bath_tub', 'bathrobe', 'washing_machine', 'laundry_dryer', 'bidet', 'jacuzzi'];
                                     var queryUpdateBathroomAmenities;
-                                    if(text_fields.bathroomAmenities){
+                                    // if(text_fields.bathroomAmenities){
                                         // check if property already has bathroom amenities introduced
                                         client.query('SELECT id_amenities FROM bathroom_amenities WHERE id_property=$1', [req.params.id_property], (err5, result5) =>{
                                             if(err5) {console.log(err5); return;}
@@ -331,23 +339,27 @@ const postListingDetails = (req, res) =>{
                                                 if(text_fields.rules_btn == '')res.redirect(`/hosting/listingPhotos/${req.params.id_property}`);
                                             });
                                         });
-                                    }
+                                    // }
                                 });
                             });
-                        }                        
+                        // }                        
                     });
                 });
-            }           
+            // }           
         });
     });
 }
 
 const getListingPhotos = (req, res) =>{
+    if(req.session && req.session.user){
     var queryGetPhotos = `SELECT * FROM photos WHERE id_property=$1`;
     client.query(queryGetPhotos, [req.params.id_property], (err, result)=>{
         if(err) {console.log(err); return;}
         res.render('pages/listingPhotos', {id_property: req.params.id_property, photos: result.rows[0]});
     })
+    } else {
+        res.render('pages/login');
+    }
 }
 
 const postListingPhotos = (req, res) =>{
@@ -437,7 +449,7 @@ const generatePhotos = (req, res) =>{
     client.query(queryGetPhotos, [req.params.id_property], (err, result) =>{
         if(err) {console.log(err); return;}
         //var images = [result.rows[0].big_picture, result.rows[0].small_pic_1, result.rows[0].small_pic_2, result.rows[0].small_pic_3, result.rows[0].small_pic_4];
-        
+        console.log(result.rows[0]);
         if(result.rows[0].big_picture){
             sharp(`${__dirname}/../../${result.rows[0].big_picture}`).resize(medium_dim).toFile(`${propertyFolder}/big_picture-${medium_dim}.jpg`);
         }
@@ -466,7 +478,7 @@ const generatePhotos = (req, res) =>{
 }
 
 const getListingRules = (req, res) =>{
-    
+    if(req.session && req.session.user){
     var error = '';
     if(req.query.error){
         switch(req.query.error){
@@ -500,6 +512,9 @@ const getListingRules = (req, res) =>{
             error: error
         });
     });
+    } else {
+        res.render('pages/login');
+    }
 }
 
 const postAddRules = (req, res) =>{
@@ -533,8 +548,8 @@ const postAddRules = (req, res) =>{
         var queryUpdateProperty = `UPDATE properties SET price = $1, week_discount = $2, checkin = $3, checkout = $4,
                                     for_kids = $5, smoking_allowed = $6, pets_allowed = $7, events_allowed = $8, less_guests_discount = $9  WHERE id_property= $10`;
         var paramsUpdateProperty = [text_fields.price, text_fields.week_discount, text_fields.checkin, text_fields.checkout, 
-            (text_fields.rules.includes('for_kids')) ? true : false, (text_fields.rules.includes('smoking_allowed')) ? true : false,
-            (text_fields.rules.includes('pets_allowed')) ? true : false, (text_fields.rules.includes('events_allowed')) ? true : false,
+            (text_fields.rules && text_fields.rules.includes('for_kids')) ? true : false, (text_fields.rules && text_fields.rules.includes('smoking_allowed')) ? true : false,
+            (text_fields.rules && text_fields.rules.includes('pets_allowed')) ? true : false, (text_fields.rules && text_fields.rules.includes('events_allowed')) ? true : false,
             text_fields.less_guests_discount, req.params.id_property];
         client.query(queryUpdateProperty, paramsUpdateProperty, (err, result) =>{
             if(err) console.log(err);
@@ -549,6 +564,7 @@ const postAddRules = (req, res) =>{
 
 const getBookingHistory = (req, res) =>{
     // :id_property
+    if(req.session && req.session.user){
     var queryGetOldBookings = `SELECT *, u.firstname, u.lastname FROM bookings INNER JOIN users u USING(id_user) WHERE checkout < CURRENT_DATE OR (status != 'confirmed' AND status != 'pending') AND id_property=$1 ORDER BY checkin DESC LIMIT 10`;
     client.query(queryGetOldBookings, [req.params.id_property], (err, result) =>{
         if(err) {console.log(err); return;}
@@ -557,10 +573,14 @@ const getBookingHistory = (req, res) =>{
             bookings: result.rows,
         })
     });
+    } else{
+        res.render('pages/login');
+    }
 }
 
 const getPropertyReviews = (req, res) =>{
     // :id_property
+    if(req.session && req.session.user){
     var queryGetReviews = `SELECT r.*, u.firstname, u.lastname, u.profile_pic FROM reviews r INNER JOIN users u USING(id_user) WHERE id_property=$1`;
         client.query(queryGetReviews, [req.params.id_property], (err1, result1) =>{
             if(err1) {console.log(err1); return;}
@@ -568,6 +588,9 @@ const getPropertyReviews = (req, res) =>{
                 reviews: result1.rows
             })
         });
+    } else{
+        res.render('pages/login');
+    }
 }
 
 function verifyPropertyListing(id_property){
